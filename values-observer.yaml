@@ -1,0 +1,142 @@
+thanos:
+  fullnameOverride: thanos
+  queryFrontend:
+    enabled: true
+  query:
+    service:
+      type: NodePort
+      nodePorts:
+        http: 30002
+    stores:
+      - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
+      - dnssrv+_http-workload-cluster._tcp.thanos-query-envoy.default.svc.cluster.local
+    replicaLabel: [agent_replica, sidecar_replica, prometheus_replica]
+
+  receive:
+    ## Enable thanos receiver if you want to deploy MVP0 version
+    enabled: false
+    replicaCount: 1
+    replicaLabel: receive_replica
+    service:
+      type: NodePort
+      nodePorts:
+        remote: 30291
+    tsdbRetention: 1d
+
+  enabled: true
+  service:
+    labels:
+      name: thanos-query-envoy
+    name: thanos-query-envoy
+    selector:
+      app.kubernetes.io/component: query
+      app.kubernetes.io/name: thanos
+
+grafanaDatasourcesAsConfigMap:
+  cluster-metrics:
+  - name: thanos
+    isDefault: true
+    type: prometheus
+    access: proxy
+    url: http://thanos-query-frontend:9090
+
+  cluster-logs: null
+loki:
+  enabled: false
+promtail:
+  enabled: false
+
+kube-prometheus-stack:
+  grafana:
+    service:
+      type: NodePort
+      nodePort: 30000
+  kubeScheduler:
+    serviceMonitor:
+      # TODO fix this:
+      insecureSkipVerify: true
+  kubeControllerManager:
+    serviceMonitor:
+      # TODO fix this:
+      insecureSkipVerify: true
+  prometheus:
+    prometheusSpec:
+      replicas: 2
+      replicaExternalLabelName: sidecar_replica
+      externalLabels:
+        cluster: observer-cluster
+  defaultRules:
+    labels:
+      prometheus_rule: '2'
+    disabled:
+      PrometheusNotConnectedToAlertmanagers: true
+  nameOverride: kube-prometheus
+  alertmanager:
+    service:
+      type: NodePort
+      nodePort: 30001
+  thanosRuler:
+    enabled: true
+    service:
+      additionalPorts:
+      - name: grpc
+        port: 10901
+        protocol: TCP
+        targetPort: 10901
+    thanosRulerSpec:
+      evaluationInterval: "1m"
+      ruleSelector:
+        matchLabels:
+          prometheus_rule: '2'
+      queryEndpoints:
+      - dnssrv+_http._tcp.thanos-query
+## Replace if thanos query runs on different path than /
+#      - http://thanos-query:9090/thanos
+      alertmanagersUrl:
+      - http://kube-prometheus-alertmanager:9093
+## Replace if alertmanager runs on different path than /
+#      - http://kube-prometheus-alertmanager:9093/alertmanager
+
+dnation-kubernetes-monitoring:
+  clusterMonitoring:
+    clusters:
+    - name: Observer
+      label: observer-cluster
+      description: 'Observer cluster monitoring'
+  grafanaDashboards:
+    isLoki: false
+  prometheusRules:
+    labelPrometheus:
+      prometheus_rule: '2'
+## Uncomment when you want to fire dNation alerts immediately
+#    alertInterval: "0m"
+
+
+  kaasMonitoring:
+    ## Enable kaasMonitoring if you want to deploy MVP0 version
+    enabled: false
+
+## Uncomment if you want to monitor SCS infrastructure services
+#  blackboxMonitoring:
+#    enabled: true
+#prometheus-blackbox-exporter:
+#  enabled: true
+#  prometheusRule:
+#    additionalLabels:
+#      prometheus_rule: '2'
+#  serviceMonitor:
+#    targets:
+#    - name: scs-registry
+#      url: https://registry.scs.community/account/sign-in
+#    - name: scs-jitsi
+#      url: https://conf.scs.koeln:8443/
+#    - name: scs-hedgedoc
+#      url: https://input.scs.community/
+#    - name: scs-nextcloud
+#      url: https://scs.sovereignit.de/nextcloud/login
+#    - name: scs-web
+#      url: https://scs.community/
+#    - name: scs-docs
+#      url: https://docs.scs.community/
+#    - name: scs-zuul
+#      url: https://zuul.scs.community

@@ -1,0 +1,19 @@
+thanos:
+  query:
+    ingress:
+      enabled: false # disabled for http
+      grpc:
+        ingressClassName: nginx
+        enabled: true
+        annotations:
+          nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+          nginx.ingress.kubernetes.io/ssl-redirect: "true"
+          nginx.ingress.kubernetes.io/grpc-backend: "true"
+          nginx.ingress.kubernetes.io/auth-tls-secret: "default/thanos-ca-secret"
+          nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+        hostname: query-workload.local
+        tls: false
+        extraTls:
+          - hosts:
+              - query-workload.local
+            secretName: thanos-server
