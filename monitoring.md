@@ -37,7 +37,7 @@ This section provides brief explanation of SCS monitoring stack and it's compone
 	- Loki - log aggregation system designed to work seamlessly with Prometheus and Grafana.Unlike traditional log systems, Loki indexes only metadata (like labels) instead of the full log content, making it efficient and cost-effective for storing and querying logs.
 - **Visualization layer** - for visualisation frontend
 	- Grafana - open-source analytics and visualization platform that lets users query, visualize, and alert on data from various sources like Prometheus, Loki, InfluxDB, Elasticsearch, and more. It provides interactive dashboards and customizable panels for monitoring metrics and logs in real time.
-	- dNation K8S Monitoring - series of intuitive, drill-down Grafana dashboards and Prometheus alerts written in Jsonnet. 
+	- dNation K8S Monitoring - series of intuitive, drill-down Grafana dashboards and Prometheus alerts written in Jsonnet. The layered structure  L0 (all clusters and hosts), L1 (cluster/host overview), L2 and in some cases even L3 for detailed information. This design allows  to quickly detect and investigate a problem in users infrastructure.
 
 ### 3.2. Monitoring Endpoints
 SCS monitoring platform can observe various endpoints, such as tcp/http/https through Blackbox exporter, VMs and baremetal nodes through Node exporter, another k8s clusters - see [Multicluster Monitoring](#3-3-multicluster-monitoring) and [IaaS](#3-4-iaas-monitoring)(Openstack)
@@ -246,10 +246,81 @@ kube-prometheus-stack:
 helm upgrade --context kind-observer --install dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
 ```
 
+
 ## 5. Dashboards and Customization
->Todo
+dNation K8S Monitoring project provides many dashboards, which are written in jsonnet and are therefore highly customisable. User can override default thresholds or change the colors with helm values only, there's no need to edit any Json/Jsonnet file. The values files are self-explanatory  for example:
+```yaml
+dnation-kubernetes-monitoring:
+  templates:
+    L1:
+      k8s:
+        # Modify default k8s templates
+        #This should be name of the alert
+        overallUtilizationMasterNodesRAM:
+          panel:
+            thresholds:
+              critical: 95
+              warning: 90
+          alert:
+            thresholds:
+              critical: 95
+              warning: 90
+```
+Another example, can define custom alerts.
+```yaml
+dnation-kubernetes-monitoring:
+  templates:
+    L1:
+        overallUtilizationRAMSQL:
+          parent: 'overallUtilizationRAM'
+          default: false
+          panel:
+            title: 'Overall Utilization ProdSql'
+            thresholds:
+              critical: 97
+              warning: 95
+          alert:
+            name: 'HostRAMOverallHighProdSql'
+            expr: 'round((1 - sum by (job, nodename) (node_memory_MemAvailable_bytes{job=~\"prod-sql-h-1|prod-sql-h-2|prod-sql-h-3\"} * on(instance) group_left(nodename) (node_uname_info)) / sum by (job, nodename) (node_memory_MemTotal_bytes{job=~\"prod-sql-h-1|prod-sql-h-2|prod-sql-h-3\"} * on(instance) group_left(nodename) (node_uname_info))) * 100)'
+            thresholds:
+              critical: 97
+              warning: 95
+```
+dNation k8s Monitoring has several pre-made dashboard for k8s apps, e.g. MySQL, Ingress Nginx, Java Spring Acutator, etc. These dashboards can have their panel added to the clusters L1 dashboard. 
+```yaml
+dnation-kubernetes-monitoring:
+  clusterMonitoring:
+    clusters:
+    - name: observer
+      label: observer-cluster
+      description: 'Observer Cluster'
+      apps:
+      - name: nginx-ingress
+        description: Nginx ingress controller
+        jobName: ingress-nginx
+        templates:
+          nginxIngress:
+            enable: true
+          nginxIngressCertificateExpiry:
+            enable: true
+        serviceMonitor:
+          jobLabel: app
+          namespaceSelector:
+            matchNames:
+            - ingress-nginx
+          selector:
+            matchLabels:
+              app: ingress-nginx
+          endpoints:
+          - targetPort: metrics
+            interval: 30s
+            path: /metrics
+            relabelings:
+            - *containerLabel
+```
+
 ## 6 Appendices and Resources
-> Todo
+
 ### 6.1. ETCD, Kube-Proxy fix
 - The metrics of `etcd` and `kube-proxy` control plane components are by default bound to the localhost that prometheus instances **cannot** access.
 - When spawning a new cluster (`kubeadm init`) you can use our config
@@ -279,5 +350,61 @@ sudo vim etcd.yaml
 ...
 
 ```
+- Setup `kube-proxy` metrics bind address
+   Edit  kube-proxy daemon set
+```shell
+kubectl edit ds kube-proxy -n kube-system
+```
+```yaml
+...containers:
+      - command:
+        - /usr/local/bin/kube-proxy
+        - --config=/var/lib/kube-proxy/config.conf
+        - --hostname-override=$(NODE_NAME)
+        - --metrics-bind-address=0.0.0.0  # Add metrics-bind-address line
+
+```
+Edit kube-proxy config map
+```shell
+kubectl -n kube-system edit cm kube-proxy
+```
+```yaml
+...
+    kind: KubeProxyConfiguration
+    metricsBindAddress: "0.0.0.0:10249" # Add metrics-bind-address host:port
+    mode: ""
+```
+Delete the kube-proxy pods and reapply the new configuration
+```shell
+kubectl -n kube-system delete po -l k8s-app=kube-proxy
+```
+-  Setup `scheduler` metrics bind address
+```shell
+# On k8s master node
+cd /etc/kubernetes/manifests/
+sudo vim kube-scheduler.yaml
+```
+```yaml
+# Edit bind-address and port command options
+...
+- --bind-address=0.0.0.0
+- --secure-port=10259
+...
+```
+- Setup `controller-manager` metrics bind address
+```shell
+# On k8s master node
+cd /etc/kubernetes/manifests/
+sudo vim kube-controller-manager.yaml
+```
+```yaml
+# Edit bind-address and port command options
+...
+- --bind-address=0.0.0.0
+- --secure-port=10257
+...
+```
 ### 6.2. Resources
 [SCS Monitoring Documentation](https://docs.scs.community/docs/operating-scs/components/monitoring/docs/overview)
+[dNation Kubernetes Monitoring](https://dnationcloud.github.io/kubernetes-monitoring/)
+
