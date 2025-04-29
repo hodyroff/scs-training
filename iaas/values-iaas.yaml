@@ -1,0 +1,45 @@
+prometheus-openstack-exporter:
+  enabled: true
+  multicloud:
+    enabled: false
+  serviceMonitor:
+    scrapeTimeout: "1m"
+  commonLabels:
+  # change if you chaged release name
+    release: dnation-kubernetes-monitoring-stack 
+# reoplace with your clouds.yaml
+  clouds_yaml_config: |
+    clouds.yaml: |
+        clouds:
+          default:
+            auth:
+              auth_url: <replace>
+              application_credential_id: "<replace>"
+              application_credential_secret: "<replace>"
+            region_name: "<replace>"
+            interface: "public"
+            identity_api_version: 3
+            auth_type: "v3applicationcredential"
+kube-prometheus-stack:
+  grafana:
+    dashboardProviders:
+      dashboardprovidersiaas.yaml:
+        apiVersion: 1
+        providers:
+      # Openstack exporter Dashboard provider
+        - name: iaas
+          folder: 'IaaS'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/iaas
+    dashboards:
+      iaas:
+        # Openstack exporter Dashboard
+        openstack-exporter:
+          gnetId: 21085
+          revision: 3
+          datasource:
+          - name: DS_PROMETHEUS
+            value: thanos

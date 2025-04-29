@@ -12,8 +12,8 @@ This course provides an introduction to SCS Monitoring, a scalable, highly avail
 - Technologies covered: KinD, Helm, Kubernetes, Prometheus, Thanos, Loki, Grafana
 - What to expect by the end of this course - TODO
 ## 2. Motivation and Use Cases
-Monitoring means real-time metrics and logs that inform the operator about current infrastructure state and possible problems. Monitoring makes it easy to detect problems and makes it easier to force
-The main features of SCS Monitoring:
+Monitoring means real-time metrics and logs that inform the operator about current infrastructure state and possible problems. Monitoring makes it easy to detect problems and makes it easier to solve or debug them.
+**The main features of SCS Monitoring:**
 - Highly available
 - Scalable
 - Global view
@@ -28,28 +28,35 @@ The main features of SCS Monitoring:
 ## 3. Monitoring Overview
 This section provides brief explanation of SCS monitoring stack and it's components.
 ### 3.1. Visualisation and Data Layer
-![monitoring1.svg](monitoring1.svg)
+![monitoring1.svg](images/monitoring1.svg)
 - **Data Layer** - for scraping/exporting metrics and logs
-	- Prometheus - real-time metrics and alerts based on time-series data.
-	- Exporters (Node exporter,SSL exporter, etc.) - exposing metrics for Prometheus
-	- Thanos - long-term storage, high availability, multi-cluster
-	- Loki - log aggregation
+	- Prometheus - collects  real-time metrics and alerts based on time-series data 
+	   and provides a powerful query language (PromQL) to analyze the data. It's widely adopted in Kubernetes environments for its ease of use, flexibility, and strong community support.
+	- Exporters (Node exporter,SSL exporter, etc.) - act as a bridge between Prometheus and the system being monitored, making it possible to gather metrics from services that don’t natively support Prometheus. . Node Exporter for example collects hardware and OS-level metrics - such as CPU, memory, disk, and network statistics - from Linux systems.
+	- Thanos - extends Prometheus by enabling scalable, long-term storage and high availability of metrics data. It works by layering components on top of Prometheus, such as sidecars, query nodes, and object storage integrations (like S3 or GCS), to allow for deduplication, global querying across multiple Prometheus instances, and retention of data beyond the local storage limits
+	- Loki - log aggregation system designed to work seamlessly with Prometheus and Grafana.Unlike traditional log systems, Loki indexes only metadata (like labels) instead of the full log content, making it efficient and cost-effective for storing and querying logs.
 - **Visualization layer** - for visualisation frontend
-	- Grafana - analytics and visualization
-	- dNation K8S Monitoring - series of intuitive, drill-down Grafana dashboards and Prometheus alerts
-### 3.2. Multicluster monitoring
-![monitoring3.svg](monitoring3.svg)
+	- Grafana - open-source analytics and visualization platform that lets users query, visualize, and alert on data from various sources like Prometheus, Loki, InfluxDB, Elasticsearch, and more. It provides interactive dashboards and customizable panels for monitoring metrics and logs in real time.
+	- dNation K8S Monitoring - series of intuitive, drill-down Grafana dashboards and Prometheus alerts written in Jsonnet. 
+
+### 3.2. Monitoring Endpoints
+SCS monitoring platform can observe various endpoints, such as tcp/http/https through Blackbox exporter, VMs and baremetal nodes through Node exporter, another k8s clusters - see [Multicluster Monitoring](#3-3-multicluster-monitoring) and [IaaS](#3-4-iaas-monitoring)(Openstack)
+
+### 3.3. Multicluster Monitoring
+The SCS Monitoring Platform supports multi-cluster monitoring, enabling the observation of one or more Kubernetes clusters across various distributions, including K3s, OpenShift, and vanilla Kubernetes. It leverages Prometheus for metric scraping, Thanos for long-term metric storage in object storage services, and Grafana for visualizing metrics through customizable dashboards. Additionally, Loki is used for collecting and aggregating logs, providing a complete observability solution.
+
+![monitoring3.svg](images/monitoring3.svg)
 - **Workload Cluster** - Contains data layer only. Uses Prometheus to scrape metrics and Thanos to store longterm metrics in an objectstore service
 - **Observer cluster** - Contains both data and visual layer. Utilizes Thanos with Envoy proxy for short term queries multiple clusters, hosts and IAASs, including the observer cluster itself. Uses Grafana to display dNation dashboards, as well as any aditional dashboards. For Long term Querries it looks into the objectstore service
-### 3.3. IAAS Monitoring
-![iaas.png](iaas.png)
+### 3.4. IAAS Monitoring
+![iaas.png](images/iaas.png)
 IaaS monitoring uses openstack exporter. The user needs to supply credentials in form of `clouds.yaml` Currently, there's no dNation dashboard, we recommend to use [this dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/). See [Dashboards and Customization](#5-dashboards-and-customisation) on how to add 3rd party dashboards.
 ## 4. Example Deployments
-This section provides example deployments of single-cluster, multi-cluster and IAAS monitoring as
+This section provides example deployments of single-cluster, multi-cluster and IAAS monitoring using [KinD](https://kind.sigs.k8s.io/)
 ### 4.1. Quickstart Guide
 - Create KinD cluster
 ```shell
-kind create cluster --config kind-observer-config.yaml --image kindest/node:v1.31.6 --name observer
+kind create cluster --config kind/kind-observer-config.yaml --image kindest/node:v1.31.6 --name observer
 ```
 - Install monitoring stack  
 ```shell
@@ -58,7 +65,7 @@ helm repo add dnationcloud https://dnationcloud.github.io/helm-hub/
 
 helm repo update dnationcloud
 
-helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f values-observer.yaml
+helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
 
 ```
 - Portforward to Grafana
@@ -70,11 +77,11 @@ kubectl --namespace default port-forward  svc/dnation-kubernetes-monitoring-stac
 >Todo
 - Spawn a workload cluster in KinD - observer was already created in [previous section](#4-1-quickstart-guide), if not please follow it
 ```shell
-kind create cluster --config kind-workload-config.yaml --image kindest/node:v1.31.6 --name workload
+kind create cluster --config kind/kind-workload-config.yaml --image kindest/node:v1.31.6 --name workload
 ```
 - Install k8s monitoring on the cluster using `values-observer.yaml`
 ```shell
-helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f values-workload.yaml
+helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml
 ```
 - Now we connect the clusters
 #### 4.2.1 Observer Cluster
@@ -84,7 +91,7 @@ helm --kube-context kind-observer install cert-manager jetstack/cert-manager --n
 ```
 - Create a self signed issuer and a CA issuer with self-signed ca. Use CA issuer to generate client and server certificate.
 ```shell
-kubectl --context kind-observer  apply -f tls-resources-observer.yaml 
+kubectl --context kind-observer  apply -f multicluster/tls-resources-observer.yaml 
 ```
 - Copy data  from `tls-ca-key-pair`
 ```yaml
@@ -100,7 +107,7 @@ data:
 ```
 - Apply additional observer values to mount this secrets
 ```shell
-helm --kube-context kind-observer upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f values-observer.yaml -f values-connect-observer.yaml
+helm --kube-context kind-observer upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml -f multicluster/values-connect-observer.yaml
 ```
 - Access monitoring [http://localhost:30000/d/monitoring/infrastructure-services-monitoring](http://localhost:30000/d/monitoring/infrastructure-services-monitoring). You will see the box for workload cluster saying `Down`
 > Hack: monitoring is domain based, this should make it work locally in Kind
@@ -124,7 +131,7 @@ hosts {
 #### 4.2.2. Workload Cluster
 - Install ingress nginx
 ```shell
-kubectl --context kind-workload apply -f  deploy-ingress-nginx.yaml
+kubectl --context kind-workload apply -f  multicluster/deploy-ingress-nginx.yaml
 ```
 - Add the following secrets to workload cluster
 ```yaml
@@ -153,11 +160,91 @@ data:
 ```
 - Apply workload observer values to connect the clusters
 ```bash
- helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f values-workload.yaml -f values-connect-workload.yaml 
+ helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml -f multicluster/values-connect-workload.yaml 
 ```
-### 4.3 IAAS Monitoring
-> Todo
-- On observer cluster add the following
+### 4.3 IaaS Monitoring
+- Acquire application credential of your cloud. An admin access is required. You can use Horizon UI `https://your.openstack.cloud.url/identity/application_credentials/` or via `openstack` cli
+>Warning: If you used Horizon, the secret will be automaticaly generated and shown only once! Make sure to note it down in a secure place i.e. KeyPass
+```shell
+openstack application credential create my-app-cred --secret <generate-your-app-cred-secret-here> --role <admin or reader>
+```
+- Admin role is required to access all the metrics, without it the resulting dashboard will be incomplete.  In this example however, reader role is sufficient for demonstration purposes, fill free to use it. Also, in some Openstack deployments, internal API inaccessible from outside  is required to read all the metrics.
+- Create `values-iaas.yaml` and fill in application credentials.
+
+```yaml
+prometheus-openstack-exporter:
+  enabled: true
+  multicloud:
+    enabled: false
+  serviceMonitor:
+    scrapeTimeout: "1m"
+  commonLabels:
+  # change if you chaged release name
+    release: dnation-kubernetes-monitoring-stack 
+# reoplace with your clouds.yaml
+  clouds_yaml_config: |
+    clouds.yaml: |
+        clouds:
+          default:
+            auth:
+              auth_url: <replace>
+              application_credential_id: "<replace>"
+              application_credential_secret: "<replace>"
+            region_name: "<replace>"
+            interface: "public"
+            identity_api_version: 3
+            auth_type: "v3applicationcredential"
+#  Needed only for internal openstack APIs
+#  Demo purposes only, wont be used in KinD
+#  For example in Yaook, uncomment the following:
+            # key: "/etc/ssl/certs/yaook-ca/tls.key"
+            # cert: "/etc/ssl/certs/yaook-ca/tls.crt"
+            # cacert: "/etc/ssl/certs/yaook-ca/ca.crt"
+
+# Mount certificates in case of internal API, e.g. Yaook
+  # extraVolumes:
+  # - name: yaook-ca
+  #   secret:
+  #     secretName: yaook-ca
+  #     items:
+  #     - key: ca.crt
+  #       path: yaook-ca
+```
+- In real deployments e.g. Yaook, Kolla-Ansible, OSSISM. Internal API is needed to access the metrics. Often, a private CA must be mounted. To do this, follow the commented part of above example. The observer cluster must, of course, have access to the internal api. The exporter might be deployed on a workload cluster as well, which is advised in case of Yaook.
+- Create a file called `values-iaas-dashboard.yaml`. Since dNation K8S monitoring does not provide it's own dashboard for IaaS/Openstack you can use the [recommended dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/).
+
+```yaml
+kube-prometheus-stack:
+  grafana:
+    dashboardProviders:
+      dashboardprovidersiaas.yaml:
+        apiVersion: 1
+        providers:
+      # Openstack exporter Dashboard provider
+        - name: iaas
+          folder: 'IaaS'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/iaas
+    dashboards:
+      iaas:
+        # Openstack exporter Dashboard
+        openstack-exporter:
+        #Dashboard Id from URL
+          gnetId: 21085
+          revision: 3
+          datasource:
+          - name: DS_PROMETHEUS
+            value: thanos
+
+```
+
+- In this kind example. You can also use [values file](iaaas/values-iaas.yaml) provided with this documentation, which combines both above yaml files into one. Just fill in your credentials and apply to observer cluster.
+```bash
+helm upgrade --context kind-observer --install dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
+```
 
 ## 5. Dashboards and Customization
 >Todo
