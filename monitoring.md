@@ -31,12 +31,12 @@ This section provides brief explanation of SCS monitoring stack and it's compone
 ![monitoring1.svg](monitoring1.svg)
 - **Data Layer** - for scraping/exporting metrics and logs
 	- Prometheus - real-time metrics and alerts based on time-series data.
-	- Exporters (Node exporter,SSL exporter) - exposing metrics for Prometheus
+	- Exporters (Node exporter,SSL exporter, etc.) - exposing metrics for Prometheus
 	- Thanos - long-term storage, high availability, multi-cluster
 	- Loki - log aggregation
 - **Visualization layer** - for visualisation frontend
 	- Grafana - analytics and visualization
-	- dNation K8S Monitoring - series of intuitive, drill-down Grafana dashboards
+	- dNation K8S Monitoring - series of intuitive, drill-down Grafana dashboards and Prometheus alerts
 ### 3.2. Multicluster monitoring
 ![monitoring3.svg](monitoring3.svg)
 - **Workload Cluster** - Contains data layer only. Uses Prometheus to scrape metrics and Thanos to store longterm metrics in an objectstore service
