@@ -98,9 +98,10 @@ rate-limiting.
   - Proxy registry - mirror external images, avoid rate-limiting, reject 
     unsuitable images
   - Air-gapped registry - security enclaves...
-
 - Placement in SCS stack - part of SCS standard
+
 ![SCS stack](https://sovereigncloudstack.github.io/website/assets/images/201001-SCS-4c-06fe1d5ce5729b4e6bc3ac5190d4dafab09f0374f8e329baeab2b092983a3ea2bc11268e0c783f58f4e991e819375bcf5c6bdc95df977bdea22d145b04f6e934.png)
+
 ---
 
 ## 3. SCS Registry Instance Overview
@@ -179,35 +180,38 @@ $ kubectl edit ingress -n ingress-nginx ingress-nginx-controller
 ```
 
 - [Other ingress annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting)
+
 ---
 
 ## 6. Quickstart Guide
 
- - Clone the [SCS Harbor deployment repository](https://github.com/SovereignCloudStack/k8s-harbor)
-
-```bash
-git clone https://github.com/SovereignCloudStack/k8s-harbor.git
-```
-
 - Prepare the environment
   - Install prerequisites (KinD, Helm, Docker, kubectl, Flux CLI)
-
-```bash
-curl -s https://fluxcd.io/install.sh | sudo FLUX_VERSION=2.2.3 bash
-flux install
-```
-
 - Create a KinD cluster
 
 ```bash 
 kind create cluster
 ```
 
-- Install Harbor using Helm
+- Install flux into the cluster
 
 ```bash
-kubectl apply -k envs/dev/
+curl -s https://fluxcd.io/install.sh | sudo FLUX_VERSION=2.2.3 bash
+flux install
 ```
+
+- Install Harbor using Helm
+  - Clone the [SCS Harbor deployment repository](https://github.com/SovereignCloudStack/k8s-harbor)
+
+  ```bash
+  git clone https://github.com/SovereignCloudStack/k8s-harbor.git
+  ```
+
+  - Install using provided Kustomize manifest
+
+  ```bash
+  kubectl apply -k k8s-harbor/envs/dev/
+  ```
 
 - Make accessible on localhost
 
@@ -234,17 +238,17 @@ http://localhost:8080
 - Prerequisites
   - Kubernetes cluster version >=1.20
 
-```bash
-export KUBECONFIG=/path/to/kubeconfig
-```
+  ```bash
+  export KUBECONFIG=/path/to/kubeconfig
+  ```
 
   - Flux CLI (it is part of SCS KaaS V1)
 
-```bash
-# Installation documentation: https://fluxcd.io/flux/installation/#install-the-flux-cli
-curl -s https://fluxcd.io/install.sh | sudo FLUX_VERSION=2.2.3 bash
-flux install
-```
+  ```bash
+  # Installation documentation: https://fluxcd.io/flux/installation/#install-the-flux-cli
+  curl -s https://fluxcd.io/install.sh | sudo FLUX_VERSION=2.2.3 bash
+  flux install
+  ```
 
   - kubectl
 - Harbor installation
@@ -278,12 +282,12 @@ kubectl apply -k envs/public/
 - Backing up:
   - Harbor database
   - Persistent volumes (registry, charts, etc.)
-- Automatize the process using [Velero](https://velero.io/docs/v1.15/how-velero-works/) - 
+- Automatize the process using [Velero](https://velero.io/docs/v1.15/how-velero-works/) -
   open-source cloud-native backup/restore tool for k8s
 - Backup strategies
   - Regular backup created using [restic](https://restic.net/) integration
     in Velero - suitable for long-term protection of Harbor data
-  - point-in-time snapshot - Velero supports Container Storage Interface 
+  - point-in-time snapshot - Velero supports Container Storage Interface
     snapshots - suitable for temporary one-time protection of data before
     some potentially problematic changes, like upgrade
 - Prerequisites
@@ -295,12 +299,12 @@ kubectl apply -k envs/public/
   - S3 compatible backend storage for Velero to store backup data
     - EC2 credentials
 - Limitations
-  - The key-value database (Redis) storage should not be backed up and/or 
+  - The key-value database (Redis) storage should not be backed up and/or
     restored, as a result, the user sessions of logged in users that are
-    stored in Redis will be lost. 
-  - The upload purging process can cause backup failures. It is a 
-    background process of the registry that periodically removes orphaned 
-    files from the upload directories of the registry. This interval is by 
+    stored in Redis will be lost.
+  - The upload purging process can cause backup failures. It is a
+    background process of the registry that periodically removes orphaned
+    files from the upload directories of the registry. This interval is by
     default set to 24h. Check the timing and perform backup between.
 
     ```bash
@@ -308,43 +312,120 @@ kubectl apply -k envs/public/
     ```
 
 - Example backup and restore in KinD
+  - Deploy single-node single-drive MinIO for S3 bucket as velero backup target
 
-```bash
-# deploy single-node single-drive MinIO for S3 bucket as velero backup target
-docker run -d \
-  --name minio \
-  --restart unless-stopped \
-  -e MINIO_ROOT_USER="${MINIO_ROOT_USER}" \
-  -e MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}" \
-  -e MINIO_BROWSER_REDIRECT_URL="${MINIO_BROWSER_REDIRECT_URL}" \
-  -v "${STORAGE_PREFIX}/data:/data" \
-  -p 127.0.0.1:${MINIO_PORT}:9000 \
-  -p 127.0.0.1:${MINIO_PORT_CONSOLE}:9001 \
-  quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z \
-  server /data --console-address ":9001"
-```
+  ```bash
+  mkdir miniodata
+  docker run -d \
+    --name minio \
+    --restart unless-stopped \
+    -e MINIO_ROOT_USER="minioroot" \
+    -e MINIO_ROOT_PASSWORD="miniorootpass" \
+    -v "./miniodata:/data" \
+    -p 9000:9000 \
+    -p 9001:9001 \
+    quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z \
+    server /data --console-address ":9001"
+  ```
 
-```bash
-# install velero cli to control the process
-wget https://github.com/vmware-tanzu/velero/releases/download/v1.10.2/velero-v1.10.2-linux-amd64.tar.gz 
-tar -zxvf velero-v1.10.2-linux-amd64.tar.gz 
-sudo mv velero-v1.10.2-linux-amd64/velero /usr/local/bin/
-```
+  - Install MinIO client
 
-```bash
-# install velero to cluster
-velero install \
-    --kubeconfig <kubeconfig> \
-    --features=EnableAPIGroupVersions \
+  ```bash
+  curl -O https://dl.min.io/client/mc/release/linux-amd64/mc
+  chmod +x mc
+  sudo mv mc /usr/local/bin/
+  ```
+
+  - Prepare credentials for velero to use for backup
+
+  ```bash
+  mc alias set localminio http://127.0.0.1:9000 miniroot miniorootpass
+  mc admin user add localminio velero_user velero_pass123
+  ```
+
+  - Add a policy for the velero user
+
+  ```bash
+  mc admin policy create localminio velero-policy - <<EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::velero",
+          "arn:aws:s3:::velero/*"
+        ]
+      }
+    ]
+  }
+  EOF
+  mc admin policy attach localminio velero-policy --user velero_user
+  ```
+
+  - Create a bucket
+
+  ```bash
+  mc mb localminio/velero
+  ```
+
+  - Create a credentials file for velero to use
+
+  ```bash
+  cat <<EOF > credentials-velero
+  [default]
+  aws_access_key_id = velero_user
+  aws_secret_access_key = velero_pass123
+  EOF
+  ```
+
+  - Install velero cli to control the process
+
+  ```bash
+  wget https://github.com/vmware-tanzu/velero/releases/download/v1.10.2/velero-v1.10.2-linux-amd64.tar.gz 
+  tar -zxvf velero-v1.10.2-linux-amd64.tar.gz 
+  sudo mv velero-v1.10.2-linux-amd64/velero /usr/local/bin/
+  ```
+
+  - Install velero to cluster
+
+  ```bash
+  velero install \
     --provider aws \
-    --plugins velero/velero-plugin-for-aws:v1.6.1 \
-    --bucket velero-backup \
-    --secret-file ~/.aws/credentials \
+    --plugins velero/velero-plugin-for-aws:v1.9.0 \
+    --bucket velero \
+    --secret-file ./credentials-velero \
     --use-volume-snapshots=false \
-    --uploader-type=restic \
-    --use-node-agent \
-    --backup-location-config <minio target>
-```
+    --backup-location-config region=minio,s3ForcePathStyle="true",s3Url=http://<local IP of host machine>:9000
+  ```
+
+  - Create a backup of harbor running in `default` namespace
+
+  ```bash
+  velero backup create harbor-backup --include-namespaces default
+  ```
+
+  - Simulate the loss of harbor
+
+  ```bash
+  kubectl delete -k k8s-harbor/envs/dev/
+  ```
+
+  - Restore from `harbor-backup`
+
+  ```bash
+  velero restore create --from-backup harbor-backup
+  ```
+
+  - In production deployments don't forget to handle PVC snapshots using 
+    velero restic integration and CSI plugin for snapshots as described in
+    [SCS Backup and Restore documentation](https://docs.scs.community/docs/container/components/container-registry/docs/backup_and_restore)
 
 There is a [case study of backup, migration and upgrade](https://scs.community/tech/2023/05/30/registry-migration-upgrade/)
 of [production SCS container registry](https://registry.scs.community/) 
@@ -367,13 +448,33 @@ upgrade or scaling the cluster.
 - Migrating from:
   - One Harbor instance to another
   - Docker registry to Harbor
-- Tools and scripts
+- Process
+  - Using the same tools as in [backup and restore](#8-backup-and-restore)
+  - Backup Harbor resources in source cluster to a storage target accessible
+    to both clusters
+  - Restore the backup to target cluster
 - KinD-based migration lab
-  - From and existing KinD deployment
+  - Using existing KinD deployment from [Quickstart guide](#6-quickstart-guide), add a new
+    migration target cluster and install velero into it using the process
+    described in [Backup and Restore](#8-backup-and-restore). Optionally name
+    the target cluster.
+
+  ```bash 
+  kind create cluster --name migration-target
+  ```
+
+  - By installing velero there with access to the same
+    storage target, velero should already see existing backup
 
   ```bash
-  # create a new target KinD cluster
-  # TODO
+  velero backup get
+  ```
+
+  - Restore the backup saved in [Backup and Restore](#8-backup-and-restore)
+    in the target cluster
+
+  ```bash
+  velero restore create --from-backup harbor-backup
   ```
 
 ---
@@ -412,48 +513,66 @@ upgrade or scaling the cluster.
   - Load Balancer
     - Routes traffic to the core, portal, jobservice, and registry components
     - Can be a simple NGINX ingress or external L4/L7 load balancer
-- Setting up HA in a simulated KinD environment
+- Trying out HA deployment in KinD
+  - Create a multinode KinD cluster
 
-```bash
-# Install and wait for operators
-$ kubectl apply -k operators/
-$ flux get helmrelease -n default
-NAME                    REVISION        SUSPENDED       READY   MESSAGE
-cert-manager            v1.11.0         False           True    Release reconciliation succeeded
-ingress-nginx           4.5.2           False           True    Release reconciliation succeeded
-postgres-operator       1.9.0           False           True    Release reconciliation succeeded
-redis-operator          3.2.7           False           True    Release reconciliation succeeded
-```
+  ```bash
+  cat <<EOF > kind-multinode.yaml
+  kind: Cluster
+  apiVersion: kind.x-k8s.io/v1alpha4
+  nodes:
+    - role: control-plane
+    - role: worker
+    - role: worker
+    - role: worker
+  EOF
+  kind create cluster --name ha-test-cluster --config ./kind-multinode.yaml
+  ```
 
-```bash
-# install operators for redis and postgres
-kubectl apply -k operators/redis/
-kubectl apply -k operators/postgres/
-```
+  - Install flux
 
-```bash
-# create redis and postgres clusters
-envs/public-ha/redis/redis-secret.bash # pwgen needs to be installed
-kubectl apply -k envs/public-ha/redis/
-kubectl apply -k envs/public-ha/postgres/
-```
+  ```bash
+  flux install
+  ```
 
-```bash
-# install Harbor
-# Replace the example.com URL in the harbor-config.yaml file with the desired one.
-# Take ingress-nginx-controller LoadBalancer IP address and create DNS record for Harbor.
-kubectl get svc -n ingress-nginx
-NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
-ingress-nginx-controller             LoadBalancer   100.92.14.168   81.163.194.219   80:30799/TCP,443:32482/TCP   2m51s
-ingress-nginx-controller-admission   ClusterIP      100.88.40.231   <none>           443/TCP  
-```
+  - Deploy needed operators for certificates, ingress, postgres and redis
 
-```bash
-# generate secrets and install
-base/harbor-secrets.bash # pwgen and htpasswd need to be installed
-envs/public-ha/swift-secret.bash <username> <password>
-kubectl apply -k envs/public-ha/
-```
+  ```bash
+  kubectl apply -k k8s-harbor/operators/
+  ```
+
+  - Create redis and postgres clusters
+
+  ```bash
+  envs/public-ha/redis/redis-secret.bash # pwgen needs to be installed
+  kubectl apply -k envs/public-ha/redis/
+  kubectl apply -k envs/public-ha/postgres/
+  ```
+
+  - Get ports on local host on which ingress is accessible
+
+  ```bash
+  kubectl get svc -n ingress-nginx
+  NAME                                 TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+  ingress-nginx-controller             LoadBalancer   10.96.34.168   <pending>     80:32634/TCP,443:30689/TCP   123m
+  ingress-nginx-controller-admission   ClusterIP      10.96.130.44   <none>        443/TCP                      123m
+
+  curl http://localhost:32634
+  ```
+
+  - Generate secrets and install
+ 
+  ```bash
+  base/harbor-secrets.bash # pwgen and htpasswd need to be installed
+  envs/public-ha/swift-secret.bash <username> <password>
+  kubectl apply -k envs/public-ha/
+  ```
+
+  - Simulate node down
+
+  ```bash
+  docker pause <container_id>
+  ```
 
 ---
 
