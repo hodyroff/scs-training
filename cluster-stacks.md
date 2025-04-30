@@ -1,3 +1,4 @@
+
 # SCS Cluster Stacks Course
 
 ## Course Overview
@@ -228,8 +229,6 @@ Here’s a typical sequence of how these components interact:
 
 ## 6. Quickstart Guide
 
-TODO: Finish
-
 [SCS Cluster Stacks Quickstart guide](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/providers/openstack/quickstart)
 
 - Prerequisites (KinD, Helm, kubectl, Clusterctl)
@@ -246,7 +245,7 @@ curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.9.7/
 - Bootstrap a management cluster with KinD
 
 ```bash
-kind create cluster
+kind create cluster --config=kind/kind-cluster-with-extramounts.yaml
 ```
 
 - Transform it into a management cluster with clusterctl
@@ -257,20 +256,84 @@ export EXP_CLUSTER_RESOURCE_SET=true
 export EXP_RUNTIME_SDK=true
 clusterctl init --infrastructure docker
 ```
-
-- Initializing infrastructure providers
-- Creating your first workload cluster
-
+- Install CSO
+```bash
+# Install CSO and CSPO
+helm upgrade -i cso \
+-n cso-system \
+--create-namespace \
+oci://registry.scs.community/cluster-stacks/cso \
+--set clusterStackVariables.ociRepository=registry.scs.community/kaas/cluster-stacks
+```
+```shell
+kubectl create namespace cluster
+```
+- Create a basic `clusterstack.yaml` file
+```yaml
+apiVersion: clusterstack.x-k8s.io/v1alpha1
+kind: ClusterStack
+metadata:
+  name: docker
+  namespace: cluster
+spec:
+  provider: docker
+  name: scs
+  kubernetesVersion: "1.30"
+  channel: custom
+  autoSubscribe: false
+  noProvider: true
+  versions:
+    - v0-sha.rwvgrna
+```
+- Apply `clusterstack.yaml`
+```shell
+k apply -f clusterstacks/clusterstack.yaml
+```
+- Create a `cluster.yaml` file
+```yaml
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: docker-testcluster
+  namespace: cluster
+  labels:
+    managed-secret: cloud-config
+spec:
+  topology:
+    class: docker-scs-1-30-v0-sha.rwvgrna
+    controlPlane:
+      replicas: 1
+    version: v1.30.10
+    workers:
+      machineDeployments:
+        - class: default-worker
+          name: md-0
+          replicas: 1
+```
+- Apply cluster.yaml
+```shell
+k apply -f clusterstacks/cluster.yaml
+```
+- Get kubeconfig and view cluster node
+```shell
+clusterctl get kubeconfig -n cluster docker-testcluster > /tmp/kubeconfig
+```
+```shell
+kubectl get nodes --kubeconfig /tmp/kubeconfig
+```
+- The clusterstack from example installs cilium CNI in the cluster
 ---
 
 ## 7. Configuration and Customization
 
 TODO: Expand outline
+[CSCTL](https://github.com/SovereignCloudStack/csctl/blob/main/README.md)
+- Download [CSCTL](https://github.com/SovereignCloudStack/csctl/releases/latest)  and unpack
+```shell
+chmod u+x ~/Downloads/csctl_0.0.2_linux_amd64
+sudo mv ~/Downloads/csctl_0.0.2_linux_amd64 /usr/local/bin/csctl
+```
 
-- Using `clusterctl` and templates
-- YAML structure of a Cluster Stack
-- Customizing machine specs, networking, Kubernetes version, etc.
-- Integration with SCS Terraform modules
 
 ---
 
