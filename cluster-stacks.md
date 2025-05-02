@@ -10,8 +10,6 @@ cluster lifecycles, and dive deep into their deployment, configuration, and
 evolution. Hands-on examples will guide learners through practical examples
 of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 
----
-
 ## Table of Contents
 
 1. [Introduction](#1-introduction)
@@ -21,13 +19,9 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 5. [Components and Responsibilities](#5-components-and-responsibilities)
 6. [Quickstart Guide](#6-quickstart-guide)
 7. [Configuration and Customization](#7-configuration-and-customization)
-8. [Upgrading Cluster Stacks](#8-upgrading-cluster-stacks)
-9. [Debugging and Observability](#9-debugging-and-observability)
-10. [Cluster Stack Use Cases](#10-cluster-stack-use-cases)
-11. [Summary and Further Learning](#11-summary-and-further-learning)
-12. [Appendices and Resources](#12-appendices-and-resources)
-
----
+8. [Cluster Stack Use Cases](#8-cluster-stack-use-cases)
+9. [Summary and Further Learning](#9-summary-and-further-learning)
+10. [Appendices and Resources](#12-appendices-and-resources)
 
 ## 1. Introduction
 
@@ -43,12 +37,10 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
   - [Cluster API](https://cluster-api.sigs.k8s.io/)
   - [Helm](https://helm.sh/)
 
----
-
 ## 2. What Are Cluster Stacks?
 
-Cluster Stacks is a composable, modular, and declarative framework or set of
-tooling for defining, provisioning, and managing Kubernetes clusters,
+Cluster Stacks is a framework and a set of reference implementations
+for defining, and managing Kubernetes clusters,
 often across cloud providers or infrastructure environments. The term is
 inspired by the idea of application stacks, but at the infrastructure layer:
 instead of just defining applications that run on Kubernetes, a cluster stack 
@@ -72,23 +64,23 @@ tools allow to define the operation of the cluster itself in similar manner.
 CAPI provides these benefits using "managing Kubernetes with Kubernetes"
 paradigm, using a bootstrap/management Kubernetes cluster in which controllers
 managing target workload cluster run reconciling the target cluster to the
-desired state defined declaratively as custom resources.
+desired state defined declaratively as custom resources. CAPI doesn't provide
+all the services needed for a fully functional Kubernetes cluster - prominently
+Container Network Interface (CNI) plugin, which handles pod networking in the
+target cluster is left for the operator to install separately.
 
 Cluster Stacks are a concept that combines all the important components of a
 Kubernetes cluster
 
 - Configuration of Kubernetes (e.g. Kubeadm)
-- Core Applications
-- Node Images 
+- Addons (e.g. CNI)
 
-These main 3 elements are combined in Cluster Stacks and tested as a whole,
+These main elements are combined in Cluster Stacks and tested as a whole,
 providing a directly usable distribution for quick and safe creation or upgrade
 of production grade Kubernetes clusters. A Cluster Stack is released only if
 everything works together, an upgrade from the previous version is possible
 and its function thus is ensured. In addition, the SCS Cluster Stack Operator
 simplifies the use of Cluster Stacks.
-
----
 
 ## 3. Cluster Stacks in the SCS Ecosystem
 
@@ -113,23 +105,20 @@ operations (create, scale, upgrade, delete).
 
 - Using Cluster API CRDs (Custom Resource Definitions) for defining
   infrastructure and cluster configurations
-- Supporting CAPI-compatible providers (e.g., for OpenStack, AWS, Bare Metal)
+- Supporting CAPI-compatible providers (e.g. OpenStack, Bare Metal)
 - Encouraging upstream compatibility, reducing duplication and improving 
   long-term sustainability
-
----
 
 ## 4. Architecture Overview
 
 [SCS Cluster Stacks overview](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/overview/)
 
 Cluster Stacks is packaging components essential for setting up, maintaining
-and operating a Kubernetes cluster. They can be divided into three distinct
+and operating a Kubernetes cluster. They can be divided into two distinct
 layers
 
 - cluster-class
 - cluster-addons
-- node-images
 
 [ClusterClass](https://cluster-api.sigs.k8s.io/tasks/experimental-features/cluster-class/)
 is a feature of CAPI which defines the desired configuration and properties of
@@ -151,14 +140,6 @@ is ready to serve workloads.
   control plane to nodes and vice versa
 - Metrics Server - cluster-wide aggregator of resource usage data
 
-Node images provide the foundation for the operating system environment on each
-node of the target Kubernetes cluster. They are typically a minimal operating
-system distribution, with needed tools like containerd, kubelet, etc. installed.
-
-In the cluster-stacks repository, the build instructions for Node Images are
-always available, but for the deployment a URL of a remote registry or a path
-to provider uploaded artifact can be used for provisioning the nodes.
-
 Any change in any of the layers triggers a version bump in the cluster class,
 hence the cluster stack. The cluster stack version doesn't simply mirror the
 versions of its components, but rather, it reflects the "version of change".
@@ -168,14 +149,13 @@ entire stack as a whole at a particular point in time.
 
 ![Cluster Stacks architecture](https://github.com/SovereignCloudStack/cluster-stacks-demo/blob/main/hack/images/syself-cluster-stacks-web.png)
 
----
-
 ## 5. Components and Responsibilities
 
-Cluster API (CAPI) provides declarative APIs and tooling to manage the lifecycle
-of Kubernetes clusters. It breaks responsibilities across several core controller
-types, each handling a distinct layer of concern. It is responsible for defining
-the core cluster objects and their reconciliation logic.
+Cluster Stacks use CAPI as the foundational tool which provides declarative 
+APIs to manage the lifecycle of Kubernetes clusters. CAPI breaks 
+responsibilities across several core controller types, each handling 
+a distinct layer of concern. It is responsible for defining the core 
+cluster objects and their reconciliation logic.
 
 - Cluster - Represents a logical Kubernetes cluster
 - Machine - Represents a single Kubernetes node.
@@ -212,21 +192,6 @@ providers/
         └── <k8s_major_minor_version>/
 ```
 
-Here’s a typical sequence of how these components interact:
-
-- User or GitOps tool (e.g., Flux) creates a Cluster resource with associated
-  KubeadmControlPlane and infrastructure references
-- Cluster API core controllers observe the new Cluster and spawn Machine and
-  KubeadmControlPlane resources
-- Bootstrap provider (e.g., CABPK) generates cloud-init/kubeadm configs for
-  bootstrapping
-- Infrastructure provider provisions actual infrastructure (VMs, networks)
-- KubeadmControlPlane bootstraps the Kubernetes control plane
-- Additional Machines are created for worker nodes (via MachineDeployment)
-- Cluster becomes fully functional, and CAPI controllers continuously reconcile
-
----
-
 ## 6. Quickstart Guide
 
 [SCS Cluster Stacks Quickstart guide](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/providers/openstack/quickstart)
@@ -258,7 +223,7 @@ clusterctl init --infrastructure docker
 ```
 - Install CSO
 ```bash
-# Install CSO and CSPO
+# Install CSO
 helm upgrade -i cso \
 -n cso-system \
 --create-namespace \
@@ -322,7 +287,6 @@ clusterctl get kubeconfig -n cluster docker-testcluster > /tmp/kubeconfig
 kubectl get nodes --kubeconfig /tmp/kubeconfig
 ```
 - The clusterstack from example installs cilium CNI in the cluster
----
 
 ## 7. Configuration and Customization
 
@@ -336,10 +300,6 @@ chmod u+x ~/Downloads/csctl_0.0.2_linux_amd64
 sudo mv ~/Downloads/csctl_0.0.2_linux_amd64 /usr/local/bin/csctl
 ```
 
-
----
-
-
 ## 8. Cluster Stack Use Cases
 
 TODO: Expand outline
@@ -348,8 +308,6 @@ TODO: Expand outline
 - Edge deployment scenarios
 - Automating fleet management
 - Dev/test cluster provisioning
-
----
 
 ## 9. Summary and Further Learning
 
@@ -368,8 +326,6 @@ TODO: Expand outline
   - Open community space on [Matrix network](https://matrix.to/#/#scs-community:matrix.org)
   - Check out the [Community calendar](https://docs.scs.community/community/collaboration)
     for information on teams meetings
-
----
 
 ## 10. Appendices and Resources
 
