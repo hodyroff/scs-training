@@ -324,34 +324,33 @@ kubectl get nodes --kubeconfig /tmp/kubeconfig
 - The clusterstack from example installs cilium CNI in the cluster
 ---
 
-## 7. Configuration and Customization
+## 7. CSCTL CLI
+As a user, you can create clusters based on Cluster Stacks with the help of the Cluster Stack Operator. The operator needs certain files, e.g. to apply the required Helm charts, and to get the necessary information about the versions in the cluster stack.
 
-TODO: Expand outline
-- Using `csctl`
-- Creating your own clusterstack
+In order to not generate these files manually, this CLI tool takes a certain pre-defined directory structure, in which users can configure all necessary Helm charts and build scripts for node images, and generates the assets that the Cluster Stack Operator can process.
+
+Therefore, this tool can be used to configure Cluster Stacks and to test them with the Cluster Stack Operator. It can also be used to release stable releases of Cluster Stacks that can be published for a broader community.
 [CSCTL](https://github.com/SovereignCloudStack/csctl/blob/main/README.md)
 - Download [CSCTL](https://github.com/SovereignCloudStack/csctl/releases/latest)  and unpack
 ```shell
 chmod u+x ~/Downloads/csctl_0.0.2_linux_amd64
 sudo mv ~/Downloads/csctl_0.0.2_linux_amd64 /usr/local/bin/csctl
 ```
+- Configure `csctl`. The configuration of csctl has to be specified in the `csctl.yaml`. It needs to follow this structure:
+```yaml
+apiVersion: csctl.clusterstack.x-k8s.io/v1alpha1
+config:
+  kubernetesVersion: vv<major>.<minor>.<patch>
+  clusterStackName: ferrol
+  provider:
+    type: <myprovider>
+    apiVersion: <myprovider>.csctl.clusterstack.x-k8s.io/v1alpha1
+    config: |
+	    <provider specific configuration>
+```
 
 
----
-
-
-## 8. Cluster Stack Use Cases
-
-TODO: Expand outline
-
-- Single-tenant vs multi-tenant clusters
-- Edge deployment scenarios
-- Automating fleet management
-- Dev/test cluster provisioning
-
----
-
-## 9. Summary and Further Learning
+## 8. Summary and Further Learning
 
 TODO: Expand outline
 
