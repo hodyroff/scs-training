@@ -19,9 +19,8 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 5. [Components and Responsibilities](#5-components-and-responsibilities)
 6. [Quickstart Guide](#6-quickstart-guide)
 7. [Configuration and Customization](#7-configuration-and-customization)
-8. [Cluster Stack Use Cases](#8-cluster-stack-use-cases)
-9. [Summary and Further Learning](#9-summary-and-further-learning)
-10. [Appendices and Resources](#12-appendices-and-resources)
+8. [Summary and Further Learning](#8-summary-and-further-learning)
+9. [Appendices and Resources](#9-appendices-and-resources)
 
 ## 1. Introduction
 
@@ -151,8 +150,8 @@ entire stack as a whole at a particular point in time.
 
 ## 5. Components and Responsibilities
 
-Cluster Stacks use CAPI as the foundational tool which provides declarative 
-APIs to manage the lifecycle of Kubernetes clusters. CAPI breaks 
+Cluster Stacks extend CAPI as the foundational tool which provides declarative
+way to manage the lifecycle of Kubernetes clusters. CAPI breaks 
 responsibilities across several core controller types, each handling 
 a distinct layer of concern. It is responsible for defining the core 
 cluster objects and their reconciliation logic.
@@ -165,8 +164,12 @@ cluster objects and their reconciliation logic.
 Controllers reconcile cluster and machine topology and ensure the right number
 and type of machines exist.
 
-Infrastructure Providers (e.g., CAPO for OpenStack, CAPV for vSphere, 
-CAPA for AWS) are responsible for provisioning the underlying infrastructure
+Cluster Stack Operator (CSO) implements all the steps needed for the use of a
+specific cluster stack implementation. It has to be installed in the management
+cluster and extends the functionality of CAPI operators.
+
+Infrastructure Providers (e.g., CAPO for OpenStack, CAPD for Docker)
+are responsible for provisioning the underlying infrastructure
 needed to host Kubernetes clusters.
 
 - Create infrastructure components (VMs, networks, load balancers, disks)
@@ -221,19 +224,23 @@ export EXP_CLUSTER_RESOURCE_SET=true
 export EXP_RUNTIME_SDK=true
 clusterctl init --infrastructure docker
 ```
+
 - Install CSO
+
 ```bash
-# Install CSO
 helm upgrade -i cso \
 -n cso-system \
 --create-namespace \
 oci://registry.scs.community/cluster-stacks/cso \
 --set clusterStackVariables.ociRepository=registry.scs.community/kaas/cluster-stacks
+
 ```
 ```shell
 kubectl create namespace cluster
 ```
+
 - Create a basic `clusterstack.yaml` file
+
 ```yaml
 apiVersion: clusterstack.x-k8s.io/v1alpha1
 kind: ClusterStack
@@ -250,11 +257,15 @@ spec:
   versions:
     - v0-sha.rwvgrna
 ```
+
 - Apply `clusterstack.yaml`
+
 ```shell
 k apply -f clusterstacks/clusterstack.yaml
 ```
+
 - Create a `cluster.yaml` file
+
 ```yaml
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
@@ -275,17 +286,23 @@ spec:
           name: md-0
           replicas: 1
 ```
+
 - Apply cluster.yaml
+
 ```shell
 k apply -f clusterstacks/cluster.yaml
 ```
+
 - Get kubeconfig and view cluster node
+
 ```shell
 clusterctl get kubeconfig -n cluster docker-testcluster > /tmp/kubeconfig
 ```
+
 ```shell
 kubectl get nodes --kubeconfig /tmp/kubeconfig
 ```
+
 - The clusterstack from example installs cilium CNI in the cluster
 
 ## 7. Configuration and Customization
@@ -300,38 +317,37 @@ chmod u+x ~/Downloads/csctl_0.0.2_linux_amd64
 sudo mv ~/Downloads/csctl_0.0.2_linux_amd64 /usr/local/bin/csctl
 ```
 
-## 8. Cluster Stack Use Cases
-
-TODO: Expand outline
-
-- Single-tenant vs multi-tenant clusters
-- Edge deployment scenarios
-- Automating fleet management
-- Dev/test cluster provisioning
-
-## 9. Summary and Further Learning
-
-TODO: Expand outline
+## 8. Summary and Further Learning
 
 - Recap of what you’ve learned
-- Tips for production readiness
-- Where to go from here (e.g., GitOps, CI/CD integration)
-- Community - get help and/or participate
+  - Cluster Stacks is a framework for fully defining production ready 
+    Kubernetes clusters, which can be deployed and managed using CAPI
+  - Cluster Stacks Operator (CSO) is able to use such definition in
+    the form of custom resources and deploy and manage workload 
+    clusters from it
+  - To use Cluster Stacks
+    - Define your workload cluster
+    - Implement it for target provider or choose existing implementation
+    - In a management cluster let CSO create a ClusterClass from the
+      implementation
+    - Use the ClusterClass to create target workload clusters
+- Community - get help and participate
   - Sovereign Cloud Stack is an open community of providers and end-users
     joining forces in defining, implementing and operating a fully open,
     federated, compatible platform
   - You are actively encouraged to contribute either code, documentation
     or issues and to participate in the various discussions happening
-    on GitHub or during our various meetings
-  - Open community space on [Matrix network](https://matrix.to/#/#scs-community:matrix.org)
+    on GitHub or during our meetings
+  - Join open community space on [Matrix network](https://matrix.to/#/#scs-community:matrix.org)
   - Check out the [Community calendar](https://docs.scs.community/community/collaboration)
     for information on teams meetings
 
-## 10. Appendices and Resources
+## 9. Appendices and Resources
 
 - [Troubleshooting tips](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stack-operator/topics/troubleshoot)
 - [SCS cluster-stacks repository](https://github.com/SovereignCloudStack/cluster-stacks)
 - [cluster-stacks-demo repository](https://github.com/SovereignCloudStack/cluster-stacks-demo)
+- [Cluster Stacks Operator documentation](https://github.com/SovereignCloudStack/cluster-stack-operator/blob/main/docs/README.md)
 - Links to documentation:
   - [SCS cluster stacks documentation](https://docs.scs.community/docs/category/cluster-stacks)
   - [CAPI official documentation](https://cluster-api.sigs.k8s.io/)
