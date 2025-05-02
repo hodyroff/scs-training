@@ -10,7 +10,6 @@ cluster lifecycles, and dive deep into their deployment, configuration, and
 evolution. Hands-on examples will guide learners through practical examples
 of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 
----
 
 ## Table of Contents
 
@@ -20,14 +19,10 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 4. [Architecture Overview](#4-architecture-overview)
 5. [Components and Responsibilities](#5-components-and-responsibilities)
 6. [Quickstart Guide](#6-quickstart-guide)
-7. [Configuration and Customization](#7-configuration-and-customization)
-8. [Upgrading Cluster Stacks](#8-upgrading-cluster-stacks)
-9. [Debugging and Observability](#9-debugging-and-observability)
-10. [Cluster Stack Use Cases](#10-cluster-stack-use-cases)
-11. [Summary and Further Learning](#11-summary-and-further-learning)
-12. [Appendices and Resources](#12-appendices-and-resources)
+7. [CSCTL CLI](#7-csctl-cli)
+8. [Summary and Further Learning](#8-summary-and-further-learning)
+9. [Appendices and Resources](#9-appendices-and-resources)
 
----
 
 ## 1. Introduction
 
@@ -43,7 +38,7 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
   - [Cluster API](https://cluster-api.sigs.k8s.io/)
   - [Helm](https://helm.sh/)
 
----
+
 
 ## 2. What Are Cluster Stacks?
 
@@ -88,7 +83,7 @@ everything works together, an upgrade from the previous version is possible
 and its function thus is ensured. In addition, the SCS Cluster Stack Operator
 simplifies the use of Cluster Stacks.
 
----
+
 
 ## 3. Cluster Stacks in the SCS Ecosystem
 
@@ -117,7 +112,7 @@ operations (create, scale, upgrade, delete).
 - Encouraging upstream compatibility, reducing duplication and improving 
   long-term sustainability
 
----
+
 
 ## 4. Architecture Overview
 
@@ -168,7 +163,7 @@ entire stack as a whole at a particular point in time.
 
 ![Cluster Stacks architecture](https://github.com/SovereignCloudStack/cluster-stacks-demo/blob/main/hack/images/syself-cluster-stacks-web.png)
 
----
+
 
 ## 5. Components and Responsibilities
 
@@ -225,7 +220,6 @@ Here’s a typical sequence of how these components interact:
 - Additional Machines are created for worker nodes (via MachineDeployment)
 - Cluster becomes fully functional, and CAPI controllers continuously reconcile
 
----
 
 ## 6. Quickstart Guide
 
@@ -322,7 +316,6 @@ clusterctl get kubeconfig -n cluster docker-testcluster > /tmp/kubeconfig
 kubectl get nodes --kubeconfig /tmp/kubeconfig
 ```
 - The clusterstack from example installs cilium CNI in the cluster
----
 
 ## 7. CSCTL CLI
 As a user, you can create clusters based on Cluster Stacks with the help of the Cluster Stack Operator. The operator needs certain files, e.g. to apply the required Helm charts, and to get the necessary information about the versions in the cluster stack.
@@ -368,7 +361,6 @@ TODO: Expand outline
   - Check out the [Community calendar](https://docs.scs.community/community/collaboration)
     for information on teams meetings
 
----
 
 ## 10. Appendices and Resources
 
