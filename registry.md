@@ -10,8 +10,6 @@ operates within the SCS stack, and learn how to manage it in
 production-grade scenarios. Practical, hands-on examples using [KinD](https://kind.sigs.k8s.io/)
 (Kubernetes in Docker) will reinforce key concepts.
 
----
-
 ## Table of Contents
 
 1. [Introduction](#1-introduction)
@@ -28,8 +26,6 @@ production-grade scenarios. Practical, hands-on examples using [KinD](https://ki
 12. [Summary and Next Steps](#12-summary-and-next-steps)
 13. [Appendices and Resources](#13-appendices-and-resources)
 
----
-
 ## 1. Introduction
 
 - Course goals
@@ -44,8 +40,6 @@ production-grade scenarios. Practical, hands-on examples using [KinD](https://ki
   - [Helm](https://helm.sh/)
   - [Kubernetes](https://kubernetes.io/)
   - [FluxCD](https://fluxcd.io/)
-
----
 
 ## 2. Motivation and Use Cases
 
@@ -102,8 +96,6 @@ rate-limiting.
 
 ![SCS stack](https://sovereigncloudstack.github.io/website/assets/images/201001-SCS-4c-06fe1d5ce5729b4e6bc3ac5190d4dafab09f0374f8e329baeab2b092983a3ea2bc11268e0c783f58f4e991e819375bcf5c6bdc95df977bdea22d145b04f6e934.png)
 
----
-
 ## 3. SCS Registry Instance Overview
 
 [SCS Documentation](https://docs.scs.community/docs/category/container-registry)
@@ -134,8 +126,6 @@ rate-limiting.
 
 [SCS container registry](https://registry.scs.community/)
 
----
-
 ## 4. Persistence
 
 [SCS persistence documentation](https://docs.scs.community/docs/container/components/container-registry/docs/persistence)
@@ -161,8 +151,6 @@ They can do that variously, based on the Harbor configuration.
   - Alternatively various other storage backends can be used
 - Core services are stateless - do not need storage
 
----
-
 ## 5. Rate limiting (optional)
 
 [SCS rate limiting documentation](https://docs.scs.community/docs/container/components/container-registry/docs/rate_limit)
@@ -180,8 +168,6 @@ $ kubectl edit ingress -n ingress-nginx ingress-nginx-controller
 ```
 
 - [Other ingress annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting)
-
----
 
 ## 6. Quickstart Guide
 
@@ -227,8 +213,6 @@ kubectl port-forward svc/harbor 8080:80
 http://localhost:8080
 ```
 
----
-
 ## 7. SCS production deployment
 
 [Production deployment docs](https://docs.scs.community/docs/container/components/container-registry/docs/scs-deployment)
@@ -268,8 +252,6 @@ base/harbor-secrets.bash # pwgen and htpasswd need to be installed
 envs/public/s3-credentials.bash <accesskey> <secretkey>
 kubectl apply -k envs/public/
 ```
-
----
 
 ## 8. Backup and Restore
 
@@ -431,8 +413,6 @@ There is a [case study of backup, migration and upgrade](https://scs.community/t
 of [production SCS container registry](https://registry.scs.community/) 
 available.
 
----
-
 ## 9. Migration
 
 [SCS migration documentation](https://docs.scs.community/docs/container/components/container-registry/docs/migration/)
@@ -476,8 +456,6 @@ upgrade or scaling the cluster.
   ```bash
   velero restore create --from-backup harbor-backup
   ```
-
----
 
 ## 10. High Availability (HA)
 
@@ -544,9 +522,9 @@ upgrade or scaling the cluster.
   - Create redis and postgres clusters
 
   ```bash
-  envs/public-ha/redis/redis-secret.bash # pwgen needs to be installed
-  kubectl apply -k envs/public-ha/redis/
-  kubectl apply -k envs/public-ha/postgres/
+  ./k8s-harbor/envs/public-ha/redis/redis-secret.bash # pwgen needs to be installed
+  kubectl apply -k k8s-harbor/envs/public-ha/redis/
+  kubectl apply -k k8s-harbor/envs/public-ha/postgres/
   ```
 
   - Get ports on local host on which ingress is accessible
@@ -563,9 +541,9 @@ upgrade or scaling the cluster.
   - Generate secrets and install
  
   ```bash
-  base/harbor-secrets.bash # pwgen and htpasswd need to be installed
-  envs/public-ha/swift-secret.bash <username> <password>
-  kubectl apply -k envs/public-ha/
+  ./k8s-harbor/base/harbor-secrets.bash # pwgen and htpasswd need to be installed
+  ./k8s-harbor/envs/public-ha/swift-secret.bash <username> <password>
+  kubectl apply -k k8s-harbor/envs/public-ha/
   ```
 
   - Simulate node down
@@ -573,8 +551,6 @@ upgrade or scaling the cluster.
   ```bash
   docker pause <container_id>
   ```
-
----
 
 ## 11. Upgrading Harbor
 
@@ -595,13 +571,19 @@ upgrade or scaling the cluster.
 - Handling downtime and rollback
 - Hands-on example with KinD
   - Backup
+  - Download latest version of harbor helm chart
 
-```bash
-# download latest version of harbor helm chart
-# TODO
-```
+  ```bash
+  helm repo add harbor https://helm.goharbor.io
+  helm fetch harbor/harbor --untar
+  ```
 
----
+  - Modify values.yaml to actual deployment values
+  - Install the newer version under a name
+
+  ```bash
+  helm install release_1 harbor/
+  ```
 
 ## 12. Summary and Next Steps
 
@@ -622,13 +604,9 @@ upgrade or scaling the cluster.
   - Advanced automation
   - [Monitoring and alerting](./monitoring.md)
 
----
-
 ## 13. Appendices and Resources
 
 - [Harbor documentation](https://goharbor.io/docs/2.1.0/)
 - [SCS Container Registry docs](https://docs.scs.community/docs/category/container-registry)
 - [SCS Container Registry repo](https://github.com/SovereignCloudStack/k8s-harbor)
 - [Harbor upgrade docs](https://goharbor.io/docs/main/administration/upgrade/helm-upgrade/)
-
----
