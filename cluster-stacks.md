@@ -327,6 +327,8 @@ kubectl get nodes --kubeconfig /tmp/kubeconfig
 ## 7. Configuration and Customization
 
 TODO: Expand outline
+- Using `csctl`
+- Creating your own clusterstack
 [CSCTL](https://github.com/SovereignCloudStack/csctl/blob/main/README.md)
 - Download [CSCTL](https://github.com/SovereignCloudStack/csctl/releases/latest)  and unpack
 ```shell
@@ -337,29 +339,8 @@ sudo mv ~/Downloads/csctl_0.0.2_linux_amd64 /usr/local/bin/csctl
 
 ---
 
-## 8. Upgrading Cluster Stacks
 
-TODO: Expand outline
-
-- Upgrade paths and strategies
-- Kubernetes version upgrades
-- Image/version pinning best practices
-- Managing node rotation and disruption
-
----
-
-## 9. Debugging and Observability
-
-TODO: Expand outline
-
-- Common failure points and debugging tools
-- Using `kubectl`, logs, and events
-- Observability with Prometheus and Grafana
-- Health checks and monitoring Cluster Stacks
-
----
-
-## 10. Cluster Stack Use Cases
+## 8. Cluster Stack Use Cases
 
 TODO: Expand outline
 
@@ -370,7 +351,7 @@ TODO: Expand outline
 
 ---
 
-## 11. Summary and Further Learning
+## 9. Summary and Further Learning
 
 TODO: Expand outline
 
@@ -390,7 +371,7 @@ TODO: Expand outline
 
 ---
 
-## 12. Appendices and Resources
+## 10. Appendices and Resources
 
 - [Troubleshooting tips](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stack-operator/topics/troubleshoot)
 - [SCS cluster-stacks repository](https://github.com/SovereignCloudStack/cluster-stacks)
