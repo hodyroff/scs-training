@@ -153,7 +153,7 @@ In essence, the cluster stack version is a reflection of the state of the
 entire stack as a whole at a particular point in time.
 
 
-![Cluster Stacks architecture](https://github.com/SovereignCloudStack/cluster-stacks-demo/blob/main/hack/images/syself-cluster-stacks-web.png)
+![Cluster Stacks architecture](https://raw.githubusercontent.com/SovereignCloudStack/cluster-stacks-demo/refs/heads/main/hack/images/syself-cluster-stacks-web.png)
 
 
 
