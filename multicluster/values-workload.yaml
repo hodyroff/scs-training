@@ -1,0 +1,59 @@
+thanosStorage:
+  secret:
+    name: thanos-objstore-config
+    key: objstore.yml
+  # More details about supported storage types and config options can be found here: https://thanos.io/tip/thanos/storage.md/
+  config: ""
+
+#On workload cluster only promtail is installed
+loki:
+  enabled: false
+
+grafanaDatasourcesAsConfigMap: null
+
+thanos:
+  enabled: true
+  existingObjstoreSecret: thanos-objstore-config
+  queryFrontend:
+    enabled: false
+  query:
+    replicaLabel:
+      - prometheus_replica
+    dnsDiscovery:
+      sidecarsService: kube-prometheus-thanos-discovery
+      sidecarsNamespace: "{{ .Release.Namespace }}"
+  bucketweb:
+    enabled: false
+  compactor:
+    enabled: false
+  storegateway:
+    enabled: true
+  ruler:
+    enabled: false
+
+kube-prometheus-stack:
+  enabled: true
+  alertmanager:
+    enabled: true
+  grafana:
+    enabled: false
+  prometheus:
+    prometheusSpec:
+      externalLabels:
+        # !IMPORTANT: each cluster must have prometheus external label 'cluster' with unique value.
+        # This will be used as cluster discriminator when metrics are aggregated on observer cluster.
+        cluster: "workload-cluster"
+      replicas: 2
+      thanos:
+        compactor:
+          enabled: false
+        objectStorageConfig:
+          existingSecret:
+            name: thanos-objstore-config
+            key: objstore.yml
+    thanosService:
+      enabled: true
+
+dnation-kubernetes-monitoring:
+  grafanaDashboards:
+    enable: false

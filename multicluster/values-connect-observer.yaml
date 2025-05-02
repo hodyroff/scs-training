@@ -1,0 +1,61 @@
+thanosQueryEnvoySidecar:
+  config:
+  - listenPort: 10001
+    name: workload-cluster
+    queryPort: 443
+    queryUrl: query-workload.local
+    tls:
+      certificate_chain: /certs/tls.crt
+      private_key: /certs/tls.key
+      trusted_ca: /certs/ca.crt
+  enabled: true
+  service:
+    labels:
+      name: thanos-query-envoy
+    name: thanos-query-envoy
+    selector:
+      app.kubernetes.io/component: query
+      app.kubernetes.io/name: thanos
+thanos:
+  query:
+    stores:
+      - dnssrv+_grpc._tcp.kube-prometheus-thanos-ruler
+      - dnssrv+_http-workload-cluster._tcp.thanos-query-envoy.default.svc.cluster.local
+    sidecars:
+      - name: envoy-sidecar
+        image: 'envoyproxy/envoy:v1.20.1'
+        imagePullPolicy: IfNotPresent
+        args:
+          - '-c'
+          - /config/envoy.yaml
+        resources: {}
+        volumeMounts:
+          - name: envoy-config
+            mountPath: /config
+            mountPropagation: None
+          - name: envoy-certs
+            mountPath: /certs
+            mountPropagation: None
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+    extraVolumes:
+      - name: envoy-config
+        configMap:
+          name: thanos-query-envoy-config
+          defaultMode: 420
+          optional: false
+      - name: envoy-certs
+        secret:
+          secretName: thanos-query-envoy-certs
+          defaultMode: 420
+          optional: false
+
+dnation-kubernetes-monitoring:
+  clusterMonitoring:
+    clusters:
+    - name: Observer
+      label: observer-cluster
+      description: 'Observer cluster monitoring'
+    - name: Workload
+      label: workload-cluster
+      description: 'Workload cluster monitoring'

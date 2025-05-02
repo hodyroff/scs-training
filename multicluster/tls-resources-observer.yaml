@@ -1,0 +1,63 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: issuer-ss
+  namespace: default
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: thanos-ca
+  namespace: default
+spec:
+  duration: 43800h # 5y
+  # name of the tls secret to store
+  # the generated certificate/key pair
+  secretName: tls-ca-key-pair
+  isCA: true
+  issuerRef:
+    # issuer created in step 1
+    name: issuer-ss
+  commonName: "ca.thanos.local"
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: issuer-ca
+  namespace: default
+spec:
+  ca:
+    secretName: tls-ca-key-pair
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: server
+  namespace: default
+spec:
+  commonName: query-workload.local
+  dnsNames:
+  - query-workload.local
+  issuerRef:
+    name: issuer-ca
+  secretName: query-workload.local
+  duration: 43800h # 5y
+  usages:
+    - server auth
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: client
+  namespace: default
+spec:
+  commonName: query-workload.local
+  dnsNames:
+  - query-workload.local
+  issuerRef:
+    name: issuer-ca
+  secretName: query-workload.local
+  usages:
+    - client auth
