@@ -18,11 +18,12 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 4. [Architecture Overview](#4-architecture-overview)
 5. [Components and Responsibilities](#5-components-and-responsibilities)
 6. [Quickstart Guide](#6-quickstart-guide)
-7. [CSCTL CLI](#7-csctl-cli)
-8. [Upgrading Workload Clusters](#8-upgrading-workload-clusters)
-9. [Debugging and Troubleshooting](#9-debugging-and-troubleshooting)
-10. [Summary and Further Learning](#10-summary-and-further-learning)
-11. [Appendices and Resources](#11-appendices-and-resources)
+7. [Configuration and Customization](#7-configuration-and-customization)
+8. [Building your own Cluster Stacks](#8-building-your-own-cluster-stacks)
+9. [Upgrading Workload Clusters](#9-upgrading-workload-clusters)
+10. [Debugging and Troubleshooting](#10-debugging-and-troubleshooting)
+11. [Summary and Further Learning](#11-summary-and-further-learning)
+12. [Appendices and Resources](#12-appendices-and-resources)
 
 ## 1. Introduction
 
@@ -226,7 +227,7 @@ export EXP_RUNTIME_SDK=true
 clusterctl init --infrastructure docker
 ```
 
-- Install CSO
+- Install Cluster Stack Operator (CSO)
 
 ```bash
 helm upgrade -i cso \
@@ -308,33 +309,40 @@ kubectl get nodes --kubeconfig /tmp/kubeconfig
 - The clusterstack from example installs cilium CNI in the cluster
 
 ## 7. Configuration and Customization
-> TODO: sumarise docs here
-- Clusterstacks can be configured with env variables.
- [Envsubst](https://github.com/drone/envsubst),  is required to expand env variables specified in CSO
-```shell
+
+- Clusterstacks can be configured with env variables,
+  [Envsubst](https://github.com/drone/envsubst), is required to expand
+  environment variables specified in CSO
+
+```bash
 GOBIN=/tmp go install github.com/drone/envsubst/v2/cmd/envsubst@latest
 ```
+
 - User can configure their own repository as a clusterstack source, e.g.
-```shell
+
+```bash
 export GIT_PROVIDER_B64=Z2l0aHVi  # github
 export GIT_ORG_NAME_B64=U292ZXJlaWduQ2xvdWRTdGFjaw== # SovereignCloudStack
 export GIT_REPOSITORY_NAME_B64=Y2x1c3Rlci1zdGFja3M=  # cluster-stacks
 export GIT_ACCESS_TOKEN_B64=$(echo -n '<my-personal-access-token>' | base64 -w0)
 ```
+
 - To use custom OCI registry, e.g.
 
-```shell
+```bash
 export OCI_REGISTRY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eQ== # registry.scs.community
 export OCI_REPOSITORY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eS9rYWFzL2NsdXN0ZXItc3RhY2tzCg== # registry.scs.community/kaas/cluster-stacks
 ```
 
 - Deploy CSO. The variables will be replaced in the file
+
 ```yaml
 # Get the latest CSO release version and apply CSO manifests
 curl -sSL https://github.com/SovereignCloudStack/cluster-stack-operator/releases/latest/download/cso-infrastructure-components.yaml | /tmp/envsubst | kubectl apply -f -
 ```
 
-Cluster can be further configured by `spec.topology.variables` field , e.g.
+- Cluster can be further configured by `spec.topology.variables` field , e.g.
+
 ```yaml
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
@@ -371,23 +379,30 @@ spec:
           name: openstack-alpha-1-29-v2
           replicas: 4
 ```
+
 For more details, see available variables [table](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/providers/openstack/configuration#available-variables)
 
-## 8. Building your own clusterstacks
-This section describes how to develop your own Clusterstack release from scratch.
+## 8. Building your own Cluster Stacks
+
+This section describes how to develop your own Cluster stack release from scratch.
 
 ### 8.1. Directory structure
-Create a new directory, e.g. `my-clusterstack`. Inside this directory create the following sub-directories
+
+Create a new directory, e.g. `my-clusterstack`. Inside this directory create the following sub-directories:
 - `cluster-class` - containing helm chart for `Cluster Class` and CAPI related resources
 - `cluster-addon` - containing helmcharts to be installed as cluster addons, e.g. a CNI of your choice or metrics-server
 - `node-image` (optional) - containing files to build your cluster's node-image - not used in this example.
+
 ### 8.2. Cluster Class
 
 - Create directory
-```shell
+
+```bash
 mkdir -p cluster-class/templates
 ```
+
 - Create a  `Chart.yaml`, e.g.
+
 ```yaml
 apiVersion: v2
 description: "This is my Cluster Stacks Cluster Class"
@@ -395,32 +410,44 @@ name: docker-my-cluster-class-1-32-cluster-class
 type: application
 version: v1
 ```
-- Generate resources using clusterctl generator, e.g.
 
-```shell
+- Generate resources using `clusterctl` generator, e.g.
+
+```bash
 clusterctl init --infrastructure docker
 cd templates
 clusterctl generate cluster my-cluster --infrastructure docker --flavor development --kubernetes-version v1.32.0 --control-plane-machine-count=3 --worker-machine-count=3  > my-cluster.yaml
 ```
+
 - Split the file into different yaml files, e.g. `Kind: Cluster` should be in `cluster.yaml`
 -  Move `kind: Cluster` outside of `cluster-class` directorym e.g.
-```shell
+
+```bash
 mv cluster.yaml ../../cluster.yaml
 ```
+
 - Remove `my-cluster.yaml`
+
 ```bash
 rm my-cluster.yaml
 ```
-- Escape all `{{ }}` so that they are not interpreted by Helm:
+
+- Escape all `{{ }}` so that they are not interpreted by Helm
+
 ```bash
 sed -i 's/{{/{{ `{{/g;s/}}/}}` }}/g' *.yaml
 ```
-- Verify with 
+
+- Verify with
+
 ```bash
 helm template .
 ```
+
 ### 8.3. Cluster Addon
+
 - Initialize cluster addon directory
+
 ```bash
 cd ..
 mkdir cluster-addon
@@ -428,12 +455,15 @@ cd cluster-addon
 ```
 
 - Create an umbrella helm chart for every cluster addon, e.g. cilium
+
 ```bash
 helm create cni
 cd cni
 rm -rf templates
 ```
+
 - Add Cilium as dependency to the Chart.yaml file:
+
 ```yaml
 dependencies:
   - alias: cilium
@@ -443,11 +473,14 @@ dependencies:
 ```
 
 - Build dependencies
+
 ```bash
 helm dep build
 ```
-- When all dependency helmcharts are created, go to the project main directory and create 
-`clusteraddon.yaml` e.g.
+
+- When all dependency helm charts are created, go to the project main directory and create 
+  `clusteraddon.yaml` e.g.
+
 ```yaml
 apiVersion: clusteraddonconfig.x-k8s.io/v1alpha1
 clusterAddonVersion: clusteraddons.clusterstack.x-k8s.io/v1alpha1
@@ -459,9 +492,12 @@ BeforeClusterUpgrade:
   - name: cni
     action: apply
 ```
+
 ### 8.4. Build clusterstack release using `csctl`
-- Download [CSCTL](https://github.com/SovereignCloudStack/csctl/releases/latest)  and unpack
-```shell
+
+- Download [CSCTL](https://github.com/SovereignCloudStack/csctl/releases/latest) and unpack
+
+```bash
 wget https://github.com/SovereignCloudStack/csctl/releases/download/v0.0.5/csctl_0.0.5_linux_amd64.tar.gz
 tar -xzf ~/Downloads/csctl_0.0.5_linux_amd64.tar.gz
 chmod u+x csctt
@@ -469,6 +505,7 @@ sudo mv csctl /usr/local/bin/csctl
 ```
 
 - Configure `csctl`. The configuration of csctl has to be specified in the `csctl.yaml`. It needs to follow this structure:
+
 ```yaml
 apiVersion: csctl.clusterstack.x-k8s.io/v1alpha1
 config:
@@ -480,6 +517,7 @@ config:
 ```
 
 - Verify the file/directory structure
+
 ```text
 my-clusterstack/
 	cluster-class/
@@ -497,14 +535,17 @@ my-clusterstack/
 	cluster.yaml	
 ```
 
-- Setup your repository to publish your clusterstack, e.g. for a git repository
+- Setup your repository to publish your cluster stack, e.g. for a git repository
+
 ```bash
 export GIT_PROVIDER=github #Only github supported
 export GIT_ORG_NAME=<your-org-or-user-name>
 export GIT_REPOSITORY_NAME=<your-repo-name>
 export GIT_ACCESS_TOKEN=<your-github-access-token>
 ```
+
 - For OCI repository, e.g.
+
 ```bash
 export OCI_REGISTRY=<your-oci-registry>
 export OCI_REPOSITORY=<your-oci-repository>
@@ -512,16 +553,20 @@ export OCI_ACCESS_TOKEN=<your-oci-access-token>
 export OCI_USERNAME=<your-username>
 export OCI_PASSWORD=<your-password>
 ```
-- Create your clusterstack e.g.
+
+- Create your cluster stack e.g.
+
 ```bash
 csctl create . --output ../my-clusterstack-build  --mode hash
 ```
+
 - If you want to publish, you can do so by e.g.
+
 ```bash
 csctl create . --output ../my-clusterstack-build  --mode hash --publish  --remote oci
 ```
 
-## 8. Upgrading Workload Clusters
+## 9. Upgrading Workload Clusters
 
 In the management cluster the `ClusterStack` object is the central resource
 referencing specific provider, cluster stack and Kubernetes minor version.
@@ -582,7 +627,7 @@ KUBE_EDITOR="sed -i 's#class: docker-scs-1-30-v0-sha.rwvgrna#class: docker-scs-1
 KUBE_EDITOR="sed -i 's#version: v1.30.10#version: v1.32.0#'" kubectl -n cluster edit cluster docker-testcluster 
 ```
 
-## 9. Debugging and Troubleshooting
+## 10. Debugging and Troubleshooting
 
 In case of cluster not working as expected there are steps you can take to
 diagnose the problem.
@@ -620,7 +665,7 @@ Cluster/docker-testcluster                                        False  Warning
 kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "====== $ns $d"; kubectl logs --since=10m -n $ns deployment/$d; done
 ```
 
-## 10. Summary and Further Learning
+## 11. Summary and Further Learning
 
 - Recap of what you’ve learned
   - Cluster Stacks is a framework for fully defining production ready
@@ -645,7 +690,7 @@ kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "==
   - Check out the [Community calendar](https://docs.scs.community/community/collaboration)
     for information on teams meetings
 
-## 11. Appendices and Resources
+## 12. Appendices and Resources
 
 - [Troubleshooting tips](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stack-operator/topics/troubleshoot)
 - [SCS cluster-stacks repository](https://github.com/SovereignCloudStack/cluster-stacks)
