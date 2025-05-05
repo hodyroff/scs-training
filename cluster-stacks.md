@@ -19,9 +19,10 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 5. [Components and Responsibilities](#5-components-and-responsibilities)
 6. [Quickstart Guide](#6-quickstart-guide)
 7. [CSCTL CLI](#7-csctl-cli)
-8. [Summary and Further Learning](#8-summary-and-further-learning)
-9. [Appendices and Resources](#9-appendices-and-resources)
-
+8. [Upgrading Workload Clusters](#8-upgrading-workload-clusters)
+9. [Debugging and Troubleshooting](#9-debugging-and-troubleshooting)
+10. [Summary and Further Learning](#10-summary-and-further-learning)
+11. [Appendices and Resources](#11-appendices-and-resources)
 
 ## 1. Introduction
 
@@ -37,16 +38,14 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
   - [Cluster API](https://cluster-api.sigs.k8s.io/)
   - [Helm](https://helm.sh/)
 
-
-
 ## 2. What Are Cluster Stacks?
 
 Cluster Stacks is a framework and a set of reference implementations
 for defining, and managing Kubernetes clusters,
 often across cloud providers or infrastructure environments. The term is
 inspired by the idea of application stacks, but at the infrastructure layer:
-instead of just defining applications that run on Kubernetes, a cluster stack 
-defines the actual Kubernetes cluster itself, its configuration, underlying 
+instead of just defining applications that run on Kubernetes, a cluster stack
+defines the actual Kubernetes cluster itself, its configuration, underlying
 infrastructure, and operational policies.
 
 Managing Kubernetes clusters at scale, especially in multi-environment,
@@ -84,8 +83,6 @@ everything works together, an upgrade from the previous version is possible
 and its function thus is ensured. In addition, the SCS Cluster Stack Operator
 simplifies the use of Cluster Stacks.
 
-
-
 ## 3. Cluster Stacks in the SCS Ecosystem
 
 Cluster Stacks are a core concept in the Sovereign Cloud Stack (SCS) ecosystem.
@@ -110,10 +107,8 @@ operations (create, scale, upgrade, delete).
 - Using Cluster API CRDs (Custom Resource Definitions) for defining
   infrastructure and cluster configurations
 - Supporting CAPI-compatible providers (e.g. OpenStack, Bare Metal)
-- Encouraging upstream compatibility, reducing duplication and improving 
+- Encouraging upstream compatibility, reducing duplication and improving
   long-term sustainability
-
-
 
 ## 4. Architecture Overview
 
@@ -152,22 +147,19 @@ versions of its components, but rather, it reflects the "version of change".
 In essence, the cluster stack version is a reflection of the state of the
 entire stack as a whole at a particular point in time.
 
-
 ![Cluster Stacks architecture](https://raw.githubusercontent.com/SovereignCloudStack/cluster-stacks-demo/refs/heads/main/hack/images/syself-cluster-stacks-web.png)
-
-
 
 ## 5. Components and Responsibilities
 
 Cluster Stacks extend CAPI as the foundational tool which provides declarative
-way to manage the lifecycle of Kubernetes clusters. CAPI breaks 
-responsibilities across several core controller types, each handling 
-a distinct layer of concern. It is responsible for defining the core 
+way to manage the lifecycle of Kubernetes clusters. CAPI breaks
+responsibilities across several core controller types, each handling
+a distinct layer of concern. It is responsible for defining the core
 cluster objects and their reconciliation logic.
 
 - Cluster - Represents a logical Kubernetes cluster
 - Machine - Represents a single Kubernetes node.
-- MachineSet, MachineDeployment: Provide scalable sets of Machine objects 
+- MachineSet, MachineDeployment: Provide scalable sets of Machine objects
   (like ReplicaSet / Deployment in apps)
 
 Controllers reconcile cluster and machine topology and ensure the right number
@@ -225,7 +217,7 @@ curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.9.7/
 kind create cluster --config=kind/kind-cluster-with-extramounts.yaml
 ```
 
-- Transform it into a management cluster with clusterctl
+- Transform it into a management cluster with `clusterctl`
 
 ```bash
 export CLUSTER_TOPOLOGY=true
@@ -244,7 +236,8 @@ oci://registry.scs.community/cluster-stacks/cso \
 --set clusterStackVariables.ociRepository=registry.scs.community/kaas/cluster-stacks
 
 ```
-```shell
+
+```bash
 kubectl create namespace cluster
 ```
 
@@ -269,7 +262,7 @@ spec:
 
 - Apply `clusterstack.yaml`
 
-```shell
+```bash
 k apply -f clusterstacks/clusterstack.yaml
 ```
 
@@ -296,19 +289,19 @@ spec:
           replicas: 1
 ```
 
-- Apply cluster.yaml
+- Apply `cluster.yaml`
 
-```shell
+```bash
 k apply -f clusterstacks/cluster.yaml
 ```
 
 - Get kubeconfig and view cluster node
 
-```shell
+```bash
 clusterctl get kubeconfig -n cluster docker-testcluster > /tmp/kubeconfig
 ```
 
-```shell
+```bash
 kubectl get nodes --kubeconfig /tmp/kubeconfig
 ```
 
@@ -339,13 +332,112 @@ config:
 	    <provider specific configuration>
 ```
 
-## 8. Summary and Further Learning
+## 8. Upgrading Workload Clusters
+
+In the management cluster the `ClusterStack` object is the central resource
+referencing specific provider, cluster stack and Kubernetes minor version.
+To be able to use multiple different Kubernetes versions or providers new
+`ClusterStack` object needs to be created for each combination.
+To be able to use specific versions of cluster stacks they can be specified
+in `spec.versions` of given `ClusterStack` object (see `clusterstack.yaml`
+file in [quickstart guide](#6-quickstart-guide)).
+
+Preferred alternative is to allow `spec.autoSubscribe: true` in the
+`ClusterStack` definition so that the operator handles discovery and
+provisioning of latest versions.
+
+Upgrading a workload cluster is done by editing the target `Cluster` object
+and providing it a new `ClusterClass` in `spec.topology.class`. This assumes
+that you have an existing cluster that references a certain `ClusterClass`
+e.g. `docker-scs-1-30-v0-sha.rwvgrna` from the
+[Quickstart guide](#6-quickstart-guide).
+
+It is possible to upgrade the Kubernetes version -
+`docker-scs-1-30-v0-sha.rwvgrna` to `docker-scs-1-32-v0-sha.rwvgrna`. In this
+case a new `ClusterStack` object is needed as the Kubernetes version is part
+of its specification.
+
+```yaml
+apiVersion: clusterstack.x-k8s.io/v1alpha1
+kind: ClusterStack
+metadata:
+  name: docker-1-32
+  namespace: cluster
+spec:
+  provider: docker
+  name: scs
+  kubernetesVersion: "1.32"
+  channel: custom
+  autoSubscribe: false
+  noProvider: true
+  versions:
+    - v0-sha.rwvgrna
+```
+
+Before upgrade make sure the new `ClusterClass` is available in the management
+cluster. Then the target `Cluster` object can be edited:
+
+- Update `spec.topology.class` to the name of the new class
+
+```bash
+KUBE_EDITOR="sed -i 's#class: docker-scs-1-30-v0-sha.rwvgrna#class: docker-scs-1-32-v0-sha.rwvgrna#'" kubectl -n cluster edit cluster docker-testcluster 
+```
+
+- If Kubernetes version is to be changed update `spec.topology.version` to
+  respective Kubernetes version. The right version (e.g. "1.32.0") must be used
+  and can be found in the `ClusterStack` object description, in the status of 
+  `ClusterStackRelease` object with the same name as desired target
+  `ClusterClass` or in the cluster stack releases documentation
+
+```bash
+KUBE_EDITOR="sed -i 's#version: v1.30.10#version: v1.32.0#'" kubectl -n cluster edit cluster docker-testcluster 
+```
+
+## 9. Debugging and Troubleshooting
+
+In case of cluster not working as expected there are steps you can take to
+diagnose the problem.
+
+- Check the latest events
+
+```bash
+kubectl get events -A  --sort-by=.lastTimestamp
+```
+
+- Use a tool which conveniently checks all conditions of all resources in a
+  Kubernetes cluster ([check-conditions](https://github.com/guettli/check-conditions))
+
+```bash
+go run github.com/guettli/check-conditions@latest all
+```
+
+- Check the cluster with `clusterctl` tool
+
+```bash
+clusterctl describe cluster -n cluster docker-testcluster
+NAME                                                              READY  SEVERITY  REASON                           SINCE  MESSAGE
+Cluster/docker-testcluster                                        False  Warning   ScalingUp                        3h16m  Scaling up control plane to 1 replicas (actual 0)
+├─ClusterInfrastructure - DockerCluster/docker-testcluster-785wm  True                                              3h16m
+├─ControlPlane - KubeadmControlPlane/docker-testcluster-45grm     False  Warning   ScalingUp                        3h16m  Scaling up control plane to 1 replicas (actual 0)
+│ └─Machine/docker-testcluster-45grm-tx5lt                        False  Warning   BootstrapFailed                  3h13m  1 of 2 completed
+└─Workers
+  └─MachineDeployment/docker-testcluster-md-0-r6z4b               False  Warning   WaitingForAvailableMachines      3h16m  Minimum availability requires 1 replicas, current 0 available
+    └─Machine/docker-testcluster-md-0-r6z4b-hlpj4-q8fkx           False  Info      WaitingForControlPlaneAvailable  3h16m  0 of 2 completed
+```
+
+- Check the logs, list all logs from all deployments, show for last 10 minutes
+
+```bash
+kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "====== $ns $d"; kubectl logs --since=10m -n $ns deployment/$d; done
+```
+
+## 10. Summary and Further Learning
 
 - Recap of what you’ve learned
-  - Cluster Stacks is a framework for fully defining production ready 
+  - Cluster Stacks is a framework for fully defining production ready
     Kubernetes clusters, which can be deployed and managed using CAPI
   - Cluster Stacks Operator (CSO) is able to use such definition in
-    the form of custom resources and deploy and manage workload 
+    the form of custom resources and deploy and manage workload
     clusters from it
   - To use Cluster Stacks
     - Define your workload cluster
@@ -364,7 +456,7 @@ config:
   - Check out the [Community calendar](https://docs.scs.community/community/collaboration)
     for information on teams meetings
 
-## 9. Appendices and Resources
+## 11. Appendices and Resources
 
 - [Troubleshooting tips](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stack-operator/topics/troubleshoot)
 - [SCS cluster-stacks repository](https://github.com/SovereignCloudStack/cluster-stacks)
