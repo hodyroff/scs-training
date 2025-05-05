@@ -264,7 +264,7 @@ spec:
 - Apply `clusterstack.yaml`
 
 ```bash
-k apply -f clusterstacks/clusterstack.yaml
+kubectl apply -f clusterstacks/clusterstack.yaml
 ```
 
 - Create a `cluster.yaml` file
@@ -293,7 +293,7 @@ spec:
 - Apply `cluster.yaml`
 
 ```bash
-k apply -f clusterstacks/cluster.yaml
+kubectl apply -f clusterstacks/cluster.yaml
 ```
 
 - Get kubeconfig and view cluster node
@@ -570,11 +570,11 @@ csctl create . --output ../my-clusterstack-build  --mode hash --publish  --remot
 
 In the management cluster the `ClusterStack` object is the central resource
 referencing specific provider, cluster stack and Kubernetes minor version.
-To be able to use multiple different Kubernetes versions or providers new
-`ClusterStack` object needs to be created for each combination.
-To be able to use specific versions of cluster stacks they can be specified
-in `spec.versions` of given `ClusterStack` object (see `clusterstack.yaml`
-file in [quickstart guide](#6-quickstart-guide)).
+To be able to use multiple different Kubernetes versions new `ClusterStack`
+object needs to be created, as the version is part of `ClusterStack`
+specification. To be able to use specific versions of cluster stacks they
+can be specified in `spec.versions` of given `ClusterStack` object
+(see `clusterstack.yaml` file in [quickstart guide](#6-quickstart-guide)).
 
 Preferred alternative is to allow `spec.autoSubscribe: true` in the
 `ClusterStack` definition so that the operator handles discovery and
@@ -595,17 +595,17 @@ of its specification.
 apiVersion: clusterstack.x-k8s.io/v1alpha1
 kind: ClusterStack
 metadata:
-  name: docker-1-32
+  name: docker-1-31
   namespace: cluster
 spec:
   provider: docker
   name: scs
-  kubernetesVersion: "1.32"
+  kubernetesVersion: "1.31"
   channel: custom
   autoSubscribe: false
   noProvider: true
   versions:
-    - v0-sha.rwvgrna
+    - v0-sha.fhg6gbu
 ```
 
 Before upgrade make sure the new `ClusterClass` is available in the management
