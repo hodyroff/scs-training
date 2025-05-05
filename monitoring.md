@@ -8,9 +8,19 @@ This course provides an introduction to SCS Monitoring, a scalable, highly avail
 5. [Dashboards and Customization](#5-dashboards-and-customization)
 6. [Appendices and Resources](#6-appendices-and-resources)
 ## 1. Introduction
-- Course goals - TODO
-- Technologies covered: KinD, Helm, Kubernetes, Prometheus, Thanos, Loki, Grafana
-- What to expect by the end of this course - TODO
+- Course goals
+  - Layout motivation behind monitoring stack in SCS infrastructure
+  - Provide understanding of SCS Monitoring Stack
+  - Explain monitoring components, their deployments and configuration
+  - Utilize hands-on experience with local example deployments using [KinD](https://kind.sigs.k8s.io/)
+- Technologies covered
+  - [KinD](https://kind.sigs.k8s.io/)
+  - [Helm](https://helm.sh/)
+  - [Kubernetes](https://kubernetes.io/)
+  - [Prometheus](https://prometheus.io/)
+  - [Thanos](https://thanos.io/)
+  - [Loki](https://grafana.com/oss/loki/)
+  - [Grafana](https://grafana.com/)
 ## 2. Motivation and Use Cases
 Monitoring means real-time metrics and logs that inform the operator about current infrastructure state and possible problems. Monitoring makes it easy to detect problems and makes it easier to solve or debug them.
 **The main features of SCS Monitoring:**
