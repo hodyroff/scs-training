@@ -83,8 +83,10 @@ helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-
 kubectl --namespace default port-forward  svc/dnation-kubernetes-monitoring-stack-grafana 3000:80
 ```
 - Access monitoring [http://localhost:30000/d/monitoring/infrastructure-services-monitoring](http://localhost:30000/d/monitoring/infrastructure-services-monitoring)
+#### Assignments
+1. Create a cluster and install Monitoring into it
+2. Verify accessibility using UI
 ### 4.2. Multicluster Monitoring
->Todo
 - Spawn a workload cluster in KinD - observer was already created in [previous section](#4-1-quickstart-guide), if not please follow it
 ```shell
 kind create cluster --config kind/kind-workload-config.yaml --image kindest/node:v1.31.6 --name workload
@@ -172,6 +174,10 @@ data:
 ```bash
  helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml -f multicluster/values-connect-workload.yaml 
 ```
+#### Assignments
+1. Create a workload cluster
+2. Interconnect with existing observer cluster with monitoring
+3. Verify monitoring of workload cluster
 ### 4.3 IaaS Monitoring
 - Acquire application credential of your cloud. An admin access is required. You can use Horizon UI `https://your.openstack.cloud.url/identity/application_credentials/` or via `openstack` cli
 >Warning: If you used Horizon, the secret will be automaticaly generated and shown only once! Make sure to note it down in a secure place i.e. KeyPass
@@ -255,7 +261,10 @@ kube-prometheus-stack:
 ```bash
 helm upgrade --context kind-observer --install dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
 ```
-
+#### Assignments
+1. Create a workload cluster
+2. Interconnect with existing observer cluster with monitoring
+3. Verify monitoring of workload cluster
 
 ## 5. Dashboards and Customization
 dNation K8S Monitoring project provides many dashboards, which are written in jsonnet and are therefore highly customisable. User can override default thresholds or change the colors with helm values only, there's no need to edit any Json/Jsonnet file. The values files are self-explanatory  for example:
@@ -328,6 +337,10 @@ dnation-kubernetes-monitoring:
             relabelings:
             - *containerLabel
 ```
+### Assignments
+1. Lower thresholds for utilization of the monitoring
+2. Observe changes in reported values
+3. Add an ingress Nginx panel to dashboard
 
 ## 6 Appendices and Resources
 
