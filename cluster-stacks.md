@@ -308,6 +308,13 @@ kubectl get nodes --kubeconfig /tmp/kubeconfig
 
 - The clusterstack from example installs cilium CNI in the cluster
 
+### Assignments
+
+1. Create a management cluster, install needed infrastructure and create a
+  workload cluster using cluster stack version 1.30 for the proper provider
+2. Verify workload cluster properly running
+3. Deploy a registry service (Harbor) from [Registry training](/registry.md#6-quickstart-guide)
+
 ## 7. Configuration and Customization
 
 - Clusterstacks can be configured with env variables,
@@ -382,6 +389,13 @@ spec:
 
 For more details, see available variables [table](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/providers/openstack/configuration#available-variables)
 
+### Assignments
+
+1. Use environment variables to set own registry from [Quickstart guide assignments](#6-quickstart-guide)
+   as source
+2. Push needed images
+3. Create a workload cluster using own registry as a source
+
 ## 8. Building your own Cluster Stacks
 
 This section describes how to develop your own Cluster stack release from scratch.
@@ -389,6 +403,7 @@ This section describes how to develop your own Cluster stack release from scratc
 ### 8.1. Directory structure
 
 Create a new directory, e.g. `my-clusterstack`. Inside this directory create the following sub-directories:
+
 - `cluster-class` - containing helm chart for `Cluster Class` and CAPI related resources
 - `cluster-addon` - containing helmcharts to be installed as cluster addons, e.g. a CNI of your choice or metrics-server
 - `node-image` (optional) - containing files to build your cluster's node-image - not used in this example.
@@ -566,6 +581,14 @@ csctl create . --output ../my-clusterstack-build  --mode hash
 csctl create . --output ../my-clusterstack-build  --mode hash --publish  --remote oci
 ```
 
+### Assignments
+
+1. Create own github repository to be used as a source for own cluster stacks implementations
+2. Use environment variables to set the cluster stack source to this repository
+3. Create own cluster stack implementation with alternative node images
+4. Push the implementation to own github repository
+5. Create a workload cluster using this cluster stack
+
 ## 9. Upgrading Workload Clusters
 
 In the management cluster the `ClusterStack` object is the central resource
@@ -627,6 +650,12 @@ KUBE_EDITOR="sed -i 's#class: docker-scs-1-30-v0-sha.rwvgrna#class: docker-scs-1
 KUBE_EDITOR="sed -i 's#version: v1.30.10#version: v1.32.0#'" kubectl -n cluster edit cluster docker-testcluster 
 ```
 
+### Assignments
+
+1. Upgrade Kubernetes version of workload cluster from [Quickstart guide assignments](#6-quickstart-guide)
+   to 1.31
+2. Verify Kubernetes version and proper function of the workload cluster
+
 ## 10. Debugging and Troubleshooting
 
 In case of cluster not working as expected there are steps you can take to
@@ -676,9 +705,9 @@ kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "==
   - To use Cluster Stacks
     - Define your workload cluster
     - Implement it for target provider or choose existing implementation
-    - In a management cluster let CSO create a ClusterClass from the
+    - In a management cluster let CSO create a `ClusterClass` from the
       implementation
-    - Use the ClusterClass to create target workload clusters
+    - Use the `ClusterClass` to create target workload clusters
 - Community - get help and participate
   - Sovereign Cloud Stack is an open community of providers and end-users
     joining forces in defining, implementing and operating a fully open,
