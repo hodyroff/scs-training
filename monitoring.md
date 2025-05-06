@@ -338,7 +338,7 @@ dnation-kubernetes-monitoring:
             - *containerLabel
 ```
 ### Assignments
-1. Lower tresholds for utilizations of the monitoring
+1. Lower thresholds for utilization of the monitoring
 2. Observe changes in reported values
 3. Add an ingress Nginx panel to dashboard
 
