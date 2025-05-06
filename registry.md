@@ -611,7 +611,7 @@ upgrade or scaling the cluster.
 
 ### Assignments
 
-1. Upgrade one of the instances created in previous assignments to newes Harbor version
+1. Upgrade one of the instances created in previous assignments to newest Harbor version
 2. Verify functionality, access and image presence
 
 ## 12. Summary and Next Steps
