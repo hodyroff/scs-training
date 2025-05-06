@@ -80,7 +80,7 @@ requirements best as seen in comparison table:
 | Deployment capabilities             | ✓ Docker-compose, Helm chart, Operator  | ✓ Docker-compose, Operator                                          | ✓ Docker-compose, Helm chart  |
 | Administration capabilities         | ✓ Terraform, CRDs, Client libraries     | ✓ Ansible, Client libraries                                         | ✓ Client libraries            |
 
-In order to provide a usable, complete, self-contained experience SCS stack needs 
+In order to provide a usable, complete, self-contained experience SCS stack needs
 a registry service in accordance with SCS requirements. Sovereign - not dependent
 on external sources.
 
@@ -89,7 +89,7 @@ rate-limiting.
 
 - Use cases
   - Private registry - own images
-  - Proxy registry - mirror external images, avoid rate-limiting, reject 
+  - Proxy registry - mirror external images, avoid rate-limiting, reject
     unsuitable images
   - Air-gapped registry - security enclaves...
 - Placement in SCS stack - part of SCS standard
@@ -175,7 +175,7 @@ $ kubectl edit ingress -n ingress-nginx ingress-nginx-controller
   - Install prerequisites (KinD, Helm, Docker, kubectl, Flux CLI)
 - Create a KinD cluster
 
-```bash 
+```bash
 kind create cluster
 ```
 
@@ -213,11 +213,19 @@ kubectl port-forward svc/harbor 8080:80
 http://localhost:8080
 ```
 
+### Assignments
+
+1. Install prerequisites for Harbor
+2. Create a Kubernetes cluster
+3. Using SCS Harbor Helm chart install a registry service into the cluster
+4. Setup and verify access
+5. Push an image into the registry and verify through UI
+
 ## 7. SCS production deployment
 
 [Production deployment docs](https://docs.scs.community/docs/container/components/container-registry/docs/scs-deployment)
 
-[Production SCS container registry]()
+[Production SCS container registry](https://registry.scs.community)
 
 - Prerequisites
   - Kubernetes cluster version >=1.20
@@ -457,6 +465,15 @@ upgrade or scaling the cluster.
   velero restore create --from-backup harbor-backup
   ```
 
+### Assignments
+
+1. Using the process from [Quickstart guide assignments](#6-quickstart-guide)
+   create a second Kubernetes cluster
+2. Setup a S3 compatible MinIO backup target reachable from both clusters
+3. Backup the original Harbor instance using velero
+4. Restore the backup into the newly created cluster
+5. Verify new instance functionality and the image presence
+
 ## 10. High Availability (HA)
 
 [SCS HA documentation](https://docs.scs.community/docs/container/components/container-registry/docs/ha-deployment)
@@ -539,7 +556,7 @@ upgrade or scaling the cluster.
   ```
 
   - Generate secrets and install
- 
+
   ```bash
   ./k8s-harbor/base/harbor-secrets.bash # pwgen and htpasswd need to be installed
   ./k8s-harbor/envs/public-ha/swift-secret.bash <username> <password>
@@ -551,6 +568,13 @@ upgrade or scaling the cluster.
   ```bash
   docker pause <container_id>
   ```
+
+### Assignments
+
+1. Create a HA deployment of Harbor registry
+2. Verify functionality and access
+3. Push an image into registry
+4. Simulate one of the nodes down and verify accessibility
 
 ## 11. Upgrading Harbor
 
@@ -584,6 +608,11 @@ upgrade or scaling the cluster.
   ```bash
   helm install release_1 harbor/
   ```
+
+### Assignments
+
+1. Upgrade one of the instances created in previous assignments to newes Harbor version
+2. Verify functionality, access and image presence
 
 ## 12. Summary and Next Steps
 
