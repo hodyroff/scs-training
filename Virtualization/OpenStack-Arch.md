@@ -33,7 +33,9 @@ interfaces to control these.
 ### Keystone: Raw REST API example (against CiaB)
 * Discovery (`--cacert ...` needed b/c of self-signed certificate)
 ```bash
-dragon@cumulus(//):~ [4]$ curl -sS -g --cacert "/etc/ssl/certs/ca-certificates.crt" -X GET https://api.in-a-box.cloud:5000/v3 -H "Accept: application/json" | jq .
+dragon@cumulus(//):~ [4]$ curl -sS -g --cacert "/etc/ssl/certs/ca-certificates.crt" \
+    -X GET https://api.in-a-box.cloud:5000/v3 \
+    -H "Accept: application/json" | jq .
 ```
 ```json
 {
@@ -60,7 +62,9 @@ The services are versioned and have versioned (and microversioned) APIs.
 
 * Password authentication
 ```bash
-curl -sS --cacert "/etc/ssl/certs/ca-certificates.crt" -X POST https://api.in-a-box.cloud:5000/v3/auth/tokens -H "Accept: application/json" -H "Content-Type: application/json" -d '
+curl -sS --cacert "/etc/ssl/certs/ca-certificates.crt" \
+-X POST https://api.in-a-box.cloud:5000/v3/auth/tokens \
+-H "Accept: application/json" -H "Content-Type: application/json" -d '
 > {
   "auth": {
     "identity": {
@@ -188,6 +192,31 @@ curl -sS --cacert "/etc/ssl/certs/ca-certificates.crt" -X POST https://api.in-a-
 * Much easier: Store keystone endpoint and credentials in `~/.config/openstack/clouds.yaml` and `secure.yaml` and
   issue `openstack --os-cloud test catalog list`.
 
+`~/.config/openstack/clouds.yaml`
+```yaml
+---
+clouds:
+  test:
+    auth:
+      username: test
+      project_name: test
+      auth_url: https://api.in-a-box.cloud:5000/v3
+      project_domain_name: test
+      user_domain_name: test
+    cacert: /etc/ssl/certs/ca-certificates.crt
+    identity_api_version: 3
+```
+
+`~/.config/openstack/secure.yaml`
+```yaml
+---
+clouds:
+  test:
+    auth:
+      password: test
+```
+
+
 ### OpenStack Core services
 | Type | Name | Function |
 |------|------|----------|
@@ -200,6 +229,8 @@ curl -sS --cacert "/etc/ssl/certs/ca-certificates.crt" -X POST https://api.in-a-
 
 All core services (except Swift) need to be present for SCS-compatible IaaS compliance.
 Note on swift: We require an S3 compatible service. (Ideally, both S3 and Swift are offered.)
+
+Note on terminology: OpenStack calls hosts (hardware nodes) hypervisors and VMs instances or servers.
 
 ### Other standard OpenStack services
 | Type | Name | Function and Notes |
@@ -216,6 +247,8 @@ Note on swift: We require an S3 compatible service. (Ideally, both S3 and Swift 
 | telemetry | ceilometer | Collect usage/metering data (typically not exposed) |
 
 ### Optional OpenStack services
+| Type | Name | Function and Notes |
+|------|------|--------------------|
 | metric | gnocchi | Aggregation of metering data |
 | alarming | aodh | Trigger notifications |
 | clustering | senlin | Manage sets of resources |
@@ -228,4 +261,14 @@ sahara - big data, cloudkitty - metering, watcher - optimization), see
 <https://www.openstack.org/software/>. They have varying degrees of maturity and
 they are not supported by default in the SCS reference implementaton.
 
+### Dashboard: Horizon
+Horizon is the traditional dashboard that almost every OpenStack cloud offers.
+It takes a bit of time to get used to.
+![Horizon Screenshot](Screenshot_Horizon.png)
 
+### Dashboard: Skyline
+Skyline is a relatively new project and only offered on some clouds.
+It has a more modern look and can easily be extended.
+![Skyline Dashboard](Screenshot_Skyline.png)
+
+Both dashboards allow to download clouds.yaml or old-style openrc files.

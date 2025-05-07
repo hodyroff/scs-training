@@ -9,16 +9,16 @@
     * Internal Services
     * Optional Services
     * Dashboards: Horizon and Skyline
-* Internal infrastructure
+* [Internal infrastructure](Internal-infra.md)
     * Database, memcache
     * Queuing
-* User Management
+* [User Management](User-Mgmt.md)
     * Domains
     * Projects
     * Users and Groups
     * Roles
-* Security architecture
-* Practical assignments
+* [Security architecture](Sec-Arch.md)
+* [Practical assignments](Assign-VirtArch.md)
     * Study service catalog
     * Look at role assignments
 
@@ -33,6 +33,7 @@
     * Storage nodes
 * SW-defined Storage (SDS) with Ceph
 * SW-defined Networking (SDN) with OVN/OvS
+* Extra services (monitoring, management)
 * Planning your hardware
     * HCI vs. decomposed
 * Optional Seed node
@@ -116,6 +117,7 @@
 * Data Protection considerations
 * Common misunderstandings
     * Floating IPs
+    * Keypairs
 * cloud-init
 * IaC tooling
 * Backups and snapshots
