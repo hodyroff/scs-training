@@ -1,9 +1,9 @@
 # Virtualization Layer: Operating Sovereign Cloud Stack IaaS
 
 ## Virtualization Architecture
-* Virtualizing hardware
+* [Virtualizing hardware](Hardware-Virt.md)
     * KVM, OVS/OVN, Ceph
-* OpenStack architecture overview
+* [OpenStack architecture overview](OpenStack-Arch.md)
     * OpenStack Core Services
     * Other standard OpenStack Services
     * Internal Services
@@ -115,6 +115,7 @@
 ## Supporting users
 * Data Protection considerations
 * Common misunderstandings
+    * Floating IPs
 * cloud-init
 * IaC tooling
 * Backups and snapshots
