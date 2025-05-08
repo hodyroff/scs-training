@@ -16,6 +16,6 @@ be used broadly and collaboratively improved.
 
 ## Content
 
-### [SCS Cluster Stacks](cluster-stacks.md)
-### [SCS Registry](registry.md)
-### [SCS Monitoring](monitoring.md)
+### [SCS Cluster Stacks](clusterstacks/cluster-stacks.md)
+### [SCS Registry](registry/registry.md)
+### [SCS Monitoring](monitoring/monitoring.md)
