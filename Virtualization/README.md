@@ -23,8 +23,8 @@
     * Look at role assignments
 
 ## kolla-ansible and OSISM, Plan your deployment
-* Containerization with kolla
-* ansible Basics
+* [Containerization with kolla](kolla.md)
+* [ansible Basics](ansible.md)
 * Manager node, config repo, vault, gitops
 * Other node types
     * Control nodes
