@@ -25,24 +25,24 @@
 ## kolla-ansible and OSISM, Plan your deployment
 * [Containerization with kolla](kolla.md)
 * [ansible Basics](ansible.md)
-* Manager node, config repo, vault, gitops
-* Other node types
+* [Manager node, config repo, vault, gitops](osism.md)
+    * OSISM overview and manager node
     * Control nodes
     * Compute nodes
     * Network nodes
     * Storage nodes
-* SW-defined Storage (SDS) with Ceph
-* SW-defined Networking (SDN) with OVN/OvS
-* Extra services (monitoring, management)
-* Planning your hardware
+* [SW-defined Storage (SDS) with Ceph](Ceph-Intro.md)
+* [SW-defined Networking (SDN) with OVN/OvS](OVN-Intro.md)
+* [Extra services (monitoring, management)](OSISM-Extra.md)
+* [Planning your hardware](HW-Plan.md)
     * HCI vs. decomposed
-* Optional Seed node
-* Bootstrapping the manager
-* Performing the other installation steps
-* Validating the results
+    * Optional Seed node
+* [Bootstrapping the manager](Install.md)
+    * Performing the other installation steps
+* [Validating the results](Validation.md)
     * ARA
     * Smoke tests
-* Practical assignments
+* [Practical assignments](Assign-OSISM.md)
     * Create a config repository
     * Bootstrap and install manager
     * Study the OSISM tool on the manager
