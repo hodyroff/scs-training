@@ -54,7 +54,7 @@
     * Block storage (rbd)
     * ObjectStorage (rgw)
     * Optional: CephFS
-* Ceph dashboard
+* [Ceph dashboard](Ceph-Dashboard.md)
 * Ceph tooling (CLI)
 * Performing changes, tuning
 * Advice on versions, hardware, etc.
