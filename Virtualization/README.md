@@ -59,7 +59,7 @@
 * [Ceph tooling (CLI)](Ceph-CLI.md)
     * Performing changes, tuning
 * [Hardware advice](Ceph-Hardware.md)
-* [Practical assignments](Assign=Ceph.md)
+* [Practical assignments](Assign-Ceph.md)
     * Using the dashboard
     * Taking OSDs out and adding OSDs in
     * Changing weights
