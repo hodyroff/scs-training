@@ -88,6 +88,7 @@
 
 ### File Storage: CephFS
 * A layer on top of ceph objects that exposes them as a POSIX-like distributed filesystem
+* Starts the MetaData Service Daemon (MDS)
 * Stores metadata for the filesystem hierarchy (in pools `cephfs_metadata`) and file data (in pool `cephfs_data`)
 * Linux Kernel driver for cephfs exists
 * OpenStack Manila driver exists to provide access as shared filesystem
@@ -98,3 +99,13 @@
     - Cache coherency is a challenge for distributed filesystems (and was not satisfactorily tackled
       on NFS prior to v4.1)
 
+### Ceph versions
+* There is roughly one new stable release per year (spring), with version number N.2.0
+    - Bugfixes (typically backports) result in N.2.X patch releases (4-6 weeks)
+    - Bugfixes provided upstream for 2 years
+* Rolling (online) updates supported from previous two stable releases
+* "Oceanic" release names, with increasing first letters
+* Ceph users tend to be conservative and adopt new stable releases late
+    - Storage *is* valuable
+    - OSISM currently offers Quincy (17.2.x) and Reef (18.2.x)
+* See <https://docs.ceph.com/en/latest/releases/#ceph-releases-index>
