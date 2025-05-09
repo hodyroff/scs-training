@@ -50,7 +50,8 @@
 * Hosts management tooling
     - ARA, netbox, database, phpmyadmin, OpenSearch(optional)
     - CLI tooling for the operator
-    - Homer Web Frontend for the operator
+    - Homer Web Frontend for the operator, Traefik ("Ingress")
+    - Backends for the above: Redis, Postgres
 * The configuration repository is stored in `/opt/configuration/`
     - Main location for config settings there in `inventory/` and `environments/` directories,
       e.g. `/opt/configuration/environments/kolla/` for the OpenStack services.
@@ -58,18 +59,42 @@
 * Deployment scripts in `/opt/configuration/scripts/`
 
 ### Node type: Control node
-* Control nodes host infrastructure and OpenStack API services
-    -
-    -
+* Control nodes host infrastructure and monitoring
+    - Database (mariadb/galera cluster, proxysql, memcached)
+    - rabbitmq
+    - Prometheus
+    - Grafana
+    - OpenSearch (if not disabled), fluentd
+    - k3s (if enabled, useful for extending control plane, e.g. with keycloak)
+* OpenStack services
+    - keystone
+    - cinder, manila (if enabled)
+    - glance
+    - magnum (if enabled)
+    - designate
+    - barbican (if enabled), octavia
+    - skyline, horizon
+    - nova (not compute, libvirt, ssh)
+    - aodh (if enabled)
 * Avoid overloading them
 
 ### Node type: Compute node
 * Compute nodes host the virtual machines
-* To do so, they
+* To do so, they host a few OpenStack services
+    - cinder, iSCSI (tgtd, iscsid)
+    - nova (compute, libvirt, ssh)
+    - neutron metatdata agent
+* Also prometheus, fluentd
 * Capacity determined by RAM and CPU cores
 
 ### Node type: Network node
+* Networking functions
+    - neutron
+    - octavia
+    - openvswitch and OVN
 
 ### Node type: Storage node
-
+* Ceph containers
+    - OSDs
+    - Mon+Mgr, MDS, RGW
 
