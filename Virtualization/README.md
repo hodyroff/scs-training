@@ -48,8 +48,7 @@
     * Study the OSISM tool on the manager
 
 ## Basic ceph knowledge
-* [Ceph architecture](Ceph-Intro.md)
-* Ceph terminology and Features
+* [Ceph architecture and terminology](Ceph-Intro.md)
     * OSDs, Mon, BlueStore, PGs, Pools, Crush map
     * Replication and Erasure coding
     * Block storage (rbd)
