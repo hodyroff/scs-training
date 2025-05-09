@@ -19,3 +19,5 @@
     - Watch the rebalancing using dashboard and CLI
 * Bonus: Research quick maintenance with `noout` on SCS docu
     - Used for firmware, hypervisor, kernel update
+* Bonus: Why would you assign different weights to different OSDs?
+    - Perform the commands ...

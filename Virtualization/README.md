@@ -65,11 +65,11 @@
     * Changing weights
 
 ## Basic OSISM administration
-* Managing flavors with the flavor manager
-* Managing public images with the image manager
-* Managing domains, projects, users, onboarding
+* [Managing flavors with the flavor manager](Flavor-Manager.md)
+* [Managing public images with the image manager](Image-Manager.md)
+* [Managing domains, projects, users, onboarding](Onboarding.md)
 * Collecting usage data (telemetry)
-* Practical assignments
+* [Practical assignments](Assign-Manager.md)
     * Register public images
     * Onboard a new user (in her own domain)
 
