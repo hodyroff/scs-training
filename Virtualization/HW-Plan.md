@@ -1,5 +1,7 @@
 ## Planning hardware
 
+See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
+
 ### Hyperconverged vs. Fully decomposed
 * We need some nodes to run OSISM
     - 1 manager node (M)
@@ -22,6 +24,7 @@
     - Some QoS needed to ensure stability in high-load situations
         * Avoid control rabbitmq dropping messages due to customer VM overload
     - More decomposed setups can more easily scale
+    - Your security architects may want network nodes to be separate from compute nodes ...
 
 ### Sizing: Compute Nodes
 * Customer VMs have a mixture of 1:2 ... 1:8 ration vCPU to RAM
@@ -39,15 +42,15 @@
 ### Sizing: Control Nodes
 * Avoid these to hit their limits
     - Especially rabbitmq and also database are needed and must not be starved no resources
-* If you run OpenSearch, this alone adds ~32GiB RAM, 4 core requirement
-* Assume 16GiB for small clouds, double for larger ones (plus OpenSearch)
-* 4 core is enough, more for large environments
+* If you run OpenSearch, this alone adds ~32GiB RAM, 4 core requirement (even for smaller clouds)
+* Assume 32GiB for small clouds, double for larger ones (plus OpenSearch)
+* 16 cores is enough, more for large environments (plus OpenSearch)
 * Ensure sufficient and fast storage (database): NVMe (RAID-1)
-* k3s also adds 4GiB RAM, 2 cores plus those needed by workloads running on k3s
+* k3s also adds 4GiB RAM, 2 cores plus the requirements needed by workloads running on k3s
 
 ### Sizing: Network Nodes
 * Need to deal with lots of flows
-* 4GiB plus 2C for low network utilization
+* 16GiB plus 4C for low network utilization
     - double for medium
     - double again for high
 * Good network I/O (obviously)
@@ -58,6 +61,11 @@
     - Also add a core and a few GB if you use erasure coding
 * Network I/O very important, fast storage obviously
 * See notes in Ceph Doc
+
+### Sizing: Manager node:
+* 32GB, more if you want to use OpenSearch
+* 8C, more for large environments / OpenSearch
+* Storage: SSD/NVMe; use 2x1.9TB to have sufficient space for caching packages and containers
 
 ### Putting it together:
 * Add requirements up when combinig roles in not fully decomposed setups
