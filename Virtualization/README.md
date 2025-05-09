@@ -55,7 +55,7 @@
     * ObjectStorage (rgw)
     * Optional: CephFS
 * [Ceph dashboard](Ceph-Dashboard.md)
-* Ceph tooling (CLI)
+* [Ceph tooling (CLI)](Ceph-CLI.md)
 * Performing changes, tuning
 * Advice on versions, hardware, etc.
 * Practical assignments
@@ -96,7 +96,9 @@
 * Database cleanup
 * Stuck volumes
 * Stuck loadbalancer
+* FD leak
 * Stuck RabbitMQ
+* CiaB: Lost CoW file
 * Practical assignment
     * Recover from hang volume
 
