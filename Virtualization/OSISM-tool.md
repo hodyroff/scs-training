@@ -28,9 +28,9 @@
     - Typically you end up editing some file under `/opt/configuration/environments/`
     - Push the changes (for your test environment) and apply them:
 ```bash
-osism apply configuration
-osism reconciler sync
-osism apply facts
+osism apply configuration   # Pull config from git
+osism reconciler sync       # Adjust derived config files
+osism apply facts           # Gather/Update ansible facts
 ```
     - Run the playbooks that consume the new settings: `osism apply PLAYBOOK`
     - If everything works as designed, commit the same changes to the config repository
