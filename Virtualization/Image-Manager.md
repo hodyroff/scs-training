@@ -36,7 +36,14 @@ options:
                         Path to the directory containing all image files or path to single image file
 ```
 
-### Exaaple
+### Available images (as of 2025-05)
+- Debian 12, Debian 11
+- Ubuntu 24.04, Ubuntu 22.04, Ubuntu 22.04 Minimal
+- Rocky 9, AlmaLinux 9, CentOS Stream 9
+- openSUSE Leap 15.6
+- Cirros 0.6.3, Cirros 0.6.2
+
+### Example
 * Example: Register AlmaLinux 9
 ```bash
 dragon@testbed-manager(test):~ [0]$ osism manage image --cloud admin --latest --filter "AlmaLinux"`

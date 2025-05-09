@@ -68,13 +68,13 @@
 * [Managing flavors with the flavor manager](Flavor-Manager.md)
 * [Managing public images with the image manager](Image-Manager.md)
 * [Managing domains, projects, users, onboarding](Onboarding.md)
-* Collecting usage data (telemetry)
+<!-- TODO* Collecting usage data (telemetry)-->
 * [Practical assignments](Assign-Manager.md)
     * Register public images
     * Onboard a new user (in her own domain)
 
 ## Performance and Compliance monitoring
-* Netbox, prometheus, Netdata, OpenSearch
+* [Netbox, prometheus, Netdata, OpenSearch](Netbox-and-friends.md)
 * OpenStack Health Monitor
 * The SCS standards: Overview and process
 * SCS Compliance testing
