@@ -42,6 +42,7 @@
 * [Validating the results](Validation.md)
     * ARA
     * Smoke tests
+* [The OSISM tool](OSISM-tool.md)
 * [Practical assignments](Assign-OSISM.md)
     * Create a config repository
     * Bootstrap and install manager
@@ -56,9 +57,9 @@
     * Optional: CephFS
 * [Ceph dashboard](Ceph-Dashboard.md)
 * [Ceph tooling (CLI)](Ceph-CLI.md)
-* Performing changes, tuning
-* Advice on versions, hardware, etc.
-* Practical assignments
+    * Performing changes, tuning
+* [Hardware advice](Ceph-Hardware.md)
+* [Practical assignments](Assign=Ceph.md)
     * Using the dashboard
     * Taking OSDs out and adding OSDs in
     * Changing weights

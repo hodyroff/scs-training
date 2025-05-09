@@ -18,6 +18,7 @@
 * `ceph osd pool ls detail`
 * `ceph pg stat`
 * `ceph pg ls-by-pool volumes` # this takes a while
+* `rbd -p images ls`    # List RBD objects in image pool, `-p volumes` is interesting as well
 
 ### Explore, get and set config options
 * `ceph config ls`

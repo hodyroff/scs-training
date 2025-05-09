@@ -41,7 +41,8 @@
 * Acts as central control point for all changes, the only node where you login during
   normal operations
     - gitops: The configuration settings are stored in git, automation could be built
-      to no longer require login to the manager node in order to trigger changes
+      to no longer require login to the manager node in order to trigger changes;
+      `osism reconciler` prepared for this
     - Other nodes are technically accessible (`osism console` command), but this may
       be against policy (except maybe for debugging). Local changes are strongly
       discouraged and potentially destroy the managability/trustworthiness of the
