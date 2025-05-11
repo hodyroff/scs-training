@@ -35,11 +35,14 @@
 * SCS Compliance test
     - Check whether you fulfill the SCS-compatible IaaS tests (currently version 5.1):
         * Check out <https://github.com/SovereignCloudStack/standards> and go to `standards/Tests/`
-        * Ensure you can access your cloud via the API / CLI tools and have configured `clouds.yaml` and `secure.yaml` for it
+        * Ensure you can access your cloud via the API / CLI tools and have configured
+              `~/.config/openstack/clouds.yaml` and `~/.config/openstack/secure.yaml` for it
+            = Test this with openstack command line tools (you need the python SDK installed anyway)
             - It is recommended to run compliance checks with**out** admin privileges
             - In case they ever clean up too much, this won't hit anything but itself
 ```bash
-`./scs-compliance-check.py`
+# This example assumes you want to name the cloud CiaB-Kurt7 and have a cloud "test" defined in clouds/secure.yaml
+./scs-compliance-check.py scs-compatible-iaas.yaml --subject=CiaB-Kurt7 -a os_cloud=test
 ```
 * OpenStack Health Monitor
     - Will cover this later
