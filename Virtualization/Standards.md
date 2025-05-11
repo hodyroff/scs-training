@@ -62,3 +62,7 @@ garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$
       boots a VM to perform some checks. More tests like this are expected in the
       future. Yet the SCS community tries to keep the required amount of resources
       (and thus the required quota) low.
+
+### Automated compliance tests
+* <https://zuul.scs.community> runs many jobs
+
