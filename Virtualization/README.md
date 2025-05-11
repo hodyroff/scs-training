@@ -77,7 +77,7 @@
 * [OpenStack Health Monitor](OSHM.md)
 * [The SCS standards](Standards.md): Overview and process
     * SCS Compliance testing
-* Practical assignments
+* [Practical assignments](Assign-Monitoring.md)
     * Setting up OSHM
     * Studying OSHM dashboard
     * Running SCS compliance tests
