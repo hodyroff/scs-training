@@ -35,4 +35,30 @@
       from the provider and can not (fully) test compliance.
 
 ### Running tests manually
-
+* The tests are all available on github where the standards live:
+  In the <https://github.com/SovereignCloudStack/standards> repository. Tests are in the `Tests/` subdirectory.
+* Running all IaaS tests: `./scs-compliance-check.py scs-compatible-iaas.yaml --subject=NAME -a os_cloud=CLOUD`
+  assuming you have the cloud `CLOUD` defined in your `clouds.yaml` and `secure.yaml`.
+* Running single tests: Navigate the directory structure:
+    - `iaas/` for IaaS related tests
+    - further subdirs for specific tests
+* Most tests are python3 scripts
+    - Many accept the `OS_CLOUD` environment variable to specify which cloud to test
+    - Example: 
+```bash
+garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$ pwd
+/home/garloff/SCS/standards/Tests/iaas/volume-types
+garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$ echo $OS_CLOUD
+gxscs2-kaas2
+garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$ ./volume-types-check.py 
+WARNING: Recommendation violated: missing encrypted volume type
+WARNING: Recommendation violated: missing replicated volume type
+volume-types-check: PASS
+garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$ 
+```
+    - Next to the messages, the exit code is relevant. Here it's `0`.
+      (My prompt is configured to display the exit code from the last command.)
+    - Many checks do API calls without creating resources; the entropy test however
+      boots a VM to perform some checks. More tests like this are expected in the
+      future. Yet the SCS community tries to keep the required amount of resources
+      (and thus the required quota) low.
