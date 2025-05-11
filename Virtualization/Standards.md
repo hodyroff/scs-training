@@ -64,5 +64,17 @@ garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$
       (and thus the required quota) low.
 
 ### Automated compliance tests
-* <https://zuul.scs.community> runs many jobs
-
+* <https://zuul.sovereignit.cloud> runs many jobs
+    - CI checks triggered by github
+    - Security pipeline
+    - Dependency collection (SBOM)
+    - Compliance checks (job: `scs-check-all`)
+* The results of the compliace checks are collected by the compliance monitor
+    - Failures are not immediately reported to avoid false positives
+    - Instead case is reviewed by responsible engineer and reported to cloud provider
+        * This avoids spurious (non-reproducible) failures to display non-compliance
+        * It also givess CSPs an opportunity to get back into compliance quickly
+        * Compliance engineer has also access to detailed log files
+    * Curated results at: <https://compliance.sovereignit.cloud/page/table>
+    * These are also mirrored at the docs page
+    
