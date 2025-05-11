@@ -74,7 +74,7 @@
 
 ## Performance and Compliance monitoring
 * [Netbox, prometheus, Netdata, OpenSearch](Netbox-and-friends.md)
-* OpenStack Health Monitor
+* [OpenStack Health Monitor](OSHM.md)
 * The SCS standards: Overview and process
 * SCS Compliance testing
 * Practical assignments
