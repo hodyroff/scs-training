@@ -56,6 +56,7 @@ trainings are offered in alignment with the licensing terms of the ITU
 and the support from the Forum SCS-Standards at the OSBA.
 
 ## Table of Contents
+### [Introduction](Introduction/)
 ### [Recap Cloud Fundamentals](Fundamentals/)
 ### [SCS Virtualization Layer](Virtualization/)
 ### [SCS Container Layer](clusterstacks/cluster-stacks.md)
