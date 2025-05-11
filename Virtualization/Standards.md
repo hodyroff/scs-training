@@ -77,4 +77,7 @@ garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$
         * Compliance engineer has also access to detailed log files
     * Curated results at: <https://compliance.sovereignit.cloud/page/table>
     * These are also mirrored at the docs page
-    
+* Approach the Forum SCS-Standards to get added to the list of tested clouds
+    - Formal certification requires becoming member of the Forum SCS-Standards
+        * This comes with a membership fee
+        * You may pay the same fees without becoming member and received the entitlement to SCS certification
