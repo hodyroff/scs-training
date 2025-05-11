@@ -79,6 +79,7 @@ docker run \
     - List the nodes and add them to the roles `[manager]`, `[monitoring]`, `[control]`,
       `[network]`, `[ceph-control]`, `[ceph-resource]`, `[ceph-rgw:children]` in `inventory/20-roles`.
 * You can set `host_vars` there in `inventory/host_vars/NODE.yml`
+    - You can also assign vars to group (Group vars), use `generic` for all groups.
 * Changes should always be commited and push to git
 * `osism apply configuration` gets the latest status from git (overwrites local changes if any)
 

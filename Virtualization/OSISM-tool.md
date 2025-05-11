@@ -38,5 +38,10 @@ osism apply facts           # Gather/Update ansible facts
         * Ensure review and approval processes are in place for this; some changes may
           require customer communication or approval from your security team
         * Same procedure: push to repo and use the above osism commands
+* Read recommendations how to work with git branches
+  <https://docs.scs.community/docs/iaas/guides/configuration-guide/manager#working-with-git-branches>
+* Review is good, testing is better
+    - Take reviews seriously!
+        * Be mindful of hierarchies or cultural habits that e.g. prevent questioning higher ranked people
+        * Think a moment about AF447 or Fukushima
 
-    
