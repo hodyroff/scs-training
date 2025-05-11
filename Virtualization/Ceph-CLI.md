@@ -50,3 +50,9 @@ systemctl disable ceph-osd@NN
 
 * Upstream ceph docu: <https://docs.ceph.com/en/reef/rados/operations/>
   (This is for reef, use the version that you have in use.)
+
+### Ceph tuning
+* See hints at <https://docs.scs.community/docs/iaas/guides/configuration-guide/ceph/>
+* Kernel sysctl settings: Typically suitable out of the box in OSISM deployment
+* Defaults for PGs are set for a small cluster. Enable autoscaler for pools or increase manually for larger clusters (10+ OSDs)
+* There are also hints how to setup WAL and DB if those are not co-located on the same NVMe anyway

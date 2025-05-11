@@ -96,6 +96,18 @@ docker run \
     - Remember that an ansible ping verifies that ansible can log in via ssh to manage the host
     - This is why the final steps are `osism apply sshconfig` and `osism apply known-hosts`
 
+### Network
+* If you use VLANs, Link aggregation (802.3ad, also called bonding or trunking), you will need to adjust
+  your network settings.
+* For Ubuntu hosts (since OSISM 6.1.0), netplan is used,
+  read <https://docs.scs.community/docs/iaas/guides/configuration-guide/network>
+* If you want to proxy outgoing internet access on the manager node (e.g. for security reasons),
+  read <https://docs.scs.community/docs/iaas/guides/configuration-guide/proxy>
+* Extra hints for the loadbalancer, e.g. TLS/SSL certificate deployment:
+  read <https://docs.scs.community/docs/iaas/guides/configuration-guide/loadbalancer>
+    - Note: This is for the loadbalancer(s) in from of the Infra/OpenStack API services, not the
+      loadbalancers that cloud users create with the OpenStack octavia service
+
 ### Nodes: Infrastructure, Network, Logging/Monitoring, Ceph, OpenStack
 * <https://docs.scs.community/docs/iaas/guides/deploy-guide/services/>
   covers this well
@@ -105,4 +117,12 @@ docker run \
     - `set -e` is a must shell scripts
 * For Ceph, the deployment with ceph-ansible is still the default, this will change to
   ceph rook in the future. Ensure you have kubernetes/k3 set up
+
+### OpenStack tuning
+* See <https://docs.scs.community/docs/iaas/guides/configuration-guide/openstack/>
+    - E.g. 3x CPU oversubscription assumes that you have HT(SMT) enabled, you might increase to 5x otherwise.
+* It also explains the mechanism how config file tepmlating works and how these are rolled out with
+  the ansible playbooks (example: OpenSearch)
+* The service specific hints mostly link the upstream OpenStack docu
+* The Commons and Services chapters have kolla and OSISM specific information
 
