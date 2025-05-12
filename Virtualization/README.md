@@ -31,7 +31,7 @@
     * Compute nodes
     * Network nodes
     * Storage nodes
-* [SW-defined Storage (SDS) with Ceph](Ceph-Intro.md)
+<!--* [SW-defined Storage (SDS) with Ceph](Ceph-Intro.md)-->
 <!--* [SW-defined Networking (SDN) with OVN/OvS](OVN-Intro.md)-->
 * [Planning your hardware](HW-Plan.md)
     * HCI vs. decomposed

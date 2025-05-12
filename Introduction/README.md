@@ -37,24 +37,18 @@
 * This is done in several ways:
     1. By making it easier for local providers and allow self-hosting, data sovereignty is supported.
     2. By having many provider adhering to the same [technical standards](https://docs.scs.community/standards),
-       switching providers becomes
-       a lot easier. The standards are covered by [automated continuous tests](https://github.com/SovereignCloudStack/standards/Tests/)
-       and can be certified (*SCS-compatible*)
-    3. By having an openly developed complete open source [reference implementation](https://docs.scs.community/docs/category/releases), everyone
-       can adjust technnology and contribute to it, thus delivering on technical sovereignty (*SCS-open*)
-    4. By giving transpareny into operations (e.g. via blog articles, OSHM, Lean Operator Coffee),
-       some collaborative element is added to the Ops part of DevOps. [Open Operations](https://openoperations.org/)
-       thus enables the highest level (*SCS-sovereign*).
+       switching providers becomes a lot easier. The standards are covered by [automated continuous tests](https://github.com/SovereignCloudStack/standards/Tests/) and can be certified (*SCS-compatible*)
+    3. By having an openly developed complete open source [reference implementation](https://docs.scs.community/docs/category/releases), everyone can adjust technnology and contribute to it, thus delivering on technical sovereignty (*SCS-open*)
+    4. By giving transpareny into operations (e.g. via blog articles, OSHM, Lean Operator Coffee), some collaborative element is added to the Ops part of DevOps. [Open Operations](https://openoperations.org/) thus enables the highest level (*SCS-sovereign*).
 * SCS was a project by the Open Source Business Alliance e.V. ([OSBA](https://osb-alliance.de/)) in Europe in the
-  [Gaia-X](https://gaia-x.eu/)
-  context and received public funding from German [BMWK](https://bmwk.bund.de/) 2021 -- 2024.
+  [Gaia-X](https://gaia-x.eu/) context and received public funding from German [BMWK](https://bmwk.bund.de/) 2021 -- 2024.
 * It has collaboratively and openy developed and reeased 5 versions of *SCS-compatible* IaaS standards, 
   1 version of KaaS standards,
   8 releases of the reference implementation, has organized two own conferences (SCS summits),
   4 Hackathons and has contributed to numerous publications and conferences.
-* The standards evolution is now goverend by the Forum SCS-Standards in the non=profit OSBA,
+* The standards evolution is now governed by the Forum SCS-Standards in the non=profit OSBA,
   whereare open software development continues with the ecosystem partners in the SCS
-  community, goverend by tge SCS project board.
+  community, governed by the SCS project board.
 
 ## SCS and govstack
 * The SCS project has contributed to the govstack cloud building block, reflecting some

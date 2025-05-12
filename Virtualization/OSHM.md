@@ -29,7 +29,7 @@
     - Log files are stored in filesystem and are optionally pushed to Object Storage
     - Console output is optimized for readability (unlike log files), attach to it via `tmux attach`
     - Autostart realized via injecting keys into tmux ...
-* Documentation at: <>
+* Documentation at: <https://docs.scs.community/docs/operating-scs/guides/openstack-health-monitor/Debian12-Install>
     - Takes ~1hr to set up when doing for the first time
 
 ### Dashboard
