@@ -82,9 +82,9 @@
     * Studying OSHM dashboard
     * Running SCS compliance tests
 
-## Test and Validation environments
+## [Test and Validation environments](Environments.md)
 * Production, Reference and Test Environments
-* Reference/Developemtn Options
+* Reference/Development Options
     * Testbed
     * Cloud-in-a-Box
 * Validating changes

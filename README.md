@@ -1,5 +1,5 @@
 # SCS Training material
-[Sovereign Cloud Stack](https://scs.community/) (SCS) IaaS Training material
+[Sovereign Cloud Stack](https://scs.community/) (SCS) Training material
 
 ## Scope
 This is training material to learn how to plan, setup and operate the
