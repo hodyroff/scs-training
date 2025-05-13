@@ -12,27 +12,27 @@
   Homer is at <https://homer.services.YOURCLOUDDOMAIN/>
 
 ### Ceph Dashboard: Main page
-![Ceph Dashboard Main Page](Screenshot-Ceph1.png)
+![Ceph Dashboard Main Page](Screenshot_Ceph1.png)
 * Health Status
 * Capacity (gross)
 * Activity
 * Stats (Inventory)
 
 ### Ceph Dashboard: OSDs
-![Ceph OSD Page](Screenshot-Ceph2.png)
+![Ceph OSD Page](Screenshot_Ceph2.png)
 * List of OSDs with their status
 * Administrative actions (e.g. throwing OSDs out) by checking them and using the Edit button
 * Be careful!
 * Screenshot taken from a CiaB Ceph (reconfigured for 2 LVs on each of the 2 NVMes)
 
 ### Ceph Dashboard: Pools
-![Ceph Pool List](Screenshot-Ceph3.png)
+![Ceph Pool List](Screenshot_Ceph3.png)
 * List taken from CiaB install (number of PGs reduced for less used pools)
 * Clients and replication settings displayed
 * Note that lists are typically paginated (only show 25 entries per page)
 
 ### Ceph Dashboard: Images
-![Ceph Images List](Screenshot-Ceph4.png)
+![Ceph Images List](Screenshot_Ceph4.png)
 * A few OS images (names correspond to glance IDs)
 * A 10GB volume as child from image (names correspond to cinder IDs)
 
