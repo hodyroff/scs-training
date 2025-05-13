@@ -92,7 +92,7 @@
     * Looking at CiaB configuration
     * Look at testbed configuration
 
-## Dealing with errors
+## [Maintenance and dealing with errors](Maintenance.md)
 * Database cleanup
 * Stuck volumes
 * Stuck loadbalancer
