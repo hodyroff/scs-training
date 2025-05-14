@@ -379,8 +379,17 @@ kubectl create namespace cluster
 
 - Create cloud secret using csp-helper chart
 
-If OpenStack API is protected by the certificate issued by custom CA, add --set cacert="$(cat /path/to/cacert)" to the helm command.
-Note that you have to provide `clouds.yaml` as well.
+You need to run the csp-helper chart always. You always need to specify the path to your `clouds.yaml`.
+The `clouds.yaml` should contain also the secrets that you normally split off into `secure.yaml`.
+
+If you choose to use clouds.yaml with application credentials (auth_type: `v3applicationcredential`), it is the preferred and more secure option.
+If you opt to use clouds.yaml with password authentication (auth_type: `v3password`), that is also acceptable, but:
+- Ensure that `project_id` is set, `project_name` works only for CAPO, not for OCCM!
+- Using `project_id` guarantees that both CAPO and OCCM function correctly with `v3password` authentication.
+
+If the OpenStack API is secured with a certificate issued by a custom CA, include `--set cacert="$(cat /path/to/cacert)"` in your Helm command.
+There is no need to update `clouds.yaml` with the custom CA, passing the `--set cacert=...` parameter is sufficient. 
+The openstack-csp-helper ensures that the CA certificate is available to both CAPO and OCCM.
 
 ```bash
 helm upgrade -i openstack-secrets -n cluster --create-namespace https://github.com/SovereignCloudStack/openstack-csp-helper/releases/latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml --set cacert="$(cat /path/to/cacert)"
