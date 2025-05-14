@@ -1,0 +1,79 @@
+<svg viewBox="0 0 800 850" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="850" fill="#ffffff" rx="10" ry="10"/>
+  
+  <!-- Title -->
+  <text x="400" y="70" font-family="Arial" font-size="24" fill="#333333" text-anchor="middle" font-weight="bold">Cluster Stacks Architecture</text>
+  
+  <!-- Management Cluster Box -->
+  <rect x="140" y="120" width="520" height="200" fill="#e1f5fe" stroke="#0288d1" stroke-width="2" rx="5" ry="5"/>
+  <text x="400" y="150" font-family="Arial" font-size="18" fill="#01579b" text-anchor="middle" font-weight="bold">Management Cluster</text>
+  
+  <!-- Management Cluster Components -->
+  <rect x="160" y="170" width="110" height="120" fill="#bbdefb" stroke="#1976d2" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="215" y="220" font-family="Arial" font-size="14" fill="#01579b" text-anchor="middle" font-weight="bold">Cluster API</text>
+  <text x="215" y="240" font-family="Arial" font-size="12" fill="#01579b" text-anchor="middle">Core Controllers</text>
+  
+  <rect x="280" y="170" width="110" height="120" fill="#d1c4e9" stroke="#7b1fa2" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="335" y="220" font-family="Arial" font-size="14" fill="#4a148c" text-anchor="middle" font-weight="bold">Infrastructure</text>
+  <text x="335" y="240" font-family="Arial" font-size="12" fill="#4a148c" text-anchor="middle">Provider (CAPO)</text>
+  
+  <rect x="400" y="170" width="110" height="120" fill="#ffcdd2" stroke="#d32f2f" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="455" y="220" font-family="Arial" font-size="14" fill="#b71c1c" text-anchor="middle" font-weight="bold">Cluster Stack</text>
+  <text x="455" y="240" font-family="Arial" font-size="12" fill="#b71c1c" text-anchor="middle">Operator (CSO)</text>
+  
+  <rect x="520" y="170" width="110" height="120" fill="#c8e6c9" stroke="#388e3c" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="575" y="220" font-family="Arial" font-size="14" fill="#1b5e20" text-anchor="middle" font-weight="bold">Flux</text>
+  <text x="575" y="240" font-family="Arial" font-size="12" fill="#1b5e20" text-anchor="middle">GitOps</text>
+  
+  <!-- ClusterStack CRD -->
+  <rect x="200" y="400" width="150" height="120" fill="#fff9c4" stroke="#fbc02d" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="275" y="435" font-family="Arial" font-size="14" fill="#f57f17" text-anchor="middle" font-weight="bold">ClusterStack</text>
+  <text x="275" y="460" font-family="Arial" font-size="12" fill="#f57f17" text-anchor="middle">provider: openstack</text>
+  <text x="275" y="480" font-family="Arial" font-size="12" fill="#f57f17" text-anchor="middle">kubernetesVersion: 1.30</text>
+  <text x="275" y="500" font-family="Arial" font-size="12" fill="#f57f17" text-anchor="middle">autoSubscribe: true</text>
+
+  <!-- ClusterStackRelease -->
+  <rect x="450" y="400" width="150" height="120" fill="#b2dfdb" stroke="#009688" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="525" y="435" font-family="Arial" font-size="14" fill="#00695c" text-anchor="middle" font-weight="bold">ClusterStackRelease</text>
+  <text x="525" y="460" font-family="Arial" font-size="12" fill="#00695c" text-anchor="middle">name: openstack-scs-1-30</text>
+  <text x="525" y="480" font-family="Arial" font-size="12" fill="#00695c" text-anchor="middle">version: v0-sha.abcdef</text>
+  <text x="525" y="500" font-family="Arial" font-size="12" fill="#00695c" text-anchor="middle">clusterClass + addons</text>
+
+  <!-- Workload Cluster - SAME SIZE as Management Cluster -->
+  <rect x="140" y="600" width="520" height="200" fill="#eceff1" stroke="#607d8b" stroke-width="2" rx="5" ry="5"/>
+  <text x="400" y="630" font-family="Arial" font-size="18" fill="#263238" text-anchor="middle" font-weight="bold">Workload Cluster</text>
+
+  <!-- Workload Cluster Components - Properly sized and positioned with multiline text -->
+  <rect x="160" y="680" width="85" height="90" fill="#bbdefb" stroke="#1976d2" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="202" y="715" font-family="Arial" font-size="14" fill="#01579b" text-anchor="middle" font-weight="bold">Control</text>
+  <text x="202" y="735" font-family="Arial" font-size="14" fill="#01579b" text-anchor="middle" font-weight="bold">Plane</text>
+  
+  <rect x="260" y="680" width="85" height="90" fill="#d1c4e9" stroke="#7b1fa2" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="302" y="715" font-family="Arial" font-size="14" fill="#4a148c" text-anchor="middle" font-weight="bold">Worker</text>
+  <text x="302" y="735" font-family="Arial" font-size="14" fill="#4a148c" text-anchor="middle" font-weight="bold">Nodes</text>
+  
+  <rect x="360" y="680" width="85" height="90" fill="#ffcdd2" stroke="#d32f2f" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="402" y="715" font-family="Arial" font-size="14" fill="#b71c1c" text-anchor="middle" font-weight="bold">CNI</text>
+  <text x="402" y="735" font-family="Arial" font-size="14" fill="#b71c1c" text-anchor="middle" font-weight="bold">(Cilium)</text>
+  
+  <rect x="460" y="680" width="85" height="90" fill="#fff9c4" stroke="#fbc02d" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="502" y="725" font-family="Arial" font-size="14" fill="#f57f17" text-anchor="middle" font-weight="bold">CCM</text>
+  
+  <rect x="560" y="680" width="85" height="90" fill="#c8e6c9" stroke="#388e3c" stroke-width="1.5" rx="5" ry="5"/>
+  <text x="602" y="715" font-family="Arial" font-size="14" fill="#1b5e20" text-anchor="middle" font-weight="bold">Metrics</text>
+  <text x="602" y="735" font-family="Arial" font-size="14" fill="#1b5e20" text-anchor="middle" font-weight="bold">Server</text>
+
+  <!-- Connection lines -->
+  <!-- From ClusterStack to Infrastructure Provider -->
+  <path d="M 275,400 L 275,375 L 335,375 L 335,290" stroke="#546e7a" stroke-width="1.5" fill="none"/>
+  <polygon points="335,290 330,300 340,300" fill="#546e7a"/>
+  
+  <!-- From ClusterStackRelease to CSO -->
+  <path d="M 525,400 L 525,375 L 455,375 L 455,290" stroke="#546e7a" stroke-width="1.5" fill="none"/>
+  <polygon points="455,290 450,300 460,300" fill="#546e7a"/>
+  
+  <!-- From Management Cluster to Workload Cluster -->
+  <line x1="400" y1="320" x2="400" y2="600" stroke="#546e7a" stroke-width="1.5"/>
+  <polygon points="400,600 395,590 405,590" fill="#546e7a"/>
+</svg>

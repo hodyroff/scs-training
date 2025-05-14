@@ -1,0 +1,28 @@
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="500" fill="#ffffff" rx="10" ry="10"/>
+  
+  <!-- Title -->
+  <text x="400" y="50" font-family="Arial" font-size="24" fill="#333333" text-anchor="middle" font-weight="bold">SCS Architecture Layers</text>
+  
+  <!-- Layers -->
+  <rect x="150" y="100" width="500" height="80" fill="#dcedc8" stroke="#689f38" stroke-width="2" rx="5" ry="5"/>
+  <text x="400" y="145" font-family="Arial" font-size="18" fill="#33691e" text-anchor="middle" font-weight="bold">IAM Layer</text>
+  <text x="400" y="165" font-family="Arial" font-size="14" fill="#33691e" text-anchor="middle">Identity and Access Management</text>
+  
+  <rect x="150" y="190" width="500" height="80" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" rx="5" ry="5"/>
+  <text x="400" y="235" font-family="Arial" font-size="18" fill="#1b5e20" text-anchor="middle" font-weight="bold">Operations Layer</text>
+  <text x="400" y="255" font-family="Arial" font-size="14" fill="#1b5e20" text-anchor="middle">Monitoring, Logging, Operations</text>
+  
+  <rect x="150" y="280" width="500" height="100" fill="#ffcdd2" stroke="#d32f2f" stroke-width="2" rx="5" ry="5"/>
+  <text x="400" y="310" font-family="Arial" font-size="18" fill="#b71c1c" text-anchor="middle" font-weight="bold">Container Layer</text>
+  <text x="400" y="335" font-family="Arial" font-size="14" fill="#b71c1c" text-anchor="middle">Kubernetes Orchestration with ClusterStacks</text>
+  <text x="400" y="360" font-family="Arial" font-size="14" fill="#b71c1c" text-anchor="middle">Container Registry, Monitoring</text>
+  
+  <rect x="150" y="390" width="500" height="80" fill="#bbdefb" stroke="#1976d2" stroke-width="2" rx="5" ry="5"/>
+  <text x="400" y="435" font-family="Arial" font-size="18" fill="#0d47a1" text-anchor="middle" font-weight="bold">IaaS Layer</text>
+  <text x="400" y="455" font-family="Arial" font-size="14" fill="#0d47a1" text-anchor="middle">OpenStack-based Infrastructure Services</text>
+  
+  <!-- ClusterStacks highlight -->
+  <rect x="380" y="335" width="140" height="20" fill="#f8bbd0" stroke="#c2185b" stroke-width="1" rx="3" ry="3"/>
+</svg>

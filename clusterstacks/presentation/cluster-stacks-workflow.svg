@@ -1,0 +1,86 @@
+<svg viewBox="0 0 880 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="30" width="880" height="540" fill="#ffffff" rx="10" ry="10"/>
+  
+  <!-- Title -->
+  <text x="400" y="110" font-family="Arial" font-size="24" fill="#333333" text-anchor="middle" font-weight="bold">Cluster Stacks Workflow</text>
+  
+  <!-- Step 1: Define ClusterStack -->
+  <rect x="80" y="160" width="200" height="80" fill="#bbdefb" stroke="#1976d2" stroke-width="2" rx="5" ry="5"/>
+  <text x="180" y="190" font-family="Arial" font-size="16" fill="#01579b" text-anchor="middle" font-weight="bold">1. Define ClusterStack</text>
+  <text x="180" y="215" font-family="Arial" font-size="12" fill="#01579b" text-anchor="middle">Specify provider, K8s version</text>
+  <text x="180" y="230" font-family="Arial" font-size="12" fill="#01579b" text-anchor="middle">and version channel</text>
+  
+  <!-- Step 2: CSO fetches artifacts -->
+  <rect x="350" y="160" width="200" height="80" fill="#d1c4e9" stroke="#7b1fa2" stroke-width="2" rx="5" ry="5"/>
+  <text x="450" y="190" font-family="Arial" font-size="16" fill="#4a148c" text-anchor="middle" font-weight="bold">2. CSO Fetches Artifacts</text>
+  <text x="450" y="215" font-family="Arial" font-size="12" fill="#4a148c" text-anchor="middle">Downloads ClusterClass</text>
+  <text x="450" y="230" font-family="Arial" font-size="12" fill="#4a148c" text-anchor="middle">and addon templates</text>
+  
+  <!-- Step 3: ClusterClass Created -->
+  <rect x="620" y="160" width="180" height="80" fill="#ffcdd2" stroke="#d32f2f" stroke-width="2" rx="5" ry="5"/>
+  <text x="710" y="190" font-family="Arial" font-size="16" fill="#b71c1c" text-anchor="middle" font-weight="bold">3. ClusterClass Created</text>
+  <text x="710" y="215" font-family="Arial" font-size="12" fill="#b71c1c" text-anchor="middle">CAPI template with provider</text>
+  <text x="710" y="230" font-family="Arial" font-size="12" fill="#b71c1c" text-anchor="middle">specific settings</text>
+  
+  <!-- Step 4: Define Cluster -->
+  <rect x="80" y="290" width="200" height="80" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" rx="5" ry="5"/>
+  <text x="180" y="320" font-family="Arial" font-size="16" fill="#1b5e20" text-anchor="middle" font-weight="bold">4. Define Cluster</text>
+  <text x="180" y="345" font-family="Arial" font-size="12" fill="#1b5e20" text-anchor="middle">Specify ClusterClass, nodes,</text>
+  <text x="180" y="360" font-family="Arial" font-size="12" fill="#1b5e20" text-anchor="middle">and custom variables</text>
+  
+  <!-- Step 5: CAPI Provisions Infrastructure -->
+  <rect x="350" y="290" width="200" height="80" fill="#fff9c4" stroke="#fbc02d" stroke-width="2" rx="5" ry="5"/>
+  <text x="450" y="320" font-family="Arial" font-size="16" fill="#f57f17" text-anchor="middle" font-weight="bold">5. CAPI Provisions</text>
+  <text x="450" y="345" font-family="Arial" font-size="12" fill="#f57f17" text-anchor="middle">Creates VMs, networks,</text>
+  <text x="450" y="360" font-family="Arial" font-size="12" fill="#f57f17" text-anchor="middle">and Kubernetes components</text>
+  
+  <!-- Step 6: CSO Installs Addons -->
+  <rect x="620" y="290" width="180" height="80" fill="#b2dfdb" stroke="#009688" stroke-width="2" rx="5" ry="5"/>
+  <text x="710" y="320" font-family="Arial" font-size="16" fill="#00695c" text-anchor="middle" font-weight="bold">6. CSO Installs Addons</text>
+  <text x="710" y="345" font-family="Arial" font-size="12" fill="#00695c" text-anchor="middle">Applies CNI, CCM,</text>
+  <text x="710" y="360" font-family="Arial" font-size="12" fill="#00695c" text-anchor="middle">and other core addons</text>
+  
+  <!-- Step 7: Operational Cluster -->
+  <rect x="80" y="420" width="200" height="80" fill="#eceff1" stroke="#607d8b" stroke-width="2" rx="5" ry="5"/>
+  <text x="180" y="450" font-family="Arial" font-size="16" fill="#263238" text-anchor="middle" font-weight="bold">7. Operational Cluster</text>
+  <text x="180" y="475" font-family="Arial" font-size="12" fill="#263238" text-anchor="middle">Fully functional workload</text>
+  <text x="180" y="490" font-family="Arial" font-size="12" fill="#263238" text-anchor="middle">cluster ready for applications</text>
+  
+  <!-- Step 8: Upgrades -->
+  <rect x="350" y="420" width="200" height="80" fill="#e1bee7" stroke="#8e24aa" stroke-width="2" rx="5" ry="5"/>
+  <text x="450" y="450" font-family="Arial" font-size="16" fill="#4a148c" text-anchor="middle" font-weight="bold">8. Upgrade Process</text>
+  <text x="450" y="475" font-family="Arial" font-size="12" fill="#4a148c" text-anchor="middle">Point cluster to new</text>
+  <text x="450" y="490" font-family="Arial" font-size="12" fill="#4a148c" text-anchor="middle">ClusterClass version</text>
+  
+  <!-- Step 9: Monitoring -->
+  <rect x="620" y="420" width="180" height="80" fill="#dcedc8" stroke="#689f38" stroke-width="2" rx="5" ry="5"/>
+  <text x="710" y="450" font-family="Arial" font-size="16" fill="#33691e" text-anchor="middle" font-weight="bold">9. Monitoring</text>
+  <text x="710" y="475" font-family="Arial" font-size="12" fill="#33691e" text-anchor="middle">Observe cluster health</text>
+  <text x="710" y="490" font-family="Arial" font-size="12" fill="#33691e" text-anchor="middle">with integrated tools</text>
+  
+  <!-- Arrows -->
+  <path d="M 280,200 L 350,200" stroke="#546e7a" stroke-width="2" fill="none"/>
+  <polygon points="350,200 340,195 340,205" fill="#546e7a"/>
+  
+  <path d="M 550,200 L 620,200" stroke="#546e7a" stroke-width="2" fill="none"/>
+  <polygon points="620,200 610,195 610,205" fill="#546e7a"/>
+  
+  <path d="M 710,240 L 710,260 L 180,260 L 180,290" stroke="#546e7a" stroke-width="2" fill="none"/>
+  <polygon points="180,290 175,280 185,280" fill="#546e7a"/>
+  
+  <path d="M 280,330 L 350,330" stroke="#546e7a" stroke-width="2" fill="none"/>
+  <polygon points="350,330 340,325 340,335" fill="#546e7a"/>
+  
+  <path d="M 550,330 L 620,330" stroke="#546e7a" stroke-width="2" fill="none"/>
+  <polygon points="620,330 610,325 610,335" fill="#546e7a"/>
+  
+  <path d="M 710,370 L 710,390 L 180,390 L 180,420" stroke="#546e7a" stroke-width="2" fill="none"/>
+  <polygon points="180,420 175,410 185,410" fill="#546e7a"/>
+  
+  <path d="M 280,460 L 350,460" stroke="#546e7a" stroke-width="2" fill="none"/>
+  <polygon points="350,460 340,455 340,465" fill="#546e7a"/>
+  
+  <path d="M 550,460 L 620,460" stroke="#546e7a" stroke-width="2" fill="none"/>
+  <polygon points="620,460 610,455 610,465" fill="#546e7a"/>
+</svg>
