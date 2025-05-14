@@ -340,7 +340,7 @@ kubectl -n capo-system rollout status deployment
 - Create values.yaml for CSO
 
 ```bash
-cat >> values.yaml <<EOF
+cat > values.yaml <<EOF
 clusterStackVariables:
   ociRepository: registry.scs.community/kaas/cluster-stacks
 controllerManager:
