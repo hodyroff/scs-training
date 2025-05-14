@@ -53,7 +53,7 @@ ansible -m ping -u ANSIBLEUSER -m ping ROLEORGROUP
 * You can set per host variables `host_vars/nodename/vars.yaml`
 * Follow <https://docs.ansible.com/ansible/latest/getting_started/get_started_inventory.html>
 
-### Ansible dmeo: playbooks
+### Ansible demo: playbooks
 `playbooks/testplay.yaml`
 ```yaml
 - name: ping-and-echo-and-touch

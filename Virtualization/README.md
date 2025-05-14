@@ -31,7 +31,7 @@
     * Compute nodes
     * Network nodes
     * Storage nodes
-* [SW-defined Storage (SDS) with Ceph](Ceph-Intro.md)
+<!--* [SW-defined Storage (SDS) with Ceph](Ceph-Intro.md)-->
 <!--* [SW-defined Networking (SDN) with OVN/OvS](OVN-Intro.md)-->
 * [Planning your hardware](HW-Plan.md)
     * HCI vs. decomposed
@@ -82,9 +82,9 @@
     * Studying OSHM dashboard
     * Running SCS compliance tests
 
-## Test and Validation environments
+## [Test and Validation environments](Environments.md)
 * Production, Reference and Test Environments
-* Reference/Developemtn Options
+* Reference/Development Options
     * Testbed
     * Cloud-in-a-Box
 * Validating changes
@@ -92,7 +92,7 @@
     * Looking at CiaB configuration
     * Look at testbed configuration
 
-## Dealing with errors
+## [Maintenance and dealing with errors](Maintenance.md)
 * Database cleanup
 * Stuck volumes
 * Stuck loadbalancer

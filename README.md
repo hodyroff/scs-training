@@ -1,5 +1,5 @@
 # SCS Training material
-[Sovereign Cloud Stack](https://scs.community/) (SCS) IaaS Training material
+[Sovereign Cloud Stack](https://scs.community/) (SCS) Training material
 
 ## Scope
 This is training material to learn how to plan, setup and operate the
@@ -57,7 +57,7 @@ and the support from the Forum SCS-Standards at the OSBA.
 
 ## Table of Contents
 ### [Introduction](Introduction/)
-### [Recap Cloud Fundamentals](Fundamentals/)
+<!--### [Recap Cloud Fundamentals](Fundamentals/)-->
 ### [SCS Virtualization Layer](Virtualization/)
 ### [SCS Container Layer](clusterstacks/cluster-stacks.md)
 ### [SCS Monitoring](monitoring/monitoring.md)
