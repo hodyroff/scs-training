@@ -425,7 +425,7 @@ kubectl get clusterclass -n cluster
 - For demo purposes, it's a good idea to have the image uploaded in advance to avoid delays
 
 - Note: Under normal conditions, cluster creation can proceed even if the image is not yet available. However, we observed a situation where the OpenStackServer resource entered an error state due to the not yet ready image, causing the cluster creation process to stacked.
-Manually deleting the affected OpenStackServer resource and restarting the CAPO controller resolved the issue. Please be aware of this behavior, it requires further investigation.
+Manually deleting the affected OpenStackServer resource and restarting the CAPO controller (`kubectl delete po -l control-plane=capo-controller-manager -n capo-system`) resolved the issue. Please be aware of this behavior, it requires further investigation.
 
 ```bash
 kubectl get image -n cluster
@@ -473,9 +473,9 @@ clusterctl describe cluster my-cluster -n cluster
 - Get kubeconfig and play with cluster
 
 ```bash
-clusterctl get kubeconfig -n cluster my-cluster > /tmp/kubeconfig
-kubectl --kubeconfig /tmp/kubeconfig get nodes -o wide
-kubectl --kubeconfig /tmp/kubeconfig get pods -A
+clusterctl get kubeconfig -n cluster my-cluster > ~/.kube/cluster.my-cluster.yaml
+kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get nodes -o wide
+kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get pods -A
 ```
 
 - Cleanup
