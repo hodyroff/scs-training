@@ -415,7 +415,7 @@ kubectl get clusterclass -n cluster
 - Check whether the image already exists in the OpenStack project or if the OpenStack Resource Controller (ORC) is currently uploading it
 - For demo purposes, it's a good idea to have the image uploaded in advance to avoid delays
 
-- Note: Under normal conditions, cluster creation can proceed even if the image is not yet available. However, I observed a situation where the OpenStackServer resource entered an error state due to the not yet ready image, causing the cluster creation process to stacked.
+- Note: Under normal conditions, cluster creation can proceed even if the image is not yet available. However, we observed a situation where the OpenStackServer resource entered an error state due to the not yet ready image, causing the cluster creation process to stacked.
 Manually deleting the affected OpenStackServer resource and restarting the CAPO controller resolved the issue. Please be aware of this behavior, it requires further investigation.
 
 ```bash
