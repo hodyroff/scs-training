@@ -610,7 +610,7 @@ e.g. `docker-scs-1-30-v0-sha.rwvgrna` from the
 [Quickstart guide](#6-quickstart-guide).
 
 It is possible to upgrade the Kubernetes version -
-`docker-scs-1-30-v0-sha.rwvgrna` to `docker-scs-1-32-v0-sha.rwvgrna`. In this
+`docker-scs-1-30-v0-sha.rwvgrna` to `docker-scs-1-31-v0-sha.hdl6pjy`. In this
 case a new `ClusterStack` object is needed as the Kubernetes version is part
 of its specification.
 
@@ -628,7 +628,7 @@ spec:
   autoSubscribe: false
   noProvider: true
   versions:
-    - v0-sha.fhg6gbu
+    - v0-sha.hdl6pjy
 ```
 
 Before upgrade make sure the new `ClusterClass` is available in the management
@@ -637,17 +637,27 @@ cluster. Then the target `Cluster` object can be edited:
 - Update `spec.topology.class` to the name of the new class
 
 ```bash
-KUBE_EDITOR="sed -i 's#class: docker-scs-1-30-v0-sha.rwvgrna#class: docker-scs-1-32-v0-sha.rwvgrna#'" kubectl -n cluster edit cluster docker-testcluster 
+kubectl -n cluster edit cluster docker-testcluster
+
+...
+spec:
+  topology:
+    class: docker-scs-1-31-v0-sha.hdl6pjy
+...
 ```
 
-- If Kubernetes version is to be changed update `spec.topology.version` to
-  respective Kubernetes version. The right version (e.g. "1.32.0") must be used
-  and can be found in the `ClusterStack` object description, in the status of 
-  `ClusterStackRelease` object with the same name as desired target
-  `ClusterClass` or in the cluster stack releases documentation
+- If Kubernetes version is to be changed update `spec.topology.version` in
+  the same edit to respective Kubernetes version. Right version (e.g. "1.31.6")
+  must be used and can be found in the `ClusterStack` object description, in
+  the status of `ClusterStackRelease` object with the same name as desired
+  target `ClusterClass` or in the cluster stack releases documentation
 
 ```bash
-KUBE_EDITOR="sed -i 's#version: v1.30.10#version: v1.32.0#'" kubectl -n cluster edit cluster docker-testcluster 
+...
+spec:
+  topology:
+    version: v1.31.6
+...
 ```
 
 ### Assignments
