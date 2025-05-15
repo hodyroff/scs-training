@@ -1,0 +1,26 @@
+infrastructure | ClusterStack.spec.kubernetesVersion | ClusterStack.spec.versions | `k8sCluster.topology.version_minor`
+---|-----|-----|---
+docker | v1.30.10 | v0-sha.afgbogt | 1.30
+docker | v1.30.10 | v0-sha.rwvgrna | 1.30
+docker | v1.31.6 | v0-custom.ipam | 1.31
+docker | v1.31.6 | v0-custom.noipam | 1.31
+docker | v1.31.6 | v0-git.noipam | 1.31
+docker | v1.31.6 | v0-git.overwrite | 1.31
+docker | v1.31.4 | v0-sha.3wtp9nh | 1.31
+docker | v1.31.6 | v0-sha.fhg6gbu | 1.31
+docker | v1.31.6 | v0-sha.hdl6pjy | 1.31
+openstack | v1.29.10 | v0-sha.cmhhrwt | 1.29
+openstack | v1.29.9 | v0-sha.ysithut | 1.29
+openstack | v1.29.9 | v1 | 1.29
+openstack | v1.29.10 | v2 | 1.29
+openstack | v1.30.9 | v0-sha.5eukpki | 1.30
+openstack | v1.30.6 | v0-sha.jw43ytz | 1.30
+openstack | v1.30.5 | v1 | 1.30
+openstack | v1.30.11 | v2 | 1.30
+openstack | v1.30.11 | v3 | 1.30
+openstack | v1.31.5 | v0-sha.j2y5jvb | 1.31
+openstack | v1.31.1 | v1 | 1.31
+openstack | v1.31.7 | v2 | 1.31
+openstack | v1.32.1 | v0-sha.lvlvyfw | 1.32
+openstack | v1.32.1 | v0-sha.ryuaisa | 1.32
+openstack | v1.32.3 | v1 | 1.32
