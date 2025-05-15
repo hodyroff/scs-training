@@ -1,0 +1,18 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: docker-testcluster
+  namespace: cluster
+  labels:
+    managed-secret: cloud-config
+spec:
+  topology:
+    class: docker-scs-1-31-v0-sha.hdl6pjy
+    controlPlane:
+      replicas: 1
+    version: v1.31.6
+    workers:
+      machineDeployments:
+        - class: default-worker
+          name: md-0
+          replicas: 1

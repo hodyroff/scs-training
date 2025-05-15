@@ -1,0 +1,16 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: docker-testcluster-single
+  namespace: cluster
+  labels:
+    managed-secret: cloud-config
+  annotations:
+    controlplane.cluster.x-k8s.io/kubeadm-configuration-extraargs: "{\"ignore-preflight-errors\": [\"FileAvailable--etc-kubernetes-kubelet.conf\", \"FileAvailable--etc-kubernetes-pki-ca.crt\"]}"
+    controlplane.cluster.x-k8s.io/taints: "[]"
+spec:
+  topology:
+    class: docker-scs-1-30-v0-sha.rwvgrna
+    controlPlane:
+      replicas: 1
+    version: v1.30.10
