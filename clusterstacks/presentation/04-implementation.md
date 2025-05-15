@@ -188,24 +188,37 @@ Note:
 <!-- .element: class="fragment" data-fragment-index="3" -->
 
 ```bash
+# Create a configuration file for KinD with Docker socket access
+cat > kind-config.yaml << EOF
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraMounts:
+  - hostPath: /var/run/docker.sock
+    containerPath: /var/run/docker.sock
+EOF
+
 # Create a KinD cluster for the management plane
-kind create cluster --config=kind/kind-cluster-with-extramounts.yaml
+kind create cluster --config kind-config.yaml
 
 # Initialize with CAPI
 export CLUSTER_TOPOLOGY=true
 export EXP_CLUSTER_RESOURCE_SET=true
 export EXP_RUNTIME_SDK=true
-clusterctl init --infrastructure openstack
+clusterctl init --infrastructure docker --ignore-webhook-certificate
 ```
 
 Note:
 - We use KinD as a simple way to create a Kubernetes cluster for our management plane
 - This cluster will host the Cluster API and ClusterStack Operator controllers
 - We're not focusing on KinD itself - it's just a convenient tool for our demonstration
-- The management cluster runs in Docker, but will create real OpenStack VMs for workload clusters
+- The management cluster runs in Docker containers
 - The environment variables enable experimental features needed by ClusterStacks
-- We initialize the OpenStack infrastructure provider to create workload clusters in OpenStack
-- This is a crucial step - it enables the management cluster to interact with OpenStack
+- We initialize the Docker infrastructure provider for this demonstration
+- The Docker socket must be mounted to allow Docker-in-Docker operations
+- The `--ignore-webhook-certificate` flag helps avoid certificate validation issues
+- These configurations are critical for the Docker provider to work correctly
 
 ----
 
@@ -229,178 +242,200 @@ Note:
 - The ociRepository parameter points to the SCS registry where ClusterStack artifacts are stored
 - We also create a dedicated namespace for our cluster resources
 - With CSO installed, the management cluster is now ready to deploy workload clusters
+- If you encounter webhook errors, you may need to wait a few minutes for all CAPI components to initialize properly
 
 ----
 
-## Preparing OpenStack Authentication
+## Creating a ClusterStack
 
-- Create clouds.yaml with OpenStack authentication details
-- Set up a Kubernetes secret for OpenStack credentials
-<!-- .element: class="fragment" data-fragment-index="0" -->
-
-```bash
-# Create clouds.yaml file with your Cloud-in-a-Box credentials
-cat > clouds.yaml << EOF
-clouds:
-  openstack:
-    auth:
-      auth_url: https://keystone.cloud-in-a-box:5000/v3
-      project_name: demo
-      username: demo
-      password: password
-      user_domain_name: Default
-      project_domain_name: Default
-    region_name: RegionOne
-    interface: public
-    identity_api_version: 3
-EOF
-
-# Create Kubernetes secret with cloud credentials
-kubectl create secret generic cloud-config --from-file=clouds.yaml -n cluster
-```
-
-Note:
-- The OpenStack provider needs credentials to interact with the OpenStack API
-- This is critical for creating real OpenStack VMs from your KinD management cluster
-- The clouds.yaml format is the standard for OpenStack authentication
-- Replace the placeholder values with your actual credentials for your Cloud-in-a-Box environment
-- The secret is created in the cluster namespace where we'll deploy our workload clusters
-- This secret is automatically used by the ClusterStack Operator when creating OpenStack resources
-
-----
-
-## Creating an OpenStack ClusterStack
+Create a basic `clusterstack.yaml` file and apply it:
 
 ```yaml
-# ClusterStack definition for OpenStack
+# ClusterStack definition for Docker
 apiVersion: clusterstack.x-k8s.io/v1alpha1
 kind: ClusterStack
 metadata:
-  name: openstack
+  name: docker
   namespace: cluster
 spec:
-  provider: openstack
+  provider: docker
   name: scs
   kubernetesVersion: "1.30"
   channel: custom
   autoSubscribe: false
+  noProvider: true
   versions:
     - v0-sha.rwvgrna
 ```
 
 ```bash
 # Apply the ClusterStack
-kubectl apply -f openstack-clusterstack.yaml
+kubectl apply -f clusterstack.yaml
 
 # Verify the ClusterClass creation
 kubectl get clusterclass -n cluster
 ```
 
 Note:
-- We define a ClusterStack for OpenStack that specifies the Kubernetes version
-- This is explicitly using the OpenStack provider for our Cloud-in-a-Box environment
+- We define a ClusterStack for Docker that specifies the Kubernetes version
 - The CSO will download and prepare the necessary cluster stack components
-- It creates a ClusterClass that can be referenced by our OpenStack cluster definitions
+- It creates a ClusterClass that can be referenced by our cluster definition
 - Wait for the ClusterClass to be created before proceeding to create the cluster
 - You can watch the progress with: kubectl get clusterclass -n cluster -w
+- This might take a minute or two to complete
 
 ----
 
-## Creating a Single-Node OpenStack Cluster
+## Creating a Single-Node Workload Cluster
 
-```yaml
-# Single-node OpenStack cluster definition
+For testing and development, a single-node cluster (control plane only) is more reliable:
+
+```bash
+# Create the single-node cluster configuration file
+cat > cluster-single.yaml << EOF
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
 metadata:
-  name: openstack-single-node
+  name: docker-testcluster-single
   namespace: cluster
   labels:
     managed-secret: cloud-config
+  annotations:
+    controlplane.cluster.x-k8s.io/kubeadm-configuration-extraargs: "{\"ignore-preflight-errors\": [\"FileAvailable--etc-kubernetes-kubelet.conf\", \"FileAvailable--etc-kubernetes-pki-ca.crt\"]}"
+    controlplane.cluster.x-k8s.io/taints: "[]"
 spec:
-  clusterNetwork:
-    pods:
-      cidrBlocks:
-        - 192.168.0.0/16
-    serviceDomain: cluster.local
-    services:
-      cidrBlocks:
-        - 10.96.0.0/12
   topology:
-    variables:
-      - name: controller_flavor
-        value: "SCS-2V-4-20"  # Use appropriate flavor for your environment
-      - name: external_id
-        value: "public-network-id"  # Replace with actual network ID
-      - name: controlPlaneTaints
-        value: []  # Empty array removes the control-plane taint
-    class: openstack-scs-1-30-v0-sha.rwvgrna  # Use your actual ClusterClass name
+    class: docker-scs-1-30-v0-sha.rwvgrna
     controlPlane:
       replicas: 1
-      # Make control plane nodes schedulable for single-node setup
-      machineTemplate:
-        metadata:
-          annotations:
-            cluster.x-k8s.io/remove-machine-taint: ""
     version: v1.30.10
-    # No worker nodes defined - single node cluster
-```
+EOF
 
-```bash
-# Apply the single-node cluster definition
-kubectl apply -f openstack-single-node.yaml
+# Apply the cluster definition
+kubectl apply -f cluster-single.yaml
 
 # Monitor cluster creation
 kubectl get cluster -n cluster
-clusterctl describe cluster openstack-single-node -n cluster
+clusterctl describe cluster docker-testcluster-single -n cluster
 ```
 
 Note:
-- This creates a single-node Kubernetes cluster in your OpenStack Cloud-in-a-Box environment
-- Key configuration for a single-node setup:
-  - Setting `controlPlane.replicas: 1` for a single control plane node
-  - Adding annotations to remove the control-plane taint
-  - Setting `controlPlaneTaints` to an empty array
-  - Not defining any worker nodes - everything runs on the control plane
-- This single VM will run both the Kubernetes control plane and workloads
-- It's ideal for development, testing, or resource-constrained environments
-- The VM is created in OpenStack with the specified flavor
-- You can adjust the VM size by changing the controller_flavor
-- This is a real OpenStack VM, not a container in Docker
-- The single-node approach saves resources while providing a full Kubernetes environment
+- For testing and development, a single-node setup (control plane only) is more reliable
+- This configuration creates a Kubernetes cluster with just one node that acts as both control plane and worker
+- The key features of this configuration:
+  - Single control plane node (no separate worker nodes)
+  - `controlplane.cluster.x-k8s.io/taints: "[]"` removes the control-plane taint so workloads can be scheduled
+  - `ignore-preflight-errors` prevents failures during bootstrap due to pre-existing files
+- This approach is more resource-efficient and avoids worker node bootstrap issues
+- In production environments, you would typically use separate worker nodes for better separation of concerns
+- The single-node setup is recommended for development and testing scenarios
 
 ----
 
-## Examining Your OpenStack Cluster
+## Waiting for Cluster Bootstrapping
+
+- Bootstrapping a Kubernetes cluster takes time
+- Control plane initialization (~3-5 minutes)
+<!-- .element: class="fragment" data-fragment-index="0" -->
+- Add-ons deployment (~1-2 minutes)
+<!-- .element: class="fragment" data-fragment-index="1" -->
+- Monitor the progress with clusterctl
+<!-- .element: class="fragment" data-fragment-index="2" -->
+- Single-node approach simplifies troubleshooting
+<!-- .element: class="fragment" data-fragment-index="3" -->
 
 ```bash
-# Get kubeconfig for your workload cluster
-clusterctl get kubeconfig -n cluster openstack-single-node > ~/openstack-kubeconfig
-export KUBECONFIG=~/openstack-kubeconfig
+# Watch the cluster status
+watch -n 10 "clusterctl describe cluster docker-testcluster-single -n cluster"
 
-# Examine the node setup - note it's a single node with both roles
-kubectl get nodes
-kubectl describe node | grep -A5 "Taints\|Roles"
+# Check machine status
+kubectl get machines -n cluster
 
-# Explore add-ons deployed by ClusterStacks
-kubectl get pods -A
-kubectl get pods -n kube-system
-kubectl get pods -n cilium-system
-
-# Check cluster add-ons configuration
-kubectl get helmreleases -A
+# Check Docker containers
+docker ps | grep docker-testcluster
 ```
 
 Note:
-- After your OpenStack cluster is created, you can interact with it like any Kubernetes cluster
-- The nodes are actual OpenStack VMs running in your Cloud-in-a-Box environment
-- ClusterStacks automatically deploys essential add-ons:
-  - Cilium for networking
-  - CoreDNS for DNS resolution
-  - Metrics Server for resource monitoring
-  - Cloud Controller Manager for OpenStack integration
-- These components are configured to work with your OpenStack environment
-- This is a real Kubernetes cluster running on real OpenStack VMs
+- The bootstrapping process for a CAPI cluster takes time - be patient
+- For a Docker-based single-node CAPI cluster, expect 3-7 minutes total bootstrapping time
+- During bootstrapping, the following happens:
+  - Images are being pulled (Kubernetes components, CNI, etc.)
+  - kubeadm initializes the control plane
+  - Container networking is set up
+  - etcd is initialized
+  - API server, controller manager, and scheduler start
+  - CNI (Cilium) is deployed
+- You can monitor the process using the commands shown
+- The cluster is ready when the control plane machine shows as "Running" and "Ready: True"
+- Single-node clusters avoid the worker node bootstrap failures that can occur with multi-node setups
+
+----
+
+## Accessing Your Workload Cluster
+
+```bash
+# Get kubeconfig for your workload cluster
+clusterctl get kubeconfig -n cluster docker-testcluster-single > /tmp/kubeconfig-single
+
+# Check cluster nodes
+kubectl --kubeconfig /tmp/kubeconfig-single get nodes
+```
+
+Note:
+- After your workload cluster is created, you can interact with it like any Kubernetes cluster
+- The `clusterctl get kubeconfig` command retrieves the access credentials
+- You can use these credentials to directly interact with the workload cluster
+- The cluster has the Cilium CNI installed automatically as part of the ClusterStack
+
+----
+
+## Fixing Pod Scheduling Issues
+
+Some pods might remain in Pending state due to resource constraints in a single-node cluster:
+
+```bash
+# Check for pending pods
+kubectl --kubeconfig /tmp/kubeconfig-single get pods -A | grep Pending
+
+# First identify the exact deployment names if needed
+kubectl --kubeconfig /tmp/kubeconfig-single get deployments -A
+
+# Fix CoreDN
+
+Note:
+- After creating a single-node cluster, you might notice some pods remain in Pending state
+- This happens because many components are configured with multiple replicas by default
+- In a single-node environment, anti-affinity rules may prevent multiple replicas from being scheduled
+- The solution is to reduce the replica count to 1 for affected deployments
+- Common components that need adjustments include:
+  - CoreDNS (typically 2 replicas by default)
+  - Cilium Operator (typically 2 replicas by default)
+  - Metrics Server (may have multiple replicas)
+- After applying these patches, all pods should transition to Running state
+- This is a normal adjustment required for single-node clusters and doesn't affect functionality
+
+----
+
+## Examining Your Workload Cluster
+
+```bash
+# Check cluster nodes and their status
+kubectl --kubeconfig /tmp/kubeconfig-single get nodes
+
+# Check pod status across all namespaces
+kubectl --kubeconfig /tmp/kubeconfig-single get pods -A
+
+# Examine key components
+kubectl --kubeconfig /tmp/kubeconfig-single get pods -n kube-system
+```
+
+Note:
+- After your workload cluster is created, you can interact with it like any Kubernetes cluster
+- The cluster has all the necessary components for a fully functional Kubernetes environment
+- ClusterStacks automatically deploys essential add-ons like Cilium for networking
+- After the replica adjustments, all pods should be in the Running state
+- You can deploy applications to this cluster just like any other Kubernetes cluster
+- This is a real Kubernetes cluster, even though it's running as a single node
 
 ----
 
@@ -408,22 +443,54 @@ Note:
 
 ```bash
 # Deploy a sample application
-kubectl create deployment nginx --image=nginx
-kubectl expose deployment nginx --port=80 --type=ClusterIP
-kubectl port-forward service/nginx 8080:80
+kubectl --kubeconfig /tmp/kubeconfig-single create deployment nginx --image=nginx
+kubectl --kubeconfig /tmp/kubeconfig-single expose deployment nginx --port=80 --type=ClusterIP
+kubectl --kubeconfig /tmp/kubeconfig-single port-forward service/nginx 8080:80
 
 # Access the application
 curl localhost:8080
-
-# Inspect resource usage on your cluster
-kubectl top nodes
-kubectl top pods -A
 ```
 
 Note:
 - After deploying your workload cluster, you can deploy applications just like on any Kubernetes cluster
-- The application runs on the OpenStack VMs created by ClusterStacks
-- In production, you would likely use services like LoadBalancer or Ingress
-- The LoadBalancer service type works with OpenStack if it has Octavia LBaaS installed
-- Resource usage monitoring shows the actual resources used by your OpenStack VMs
+- The application runs on the Docker container created by the ClusterStack
+- This demonstrates that the cluster is fully functional
 - ClusterStacks ensures that all necessary components are properly configured
+- The single-node approach provides a complete Kubernetes environment while using minimal resources
+
+----
+
+## Troubleshooting Common Issues
+
+- Worker node bootstrap failures with multi-node clusters
+- Certificate validation issues
+<!-- .element: class="fragment" data-fragment-index="0" -->
+- Docker socket access problems
+<!-- .element: class="fragment" data-fragment-index="1" -->
+- Resource constraints (CPU, memory, disk)
+<!-- .element: class="fragment" data-fragment-index="2" -->
+- Network connectivity issues
+<!-- .element: class="fragment" data-fragment-index="3" -->
+
+```bash
+# Check for pending pods due to resource constraints
+kubectl --kubeconfig /tmp/kubeconfig-single get pods -A | grep Pending
+
+# Fix multi-replica deployments for single-node clusters
+kubectl --kubeconfig /tmp/kubeconfig-single -n kube-system patch deployment coredns --type='json' -p='[{"op": "replace", "path": "/spec/replicas", "value":1}]'
+
+# Check Kubernetes events for issues
+kubectl --kubeconfig /tmp/kubeconfig-single get events --sort-by='.lastTimestamp'
+```
+
+Note:
+- CAPI clusters can encounter various issues during creation and bootstrapping
+- For multi-node clusters, worker node bootstrap failures are common due to preflight checks
+  - The solution is to use the single-node approach or configure preflight check ignores
+- In single-node clusters, pod scheduling issues can occur due to multiple replicas and anti-affinity
+  - The solution is to reduce replica counts for system deployments
+- Resource constraints are common in development environments
+  - Ensure your system has enough CPU, memory, and disk space
+- Docker socket access is critical - ensure it's properly mounted
+- Certificate validation issues can be resolved with the `--ignore-webhook-certificate` flag
+- Check events and logs to diagnose specific issues
