@@ -17,13 +17,14 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 3. [Cluster Stacks in the SCS Ecosystem](#3-cluster-stacks-in-the-scs-ecosystem)
 4. [Architecture Overview](#4-architecture-overview)
 5. [Components and Responsibilities](#5-components-and-responsibilities)
-6. [Quickstart Guide](#6-quickstart-guide)
-7. [Configuration and Customization](#7-configuration-and-customization)
-8. [Building your own Cluster Stacks](#8-building-your-own-cluster-stacks)
-9. [Upgrading Workload Clusters](#9-upgrading-workload-clusters)
-10. [Debugging and Troubleshooting](#10-debugging-and-troubleshooting)
-11. [Summary and Further Learning](#11-summary-and-further-learning)
-12. [Appendices and Resources](#12-appendices-and-resources)
+6. [Quickstart Guide - Docker Infrastructure](#6-quickstart-guide---docker-infrastructure)
+7. [Quickstart Guide - OpenStack Infrastructure](#7-quickstart-guide---openstack-infrastructure)
+8. [Configuration and Customization](#8-configuration-and-customization)
+9. [Building your own Cluster Stacks](#9-building-your-own-cluster-stacks)
+10. [Upgrading Workload Clusters](#10-upgrading-workload-clusters)
+11. [Debugging and Troubleshooting](#11-debugging-and-troubleshooting)
+12. [Summary and Further Learning](#12-summary-and-further-learning)
+13. [Appendices and Resources](#13-appendices-and-resources)
 
 ## 1. Introduction
 
@@ -197,7 +198,7 @@ providers/
         └── <k8s_major_minor_version>/
 ```
 
-## 6. Quickstart Guide
+## 6. Quickstart Guide - Docker Infrastructure
 
 [SCS Cluster Stacks Quickstart guide](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/providers/openstack/quickstart)
 
@@ -315,7 +316,178 @@ kubectl get nodes --kubeconfig /tmp/kubeconfig
 2. Verify workload cluster properly running
 3. Deploy a registry service (Harbor) from [Registry training](/registry.md#6-quickstart-guide)
 
-## 7. Configuration and Customization
+## 7. Quickstart Guide - OpenStack Infrastructure
+
+- Bootstrap a management cluster with KinD
+
+```bash
+kind create cluster
+```
+
+- Transform it into a management cluster with `clusterctl`
+
+```bash
+export CLUSTER_TOPOLOGY=true
+export EXP_CLUSTER_RESOURCE_SET=true
+export EXP_RUNTIME_SDK=true
+kubectl apply -f https://github.com/k-orc/openstack-resource-controller/releases/latest/download/install.yaml
+clusterctl init --infrastructure openstack
+
+kubectl -n capi-system rollout status deployment
+kubectl -n capo-system rollout status deployment
+```
+
+- Create values.yaml for CSO
+
+```bash
+cat > values.yaml <<EOF
+clusterStackVariables:
+  ociRepository: registry.scs.community/kaas/cluster-stacks
+controllerManager:
+  rbac:
+    additionalRules:
+      - apiGroups:
+          - "openstack.k-orc.cloud"
+        resources:
+          - "images"
+        verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+EOF
+```
+
+- Install Cluster Stack Operator (CSO) with above values
+
+```bash
+helm upgrade -i cso \
+-n cso-system \
+--create-namespace \
+oci://registry.scs.community/cluster-stacks/cso \
+--values values.yaml
+```
+
+- Create cluster namespace
+
+```bash
+kubectl create namespace cluster
+```
+
+- Create cloud secret using csp-helper chart
+
+You need to run the csp-helper chart always. You always need to specify the path to your `clouds.yaml`.
+The `clouds.yaml` should contain also the secrets that you normally split off into `secure.yaml`.
+
+If you choose to use clouds.yaml with application credentials (auth_type: `v3applicationcredential`), it is the preferred and more secure option.
+If you opt to use clouds.yaml with password authentication (auth_type: `v3password`), that is also acceptable, but:
+- Ensure that `project_id` is set, `project_name` works only for CAPO, not for OCCM!
+- Using `project_id` guarantees that both CAPO and OCCM function correctly with `v3password` authentication.
+
+If the OpenStack API is secured with a certificate issued by a custom CA, include `--set cacert="$(cat /path/to/cacert)"` in your Helm command.
+There is no need to update `clouds.yaml` with the custom CA, passing the `--set cacert=...` parameter is sufficient. 
+The openstack-csp-helper ensures that the CA certificate is available to both CAPO and OCCM.
+
+```bash
+helm upgrade -i openstack-secrets -n cluster --create-namespace https://github.com/SovereignCloudStack/openstack-csp-helper/releases/latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml --set cacert="$(cat /path/to/cacert)"
+```
+
+- Deploy ClusterStack
+
+```bash
+cat <<EOF | kubectl apply -f -
+apiVersion: clusterstack.x-k8s.io/v1alpha1
+kind: ClusterStack
+metadata:
+  name: openstack
+  namespace: cluster
+spec:
+  provider: openstack
+  name: scs
+  kubernetesVersion: "1.32"
+  channel: custom
+  autoSubscribe: false
+  noProvider: true
+  versions:
+    - v0-sha.lvlvyfw
+EOF
+```
+
+- Check if ClusterClass exist
+```bash
+kubectl get clusterclass -n cluster
+```
+
+- Check whether the image already exists in the OpenStack project or if the OpenStack Resource Controller (ORC) is currently uploading it
+- For demo purposes, it's a good idea to have the image uploaded in advance to avoid delays
+
+- Note: Under normal conditions, cluster creation can proceed even if the image is not yet available. However, we observed a situation where the OpenStackServer resource entered an error state due to the not yet ready image, causing the cluster creation process to stacked.
+Manually deleting the affected OpenStackServer resource and restarting the CAPO controller (`kubectl delete po -l control-plane=capo-controller-manager -n capo-system`) resolved the issue. Please be aware of this behavior, it requires further investigation.
+
+```bash
+kubectl get image -n cluster
+```
+
+- Create cluster
+
+```bash
+cat <<EOF | kubectl apply -f -
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-cluster
+  namespace: cluster
+  labels:
+    managed-secret: cloud-config
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - "172.16.0.0/16"
+    serviceDomain: cluster.local
+    services:
+      cidrBlocks:
+      - "10.96.0.0/12"
+  topology:
+    class: openstack-scs-1-32-v0-sha.lvlvyfw
+    controlPlane:
+      replicas: 1
+    version: v1.32.1
+    workers:
+      machineDeployments:
+        - class: default-worker
+          name: md-0
+          replicas: 1
+EOF
+```
+
+- Validate the cluster health
+
+```bash
+clusterctl describe cluster my-cluster -n cluster
+```
+
+- Get kubeconfig and play with cluster
+
+```bash
+clusterctl get kubeconfig -n cluster my-cluster > ~/.kube/cluster.my-cluster.yaml
+kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get nodes -o wide
+kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get pods -A
+```
+
+- Cleanup
+
+Tear down both the workload cluster and the bootstrap cluster
+
+```bash
+kubectl delete cluster -n cluster my-cluster
+kind delete cluster
+```
+
+## 8. Configuration and Customization
 
 - Clusterstacks can be configured with env variables,
   [Envsubst](https://github.com/drone/envsubst), is required to expand
@@ -396,11 +568,11 @@ For more details, see available variables [table](https://docs.scs.community/doc
 2. Push needed images
 3. Create a workload cluster using own registry as a source
 
-## 8. Building your own Cluster Stacks
+## 9. Building your own Cluster Stacks
 
 This section describes how to develop your own Cluster stack release from scratch.
 
-### 8.1. Directory structure
+### 9.1. Directory structure
 
 Create a new directory, e.g. `my-clusterstack`. Inside this directory create the following sub-directories:
 
@@ -408,7 +580,7 @@ Create a new directory, e.g. `my-clusterstack`. Inside this directory create the
 - `cluster-addon` - containing helmcharts to be installed as cluster addons, e.g. a CNI of your choice or metrics-server
 - `node-image` (optional) - containing files to build your cluster's node-image - not used in this example.
 
-### 8.2. Cluster Class
+### 9.2. Cluster Class
 
 - Create directory
 
@@ -459,7 +631,7 @@ sed -i 's/{{/{{ `{{/g;s/}}/}}` }}/g' *.yaml
 helm template .
 ```
 
-### 8.3. Cluster Addon
+### 9.3. Cluster Addon
 
 - Initialize cluster addon directory
 
@@ -508,7 +680,7 @@ BeforeClusterUpgrade:
     action: apply
 ```
 
-### 8.4. Build clusterstack release using `csctl`
+### 9.4. Build clusterstack release using `csctl`
 
 - Download [CSCTL](https://github.com/SovereignCloudStack/csctl/releases/latest) and unpack
 
@@ -589,7 +761,7 @@ csctl create . --output ../my-clusterstack-build  --mode hash --publish  --remot
 4. Push the implementation to own github repository
 5. Create a workload cluster using this cluster stack
 
-## 9. Upgrading Workload Clusters
+## 10. Upgrading Workload Clusters
 
 In the management cluster the `ClusterStack` object is the central resource
 referencing specific provider, cluster stack and Kubernetes minor version.
@@ -656,7 +828,7 @@ KUBE_EDITOR="sed -i 's#version: v1.30.10#version: v1.32.0#'" kubectl -n cluster 
    to 1.31
 2. Verify Kubernetes version and proper function of the workload cluster
 
-## 10. Debugging and Troubleshooting
+## 11. Debugging and Troubleshooting
 
 In case of cluster not working as expected there are steps you can take to
 diagnose the problem.
@@ -694,7 +866,7 @@ Cluster/docker-testcluster                                        False  Warning
 kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "====== $ns $d"; kubectl logs --since=10m -n $ns deployment/$d; done
 ```
 
-## 11. Summary and Further Learning
+## 12. Summary and Further Learning
 
 - Recap of what you’ve learned
   - Cluster Stacks is a framework for fully defining production ready
@@ -719,7 +891,7 @@ kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "==
   - Check out the [Community calendar](https://docs.scs.community/community/collaboration)
     for information on teams meetings
 
-## 12. Appendices and Resources
+## 13. Appendices and Resources
 
 - [Troubleshooting tips](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stack-operator/topics/troubleshoot)
 - [SCS cluster-stacks repository](https://github.com/SovereignCloudStack/cluster-stacks)
