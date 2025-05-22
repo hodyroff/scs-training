@@ -1,0 +1,51 @@
+# +---------------------+      +-------------------+      +------------------+
+# | LoadBalancer        | ---> | Nginx Container   | ---> | Serves index.html|
+# | Service (Port 80)   |      | (Port 80)         |      |   (Hello Page)   |
+# +---------------------+      +-------------------+      +------------------+
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workload-html
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Hello</title>
+      </head>
+      <body>
+        <h1 style="font-size: 64px; text-align: center; margin-top: 20%;">Hello SCS</h1>
+      </body>
+    </html>
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: workload-pod-lb
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+  volumes:
+    - name: html-volume
+      configMap:
+        name: workload-html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workload-service-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+    - port: 80
+      targetPort: 80
