@@ -391,8 +391,10 @@ If the OpenStack API is secured with a certificate issued by a custom CA, includ
 There is no need to update `clouds.yaml` with the custom CA, passing the `--set cacert=...` parameter is sufficient. 
 The openstack-csp-helper ensures that the CA certificate is available to both CAPO and OCCM.
 
+If you want to use OVN provider OpenStack Octavia for the Workload LBs set `--set octavia_ovn=true` in the helm command.
+
 ```bash
-helm upgrade -i openstack-secrets -n cluster --create-namespace https://github.com/SovereignCloudStack/openstack-csp-helper/releases/latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml --set cacert="$(cat /path/to/cacert)"
+helm upgrade -i openstack-secrets -n cluster --create-namespace https://github.com/SovereignCloudStack/openstack-csp-helper/releases/latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml --set cacert="$(cat /path/to/cacert)" --set octavia_ovn=true
 ```
 
 - Deploy ClusterStack
@@ -456,6 +458,10 @@ spec:
     controlPlane:
       replicas: 1
     version: v1.32.1
+    # If you want to use octavia-ovn provider for Kubernetes API
+    variables:
+      - name: apiserver_loadbalancer
+        value: "octavia-ovn"
     workers:
       machineDeployments:
         - class: default-worker
@@ -478,9 +484,20 @@ kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get nodes -o wide
 kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get pods -A
 ```
 
+- You can use the following example to deploy workload (nginx server with html page) with load balancer
+
+```bash
+kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml apply -f ./clusterstacks/test-workload-lb.yaml
+```
+
+Get the IP address of the LB (from its status) and try to reach it, e.g. `curl <LB IP address>`
+
 - Cleanup
 
 Tear down both the workload cluster and the bootstrap cluster
+
+Note: Do not forget to cleanup workload LB before you tear down the workload cluster, e.g. `kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml delete -f ./clusterstacks/test-workload-lb.yaml`
+LB blocks the workload cluster deletion if it is not removed beforehand.
 
 ```bash
 kubectl delete cluster -n cluster my-cluster
