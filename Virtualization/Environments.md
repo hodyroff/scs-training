@@ -50,8 +50,9 @@
 * Cloud-in-a-Box is a single node deployment of SCS IaaS
     - It can be deployed in a virtual machine (use SCSI disk driver!)
 * It has fairly minimal requirements:
-    - 32GiB RAM, 4 cores, 400GB disk space, disable k3s and OpenSearch for this small setups
+    - 32GiB RAM, 4 cores, 400GB disk space, disable k3s and OpenSearch for small setups
     - A 8 core 96GiB machine with 2 4TB NVMes works really rather well and survices quite some workloads
+        - Keep 16GiB free for the host, more if k3s and OpenSearch are running
 * Fully automated installation process with very limited adaptability
 * Uses self-signed certificates and predefined passwords.
 * Do not expose this to the internet! Do not ever put valuable data there.

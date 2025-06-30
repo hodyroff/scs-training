@@ -10,11 +10,12 @@
     - They are just marked as deleted and deletion time is stored (as was the creation time)
     - You could use those records for billing purposes.
         * These records could also be a second source of truth (allowing to double-check the records created from ceilometer/gnocchi)
+        * You would automatically clean them up in your billing runs
 * Once you confirmed you don't need them any longer, you can remove them from the database.
     - As admin, you can ask openstack about deleted servers -- beware, the list may be huge.
         * I have not found a good way to tell `openstack` to sort by deletion time, so you might need to retrieve the complete list and then start by looking at the bottom of the list
 ```bash
-# Getting 100 old deleted servers, the `tr -d` is for CiaB container extra CR
+# Getting 100 old deleted serversi (the `tr -d` is for CiaB container extra CR)
 DELETED=$(openstack server list --all --deleted -c ID -f value | tr -d '\r')
 ```
 * Is it recommended to use `nova-manage` to move out old entries to shadow tables (for later deletion)
@@ -44,7 +45,6 @@ Seasoned SQL admins will surely find more efficient ways to do this with joins a
 More tables might have foreign key references to the `instances` table, so you might add more `DELETE` statements.
 
 
-
 #### Cinder Volumes
 * Like Nova, cinder only marks volumes as deleted in the database and records the deletion time, but does
 not remove the table entries.
@@ -66,13 +66,14 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
 #### Learning
 * You need to do regular DB maintenance work with `nova-manage` and `cinder-manage`
     - These can be part of your regular billing runs.
-
+* You don't normally tweak database tables directly, consider above examples as an exception,
+  where you will very carefully document and review what you do.
 
 ### Stuck volumes
 * Occasionally, you will find cinder volumes that users can not use and not cleanup
     - They could have a `reserved` or `deleting` status for extended amounts of time (many minutes)
     - They could be reported as attached to a VM that has long gone (and which we will only see the UUID of, not the name)
-* The cinder service seems to not be cery robust if processing of volume changes fall behind in high (control-plane) load situations
+* The cinder service seems to not be very robust if processing of volume changes fall behind in high (control-plane) load situations
     - Longstanding OpenStack issue ...
 * Approach: 
     - Set status to error as admin
@@ -81,7 +82,7 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
 * If this does not work:
     - Check in ceph whether there is an object in the `images` or `volumes` pool that needs deleting
         * Be very careful!
-    - If they're not gone yet, you may need to remove from the database as well
+    - If they're not gone yet, you may need to remove them from the database as well
 * Charging customers for unusable volume may not create enthusiastic responses
 
 ### Stuck loadbalancers
@@ -112,13 +113,38 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
   without stopping all VMs before.
 * The result is ugly:
     - Typically the VMs will no longer boot
-    - Checking the console log, one can see that their root disks are read-only
+    - Checking the console log (`openstack console log show` or using noVNC from horizon), one can see that their
+      root disks are read-only
     - This is cinder/ceph refusing to let them write
-* <!--TODO: Recovery-->
+* Recovery: Drop locks from rbd devices that correspond to your volume
+    - See example below
+
+### Recovering from locks held after surprise ceph shutdown
+* This affects volumes in `volumes` pool name `volume-${VOLUUID}` and "local" root disks
+  in pool `vms` name `${VMUUID}_disk` (in case you have the instance's root disks stored
+  on ceph).store instance
+* Cinder locks these disk files (unless you use `multiattach: True`) in ceph RBD so they
+  can not be accessed read-write by more than one VM (thus the read-only character of
+  your root disk).
+* Example with a running VM booted from volume `82b99323-3b69-4b05-9cb9-770324235099`:
+
+```bash
+dragon@cumulus(config:test):~ [0]$ rbd lock list volumes/volume-82b99323-3b69-4b05-9cb9-770324235099
+There is 1 exclusive lock on this image.
+Locker          ID                    Address
+client.4105767  auto 139984392802144  192.168.16.10:0/3228397893
+dragon@cumulus(config:test):~ [0]$ rbd lock rm volumes/volume-82b99323-3b69-4b05-9cb9-770324235099 "auto 139984392802144" client.4105767
+dragon@cumulus(config:test):~ [0]$ rbd lock list volumes/volume-82b99323-3b69-4b05-9cb9-770324235099
+dragon@cumulus(config:test):~ [0]$
+```
+
+* Don't do this on a running server unless you want to see it's volume turn to read-only.
+    - Shut it down (`openstack server stop`) and wait for it to be in `SHUTDOWN` state.
+    - On a Cloud-in-a-Box, you can use `/usr/local/bin/shutdown-instances.sh` to force-stop all VMs
 
 ### Practical assignment
 * Trainer will create volumes that are attached to already gone VMs or stuck in reserved.
     - Recover
-    - Watch out to not lose storage space
+    - Watch out to not leak storage space
 
 
