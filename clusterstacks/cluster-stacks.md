@@ -318,13 +318,18 @@ kubectl get nodes --kubeconfig /tmp/kubeconfig
 
 ## 7. Quickstart Guide - OpenStack Infrastructure
 
-- Bootstrap a management cluster with KinD
+Note: There is the repository [scs-training-kaas-scripts](https://github.com/SovereignCloudStack/scs-training-kaas-scripts)
+with bash scripts that perform the steps in this quick start guide. Ideally, you have a Linux VM
+with some tools installed, use [00-bootstrap-vm-cs.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/00-bootstrap-vm-cs.sh) to install tooling.
+
+- Bootstrap a management cluster with KinD ([01-kind-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/01-kind-cluster.sh))
 
 ```bash
 kind create cluster
 ```
 
-- Transform it into a management cluster with `clusterctl`
+
+- Transform it into a management cluster with `clusterctl` ([02-deploy-capi.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/02-deploy-capi.sh))
 
 ```bash
 export CLUSTER_TOPOLOGY=true
@@ -337,7 +342,7 @@ kubectl -n capi-system rollout status deployment
 kubectl -n capo-system rollout status deployment
 ```
 
-- Create values.yaml for CSO
+- Create values.yaml for CSO ([03-deploy-cso.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/03-deploy-cso.sh))
 
 ```bash
 cat > values.yaml <<EOF
@@ -371,13 +376,15 @@ oci://registry.scs.community/cluster-stacks/cso \
 --values values.yaml
 ```
 
-- Create cluster namespace
+- Create cluster namespace ([04-cloud-secret.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/04-cloud-secret.sh))
 
 ```bash
 kubectl create namespace cluster
 ```
 
-- Create cloud secret using csp-helper chart
+- Create cloud secret using csp-helper chart (Note: This is done differently in the scripts, which do not use the
+helm charts; 04-cloud-secret.sh creates the secrets for the CAPO, the workload cluster secrets are created later
+per cluster in 07-cluster-secret.sh.)
 
 You need to run the csp-helper chart always. You always need to specify the path to your `clouds.yaml`.
 The `clouds.yaml` should contain also the secrets that you normally split off into `secure.yaml`.
@@ -397,7 +404,7 @@ If you want to use OVN provider OpenStack Octavia for the Workload LBs set `--se
 helm upgrade -i openstack-secrets -n cluster --create-namespace https://github.com/SovereignCloudStack/openstack-csp-helper/releases/latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml --set cacert="$(cat /path/to/cacert)" --set octavia_ovn=true
 ```
 
-- Deploy ClusterStack
+- Deploy ClusterStack ([05-deploy-cstack.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/05-deploy-cstack.sh))
 
 ```bash
 cat <<EOF | kubectl apply -f -
@@ -418,7 +425,7 @@ spec:
 EOF
 ```
 
-- Check if ClusterClass exist
+- Check if ClusterClass exist ([06-wait-clusterclass.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/06-wait-clusterclass.sh))
 ```bash
 kubectl get clusterclass -n cluster
 ```
@@ -432,8 +439,9 @@ Manually deleting the affected OpenStackServer resource and restarting the CAPO 
 ```bash
 kubectl get image -n cluster
 ```
+- New scrpts only: Create per-cluster secret: [07-cluster-secret.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/07-cluster-secret.sh)
 
-- Create cluster
+- Create cluster ([08-create-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/08-create-cluster.sh))
 
 ```bash
 cat <<EOF | kubectl apply -f -
@@ -470,7 +478,7 @@ spec:
 EOF
 ```
 
-- Validate the cluster health
+- Validate the cluster health ([09-wait-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/09-wait-cluster.sh))
 
 ```bash
 clusterctl describe cluster my-cluster -n cluster
@@ -484,7 +492,7 @@ kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get nodes -o wide
 kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get pods -A
 ```
 
-- You can use the following example to deploy workload (nginx server with html page) with load balancer
+- You can use the following example to deploy workload (nginx server with html page) with load balancer ([21-deploy-kube-dashboard.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/21-deploy-kube-dashboard.sh))
 
 ```bash
 kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml apply -f ./clusterstacks/test-workload-lb.yaml
@@ -492,7 +500,7 @@ kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml apply -f ./clusterstacks/te
 
 Get the IP address of the LB (from its status) and try to reach it, e.g. `curl <LB IP address>`
 
-- Cleanup
+- Cleanup ([56-cleanup-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/56-cleanup-cluster.sh) and [57-delete-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/57-delete-cluster.sh))
 
 Tear down both the workload cluster and the bootstrap cluster
 
