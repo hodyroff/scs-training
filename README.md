@@ -32,8 +32,8 @@ Contributions:
 The work to create this material has been paid for by ITU and thus
 belongs to the [ITU](https://itu.int/).
 
-International Telecommunication Union (ITU)
-Place des Nations
+International Telecommunication Union (ITU)  
+Place des Nations  
 1211 Geneva 20 Switzerland
 
 ## License
@@ -42,12 +42,18 @@ suitable open source license.
 The current CC-BY-SA-4.0 license is a (suitable) place holder until
 a final decision on the license has been taken.
 
+## No warranty
+While the information in this material was researched with care,
+the authors can not take any responsibility for damage that may
+occur from incomplete or wrong information in this material.
+Any liability is excluded to the maximum extent permitted by law.
+
 ## Usage
 Making this material freely available has the downside that any company
 can use it and offer trainings based on this material. A good training
 can only be delivered by trainers that have deep knowledge and experience
 in deploying and running SCS infrastructure. There is currently no formal
-training certification program by the Forum SCS-Standards at the
+training certification program yet by the Forum SCS-Standards at the
 [OSBA](https://osb-alliance.de/)
 who owns and governs the SCS trademarks. When offering SCS trainings, we
 recommend to reach out to the Forum SCS-Standards <scs@osb-alliance.com>
