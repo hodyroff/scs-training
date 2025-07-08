@@ -31,7 +31,7 @@
 * Data is sorted into *pools*
     - Pools can have their individual replication strategy, scrubbing policy etc.
     - A pool has a set of *placement groups* associated with it
-* Clients need calculate the placement group of an object via CRUSH algorithm
+* Clients need to calculate the placement group of an object via CRUSH algorithm
     - Hashing the object ID resulting in an identifier `<POOLID>.<PG>`
     - From the *placement group*, the *Acting Set* can be determined. The Acting Set 
       is a list of OSDs responsible for this PG.
@@ -43,7 +43,7 @@
 * For high availability `size=3`, `min_size=2` is typically used
     - Each object is written to three OSDs.
     - Data integrity can be ensured as long as two OSDs are accessible (`in` and `up`).
-* 3x replication is that standard Ceph strategy
+* 3x replication is the standard Ceph storage strategy
     - It is very robust
     - High performance reads
     - Easy scrubbing
@@ -55,14 +55,14 @@
     - Any set of K chunks is sufficient to calculate the data
     - Somewhat compute intensive (for writing and scrubbing)
     - Net capacity is K/(K+M) of gross capacity, e.g. 3/(3+2) = 60%
-    - Considered less proven than 3xreplication
+    - Considered less proven than 3x replication
 
 ### Block storage: Rados Block Device
-* Client code that exposes ceph storage as a block device
+* Client code that exposes ceph storage as a block device ("image")
     - A set of freely addressable blocks
     - Like a disk
-* Stores blocks of e.g. 4MB as ceph objects
-* Available as linux kernel driver (rbd)
+* Stores blocks of e.g. 4MB as ceph rados objects
+* Available as linux kernel driver (rbd) and supported by libvirt
     - Acts like other block devices (e.g. SCSI disks)
 * Block size considerations:
     - Writes cause Read-Modify-Write cycles, which becomes worse for larger blocks
