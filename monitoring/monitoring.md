@@ -428,6 +428,6 @@ sudo vim kube-controller-manager.yaml
 ...
 ```
 ### 6.2. Resources
-[SCS Monitoring Documentation](https://docs.scs.community/docs/operating-scs/components/monitoring/docs/overview)
-[dNation Kubernetes Monitoring](https://dnationcloud.github.io/kubernetes-monitoring/)
+* [SCS Monitoring Documentation](https://docs.scs.community/docs/operating-scs/components/monitoring/docs/overview)
+* [dNation Kubernetes Monitoring](https://dnationcloud.github.io/kubernetes-monitoring/)
 
