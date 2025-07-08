@@ -21,7 +21,7 @@ DELETED=$(openstack server list --all --deleted -c ID -f value | tr -d '\r')
 * Is it recommended to use `nova-manage` to move out old entries to shadow tables (for later deletion)
     - See <https://docs.openstack.org/nova/2024.2/cli/nova-manage.html>
 
-#### Emergency: Delete deleted servers directly in the database (up till Apr 30 23:59:59 UTC)
+#### Example: Delete deleted servers directly in the database (up till Apr 30 23:59:59 UTC)
 ```sql
 USE nova;
 DELETE iae FROM `instance_actions_events` AS iae, `instance_actions` AS ia, `instances` AS inst
@@ -53,7 +53,7 @@ not remove the table entries.
 * It is recommended to use the `cinder-manage` tool
     - See <https://docs.openstack.org/cinder/2024.2/cli/cinder-manage.html>
 
-* Database way (emergency)
+* Database example (emergency)
 ```sql
 USE cinder;
 DELETE FROM `volume_attachment` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
@@ -67,7 +67,7 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
 * You need to do regular DB maintenance work with `nova-manage` and `cinder-manage`
     - These can be part of your regular billing runs.
 * You don't normally tweak database tables directly, consider above examples as an exception,
-  where you will very carefully document and review what you do.
+  where you will need to very carefully document and review what you do.
 
 ### Stuck volumes
 * Occasionally, you will find cinder volumes that users can not use and not cleanup
@@ -85,16 +85,16 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
     - If they're not gone yet, you may need to remove them from the database as well
 * Charging customers for unusable volume may not create enthusiastic responses
 
-### Stuck loadbalancers
+### Stuck LoadBalancers
 * Loadbalancers can get stuck in `PENDING_CREATE` or `PENDING_DELETE`.
     - Stuck means that they remain in this state for more than a minute (and then never make any progress).
     - This happens relatively often with the amphora provider (driver)
-    - Fortunatey, the ovn provider does not expose this bad behavior much
+    - Fortunately, the ovn provider does not expose this bad behavior much
 * These can not be cleaned up by the user
 * There is no CLI command the author is aware of for the admin to set them to error or to delete them
 * The solution is to go in the database :-( and set them to error for deletion
-* Charging customers for stuck loadbalancers may not create enthusiastic responses
-* Loadbalancer: There is a bug that makes the `octavia_api` container leaks file descriptors.
+* Charging customers for stuck loadbalancers may not create enthusiastic responses, so avoid it
+* Known bug in octavia Loadbalancer (affecting ovn provider): The `octavia_api` container leaks file descriptors.
     - See <https://docs.openstack.org/cinder/2024.2/cli/cinder-manage.html>
     - Automated occasional (nightly) restarts of the `octavia_api` container will help to avoid customer impact
         * Alternatively you monitor the FD count or the `octavia_api` availability and restart when the problem approaches / arises
@@ -120,9 +120,9 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
     - See example below
 
 ### Recovering from locks held after surprise ceph shutdown
-* This affects volumes in `volumes` pool name `volume-${VOLUUID}` and "local" root disks
-  in pool `vms` name `${VMUUID}_disk` (in case you have the instance's root disks stored
-  on ceph).store instance
+* This affects volumes in `volumes` pool with name `volume-${VOLUUID}` and "local" root disks
+  in pool `vms` named `${VMUUID}_disk` (in case you have the instance's root disks stored
+  on ceph)
 * Cinder locks these disk files (unless you use `multiattach: True`) in ceph RBD so they
   can not be accessed read-write by more than one VM (thus the read-only character of
   your root disk).
@@ -138,7 +138,7 @@ dragon@cumulus(config:test):~ [0]$ rbd lock list volumes/volume-82b99323-3b69-4b
 dragon@cumulus(config:test):~ [0]$
 ```
 
-* Don't do this on a running server unless you want to see it's volume turn to read-only.
+* Don't do this on a volume backing a running server unless you want to see its volume turn to read-only.
     - Shut it down (`openstack server stop`) and wait for it to be in `SHUTDOWN` state.
     - On a Cloud-in-a-Box, you can use `/usr/local/bin/shutdown-instances.sh` to force-stop all VMs
 
