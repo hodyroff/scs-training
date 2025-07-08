@@ -439,7 +439,7 @@ Manually deleting the affected OpenStackServer resource and restarting the CAPO 
 ```bash
 kubectl get image -n cluster
 ```
-- New scrpts only: Create per-cluster secret: [07-cluster-secret.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/07-cluster-secret.sh)
+- New scripts only: Create per-cluster secret: [07-cluster-secret.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/07-cluster-secret.sh)
 
 - Create cluster ([08-create-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/08-create-cluster.sh))
 
@@ -931,6 +931,7 @@ kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "==
 - [Troubleshooting tips](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stack-operator/topics/troubleshoot)
 - [SCS cluster-stacks repository](https://github.com/SovereignCloudStack/cluster-stacks)
 - [cluster-stacks-demo repository](https://github.com/SovereignCloudStack/cluster-stacks-demo)
+- [SCS training KaaS Scripts](https://github.com/SovereignCloudStack/scs-training-kaas-scripts)
 - [Cluster Stacks Operator documentation](https://github.com/SovereignCloudStack/cluster-stack-operator/blob/main/docs/README.md)
 - Links to documentation:
   - [SCS cluster stacks documentation](https://docs.scs.community/docs/category/cluster-stacks)
