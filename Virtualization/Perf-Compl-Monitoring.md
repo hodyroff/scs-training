@@ -5,17 +5,25 @@ or [Ciab Guide](https://docs.scs.community/docs/iaas/deployment-examples/cloud-i
 for a list of webinterfaces to manage your infrastructure.
 
 ### Homer
+A dashboard with links to the specific dashboards.
 
 ### Netbox
+IP address and asset management.
 
 ### ARA
+Ansible Runbook Records.
+
+### RabbitMQ
+The queuing service between all OpenStack services.
 
 ### phpMyAdmin
+Database access.
 
 ### Flower
+Celery reconciler task queue.
 
 ### Netdata
-
+Live realtime monitoring.
 
 ## OpenStack Health Monitor (OSHM)
 
