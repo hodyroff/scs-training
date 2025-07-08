@@ -93,7 +93,7 @@
     * Look at testbed configuration
 
 ## [Maintenance and dealing with errors](Maintenance.md)
-* Database cleanup
+* [Database cleanup](Maintenance.md#database-cleanup)
 * Stuck volumes
 * Stuck loadbalancer
 * FD leak
