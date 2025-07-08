@@ -331,6 +331,7 @@ docker run \
 
 ### Inventory
 <https://docs.scs.community/docs/iaas/guides/configuration-guide/configuration-repository/#step-4-post-processing-of-the-generated-configuration>
+
 * Cookiecutter creates node `node01` for your manager. Adjust it to the real name.
     - It is convenient to ensure that DNS resolution works with the used names
     - If you use the domain `region1.mycloud.org` and call the manager `manager`, it is

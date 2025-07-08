@@ -344,6 +344,7 @@ Both dashboards allow to download clouds.yaml or old-style openrc files.
 ## Internal infrastructure
 
 OpenStack requires queuing and a database to work
+
 * We use mariadb (free version of MySQL)
     - Clustered with galera for high availability
 * memcached and/or proxysql for caching (performance)
@@ -441,6 +442,7 @@ OpenStack requires queuing and a database to work
 
 ### Digression: Setting up or using a CiaB for testing
 <https://docs.scs.community/docs/iaas/deployment-examples/testbed/>
+
 * A Cloud-in-a-Box (CiaB) is an SCS setup for a single node
     - Can be deployed on bare metal (wipes your disk!) or in a VM
 * You can collect a lot of experience with it
