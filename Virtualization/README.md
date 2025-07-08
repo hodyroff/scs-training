@@ -105,34 +105,34 @@
 ## [Updates and Upgrades](Updates.md)
 * Security advisories and security updates
     * Real-world example
-* Regular maintenance updates
-* Version Upgrades
 * Hardware maintenance
     * Hypervisor/Kernel/Firmware updates
     * Live migration/evacuation
+* Version Upgrades
 * Adding and removing hardware nodes
 * Practical assignment
     * Update a service
 
 ## [Supporting users](Support.md)
-* Data Protection considerations
-* Common misunderstandings
-    * Floating IPs
-    * Keypairs
+* Responsibilities and Data Protection considerations
+* Floating IPs
+* Port security and Security groups
 * cloud-init
+* Keypairs
 * IaC tooling
-* Backups and snapshots
+* Using the OpenStack API
+* Stateful vs Stateless VMs
+    * Pets and cattle
 * Boot failures
     * Console log
     * Storage recovery
-* Port security and Security group performance
+* Backups and snapshots
 * Security incidents
     * Fraud
     * Hacked VMs
     * DoS/DDoS
-* Stateful vs Stateless VMs
-    * Pets and cattle
 * Practical assignment
-    * Clone a VM
     * Download a Storage volume
+    * Clone a VM
+    * Rescue a VM
 

@@ -56,6 +56,7 @@
             osism apply -a upgrade $svc
         done
 ```
+
     - Update OpenStack services (the exact list depends on your deployment)
 ```bash
         set -e
@@ -63,6 +64,7 @@
             osism apply -a upgrade $svc
         done
 ```
+
     - Update prometheus and grafana: `osism apply -a upgrade prometheus; osism apply -a upgrade grafana`
     - Ensure other containers are in sync:
 ```bash
@@ -71,6 +73,7 @@
             osism apply $svc
         done
 ```
+
     - Clean up unneeded containers: `osism apply cleanup-docker-images -e ireallymeanit=yes`
 
 ### Adding and removing compute nodes
@@ -78,3 +81,6 @@
     - Evacuate compute hosts
 * Adjust inventory
 * Apply all services with `osism apply` to roll out the change
+
+### Practical assignment
+* Upgrade a service

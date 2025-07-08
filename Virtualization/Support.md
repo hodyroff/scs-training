@@ -19,7 +19,7 @@
 ### Floating IPs
 * Making a VM reachable from the outside typically requires several steps on OpenStack
     - Connecting the network port to a network that is connected to a router that is connected to the outside network
-    - Allocating a floating IP from the outside network and attaching ot to the network port of that VM
+    - Allocating a floating IP from the outside network and attaching it to the network port of that VM
     - Ensuring security groups allow (incoming) traffic to that network port
     - The VM itself may have firewalling functionality that needs to be adjusted (or disabled)
 * Floating IPs are **not** visible from within the VM
@@ -33,11 +33,11 @@
     - Many security groups allow all incoming traffic *from the same groups*
         * This means all ports inside the group can freely communicate with each other (thus the name group)
     - Behind the scenes, when referring to a remote security group, the IP addresses belonging to that group are whitelisted
-        * This is secure due to port security, which means that network ports can spoof their sender IP address
+        * This is secure due to port security, which means that network ports cannot spoof their source IP address
             - Port security can be disabled per port, if you want to e.g. create VMs that do advanced networking things such as NAT
             - Be aware that such ports can then circumvent security group rules by spoofing their source IP address
         * This also means that adding a port to a security group that's referenced by this or by another security group can mean updating a lot of network filtering rules
-            - This can limit scalability of network operations for setups with lots of VMs; consider assigning IP ranges and filtering for them instead
+            - This can limit scalability of network operations for setups with lots of VMs; consider assigning IP ranges and filtering for them instead in such setups
 
 ### cloud-init
 * While clouds (OpenStack is no different from AWS here) typically support users in creating and using their own private images, they provide mechanisms to use generic images and customize them on (first) boot
@@ -49,19 +49,20 @@
     - Creating users
     - ...
 * This allows to do everything with generic images; by doing all the customization on (first) boot, the customer infamous golden images that get more and more outdated over time are avoided
-* There are several well-known mechanisms to provide the metadata to the VM; the two most used ones are attaching a virtual drive (CD-Rom typically, used to be a Floppy Disk) and providing an httpnetwork source at http://169.254.169.254
+* There are several well-known mechanisms to provide the metadata to the VM; the two most used ones are attaching a virtual drive (CD-Rom typically, used to be a Floppy Disk) and providing an http network source at http://169.254.169.254
     - Try `curl http://169.254.169.254/openstack/latest; echo` on a VM on OpenStack ...
 * The software that processes the metadata and does the customization is typically [cloud-init](https://cloudinit.readthedocs.io/en/latest/) on Linux
+    - Read the documentation to get an idea of all the possibilities
     - On Windows, [cloudbase-init](https://cloudbase.it/cloudbase-init/) does provide similar functionality
 
 ### Keypairs
-* One thing almost always required on first boot is the injection of an authorized public ssh key, so the owner of the VM can login and investigate and configure things
+* One thing almost always required on first boot of Linux VMs is the injection of an authorized public ssh key, so the owner of the VM can login and investigate and configure things
     - For production VMs, it may be best-practice to *not* allow any login
 * The key injection is done by OpenStack providing the keypair selected in horizon or via the API in the metadata, which cloud-init then picks up
     - Run `curl http://169.254.169.254/openstack/latest/meta_data.json | jq` from within the VM to see it (you need to install `jq` to get the json nicely formatted)
 * It's best to just register your public ssh key with OpenStack to make it available
     - You can have OpenStack create key pairs for you -- this is deprecated
-        * OpenStack does NOT store the secret key for you, it is displayed once upon generation, keep it safe
+        * OpenStack does NOT store the secret key for you, it is displayed once upon generation, grab and store it and keep it safe
 * There is no way to recover a lost secret key, so you might lose ssh access to your VMs
     - Most cloud images do not allow a console login by default
         * OpenStack offers a novnc console for VMs that you can use for emergency access if you configured your VM to allow local password authenticated logins
@@ -120,7 +121,7 @@ clouds:
       password: "ThisPasswordIsSecret"
 ```
 
-* Instead of specifying both `project_name` and `project_domain_name`, the `project_id` could have been configured.
+* Instead of specifying both `project_name` and `project_domain_name`, the `project_id` could have been configured (commented out in this example).
 * In most clouds, the domains used for user management (`user_domain_name`) and projects (`project_domain_name`)
 are in sync.
 * In this example, `interface` and `identity_api_version` could have been omitted as most tools
@@ -168,15 +169,25 @@ clouds:
 * Stateless VMs are sometimes called cattle -- in contrast to pets (or snowflakes) that are manually maintained VMs that need operator care, backups etc.
 * If some VMs (backend, database) hold persistent data, treat them differently
 
+### Scaling
+* Horizontal scaling (using more VMs to work in parallel) is typically easy to do with stateless VMs
+* Vertical scaling (creating larger VMs) is supported by OpenStack
+    - You can hot(un)plug disks and network ports into running VMs
+    - Changing the number of vCPUs or the amout of memory requires a VM resize operation
+        * This causes a reboot of the VM
+        * Don't forget to confirm the resize after the rebooted VM has been checked
+* Autoscaling (horizontal scaling) in OpenStack can be done via [heat](https://wiki.openstack.org/wiki/Heat/AutoScaling) orchestration templates
+    - This is not very popular and SCS standards do not require this functionality to be present
+    - Many workloads that would benefit from autoscaling are containerized and use the Kubernetes mechanisms for autoscaling
 
-### Troubleshooting boot trouble (self-support)
+### Troubleshooting boot issues (self-support)
 * When a created VM does not become accessible, this can be debugged in a number of ways
-    - Most Linux images are configured to write the boot log to the serial console. This is capture by OpenStack and can be accessed via horizon or via `openstack console log show`
+    - Most Linux images are configured to write the boot log to the serial console. This is captured by OpenStack and can be accessed via horizon or via `openstack console log show`
     - Most Linux and Windows images create output to a virtual VGA graphics card. This can be accessed via horizon or by pointing a web browser to the URL given by `openstack console url show`. Many images also allow input this way, so you could log in if local console logins are allowed.
 * If you have created your own image, you may be able to observe trouble from the bootloader to locate and load the operating system.
     - This does not typically happen on generic images provided by the provider
 * You may see trouble with your root filesystem which may have suffered corruption on a crash
-    - This be recovered by attaching the volume to another VM and using filesystem recovery tools
+    - This can be recovered by attaching the volume to another VM and using filesystem recovery tools
     - For local storage, you can boot with a rescue image (`openstack server rescue`)
 * Your volume may be read-only and reject WRITE requests
     - This is due to locks held when ceph went down and needs support from the cloud provider; it is described above in the Maintenance section
@@ -186,11 +197,31 @@ clouds:
         * Is the service (ssh) running and the port allowed in firewall and security group rules?
 * You may reach it via ssh, but it rejects your login
     - Did you inject the right public ssh key?
+        * `openstack server show` and horizon can show you which ssh key was specified for injection upon VM creation
         * If the metadata service was broken on first VM boot, the ssh key might not have been injected. Throw away the VM and recreate it then (assuming that no valuable data is held on a local root volume)
     - Did you specify the right private ssh key when connecting?
         * Use `ssh -v` to get more debug output ...
         * Beware that ssh-agents may offer added keys ahead of the one you just specified. (`SSH_AUTH_SOCK ssh -i ~/.ssh/privkey.pem logname@host` helps then).
     - Note that username/password authentication via ssh is not normally enabled in cloud VMs due to security considerations
+
+
+### Snapshots and backups
+* Definitions
+    - A snapshot is a point-in-time state of a storage device.
+    - A backup is a copy of a storage devices.
+* Snapshots:
+    - Are typically created within the same storage backend
+    - This allows for quick and cheap creation, using copy-on-write
+        * Beware that the state of a read-write mounted volume is not necessarily consistent (`sync` helps) due to dirty caches
+    - Are useful to protect against user errors or failed application changes etc.
+    - The cost of snapshots increase as they age (as they diverge more)
+* Backups:
+    - Should be stored on a different storage backend, thus also providing protection against storage backend breakage
+    - Are typically slow to create as full copies are created
+    - Snapshots can be backed up (by creating a temporary volume)
+        * For read-write mounted volumes, this is the only way to have a backup that at least comes close to a consistent filesystem
+    - OpenStack even offers incremental backups, only saving the block-level changes since the last backup
+
 
 ### Security incidents (provider perspective)
 * As public cloud provider, beware that you will have people sign up for your cloud with stolen credit card data
@@ -204,6 +235,7 @@ clouds:
         * Without any throttling, evil users might also cause a large load on your control plane (API), so the API response times for legit customers may deteriorate
     - In practice, you still want to get rid of evil customers and help your legit customers to secure their environment to avoid reputational damage
         * And of course you want your bills to be paid
+    - Obviously, your public images and configuration advice should be suitable to keep your customers secure.
 * Providing transparency to your customers in case of security incidents may help to (re)establish trust
     - This is best practice and the SCS community may support you in the right way to publish root cause analysis
 * You will want to have some DoS/DDoS protection in front of the OpenStack API and the public network used by VMs, so you can protect yourself and your customers
@@ -215,3 +247,5 @@ clouds:
     - Hint: OpenStack does not offer downloading volumes, but images
     - Hint: You can dynamically attach (and detach) volumes (and ports) to running VMs
 * Clone a VM
+* Boot a rescue image
+* Create snapshots and backups from volumes and restore them
