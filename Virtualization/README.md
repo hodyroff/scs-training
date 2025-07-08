@@ -114,7 +114,7 @@
 * Practical assignment
     * Update a service
 
-## Supporting users
+## [Supporting users](Support.md)
 * Data Protection considerations
 * Common misunderstandings
     * Floating IPs
