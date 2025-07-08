@@ -7,9 +7,9 @@
 
 ## Workload automation
 * [Infra-as-Code](IaC)
-* [Virtualization automation](IaC-Virt)
-* [Container automation](IaC-Cont)
+* [Virtualization automation](IaC-Virt.md)
+* [Container automation](IaC-Cont.md)
 
 ## Practice
-* [Fundamentals tasks](Tasks)
+* [Fundamentals tasks](Tasks.md)
 
