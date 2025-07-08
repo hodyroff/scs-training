@@ -411,7 +411,7 @@ dnation-kubernetes-monitoring:
   ```shell
   kubectl -n kube-system delete po -l k8s-app=kube-proxy
   ```
--  Setup `scheduler` metrics bind address
+- Setup `scheduler` metrics bind address
   ```shell
   # On k8s master node
   cd /etc/kubernetes/manifests/
