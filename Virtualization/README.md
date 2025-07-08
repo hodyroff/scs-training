@@ -1,24 +1,24 @@
 # Virtualization Layer: Operating Sovereign Cloud Stack IaaS
 
 ## [Virtualization Architecture](Virt-Architecture.md)
-* [Virtualizing hardware](Hardware-Virt.md)
+* [Virtualizing hardware](Virt-Architecture.md#virtualizing-hardware)
     * KVM, OVS/OVN, Ceph
-* [OpenStack architecture overview](OpenStack-Arch.md)
+* [OpenStack architecture overview](Virt-Architecture.md#openstack-architecture-overview)
     * OpenStack Core Services
     * Other standard OpenStack Services
     * Internal Services
     * Optional Services
     * Dashboards: Horizon and Skyline
-* [Internal infrastructure](Internal-infra.md)
+* [Internal infrastructure](Virt-Architecture.md#internal-infrastructure)
     * Database, memcache
     * Queuing
-* [User Management](User-Mgmt.md)
+* [User Management](Virt-Architecture.md#openstack-user-managment)
     * Domains
     * Projects
     * Users and Groups
     * Roles
-* [Security architecture](Sec-Arch.md)
-* [Practical assignments](Assign-VirtArch.md)
+* [Security architecture](Virt-Architecture.md#security-architecture)
+* [Practical assignments](Virt-Architecture.md#assignments-virtualization-architecture)
     * Study service catalog
     * Look at role assignments
 
