@@ -47,7 +47,7 @@
     * Bootstrap and install manager
     * Study the OSISM tool on the manager
 
-## Basic ceph knowledge
+## [Basic ceph knowledge](Ceph-Knowledge.md)
 * [Ceph architecture and terminology](Ceph-Intro.md)
     * OSDs, Mon, BlueStore, PGs, Pools, Crush map
     * Replication and Erasure coding
