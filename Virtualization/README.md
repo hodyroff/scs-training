@@ -64,11 +64,11 @@
     * Changing weights
 
 ## [Basic OSISM administration](OSISM-Admin.md)
-* [Managing flavors with the flavor manager](Flavor-Manager.md)
-* [Managing public images with the image manager](Image-Manager.md)
-* [Managing domains, projects, users, onboarding](Onboarding.md)
+* [Managing flavors with the flavor manager](OSISM-Admin.md#openstack-flavor-manager)
+* [Managing public images with the image manager](OSISM-Admin.md#image-manager)
+* [Managing domains, projects, users, onboarding](OSISM-Admin.md#onboarding-users)
 <!-- TODO* Collecting usage data (telemetry)-->
-* [Practical assignments](Assign-Manager.md)
+* [Practical assignments](OSISM-Admin.md#assignments-manager)
     * Register public images
     * Onboard a new user (in her own domain)
 
