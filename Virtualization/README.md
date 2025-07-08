@@ -88,7 +88,7 @@
     * Testbed
     * Cloud-in-a-Box
 <!--* Validating changes-->
-* [Practical assignments](Environments.md@assignments)
+* [Practical assignments](Environments.md#assignments)
     * Looking at CiaB configuration
     * Look at testbed configuration
 
@@ -97,7 +97,7 @@
 * [Stuck volumes](Maintenance.md#stuck-volumes)
 * [Stuck Loadalancers](Maintenance.md#stuck-loadbalancers)
 * [Stuck RabbitMQ](Maintenance.md#rabbitmq-issues)
-* [Power loss on storage](Maintenance.md@power-loss-on-storage)
+* [Power loss on storage](Maintenance.md#power-loss-on-storage)
 * [Troubleshooting Guide](https://docs.scs.community/docs/iaas/guides/troubleshooting-guide/)
 * [Practical assignment](Maintenance.md#practical-assignment)
     * Recover from hang volume
