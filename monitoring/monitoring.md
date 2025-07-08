@@ -1,5 +1,6 @@
 ## Course Overview
 This course provides an introduction to SCS Monitoring, a scalable, highly available monitoring stack based on Prometheus, Thanos, Grafana and Loki. The course contains brief overview of used technologies as well as examples and demonstrations using KinD.
+
 ## Table of Contents
 1. [Introduction](#1-introduction)
 2. [Motivation and Use Cases](#2-motivation-and-use-cases)
@@ -7,6 +8,7 @@ This course provides an introduction to SCS Monitoring, a scalable, highly avail
 4. [Example Deployments](#4-example-deployments)
 5. [Dashboards and Customization](#5-dashboards-and-customization)
 6. [Appendices and Resources](#6-appendices-and-resources)
+
 ## 1. Introduction
 - Course goals
   - Layout motivation behind monitoring stack in SCS infrastructure
@@ -21,9 +23,12 @@ This course provides an introduction to SCS Monitoring, a scalable, highly avail
   - [Thanos](https://thanos.io/)
   - [Loki](https://grafana.com/oss/loki/)
   - [Grafana](https://grafana.com/)
+
 ## 2. Motivation and Use Cases
 Monitoring means real-time metrics and logs that inform the operator about current infrastructure state and possible problems. Monitoring makes it easy to detect problems and makes it easier to solve or debug them.
+
 **The main features of SCS Monitoring:**
+
 - Highly available
 - Scalable
 - Global view
@@ -35,10 +40,13 @@ Monitoring means real-time metrics and logs that inform the operator about curre
 - Highly extensible
 - Alerting
 - Matrix chat notifications
+
 ## 3. Monitoring Overview
 This section provides brief explanation of SCS monitoring stack and it's components.
+
 ### 3.1. Visualisation and Data Layer
 ![monitoring1.svg](images/monitoring1.svg)
+
 - **Data Layer** - for scraping/exporting metrics and logs
 	- Prometheus - collects  real-time metrics and alerts based on time-series data 
 	   and provides a powerful query language (PromQL) to analyze the data. It's widely adopted in Kubernetes environments for its ease of use, flexibility, and strong community support.
@@ -56,134 +64,140 @@ SCS monitoring platform can observe various endpoints, such as tcp/http/https th
 The SCS Monitoring Platform supports multi-cluster monitoring, enabling the observation of one or more Kubernetes clusters across various distributions, including K3s, OpenShift, and vanilla Kubernetes. It leverages Prometheus for metric scraping, Thanos for long-term metric storage in object storage services, and Grafana for visualizing metrics through customizable dashboards. Additionally, Loki is used for collecting and aggregating logs, providing a complete observability solution.
 
 ![monitoring3.svg](images/monitoring3.svg)
+
 - **Workload Cluster** - Contains data layer only. Uses Prometheus to scrape metrics and Thanos to store longterm metrics in an objectstore service
 - **Observer cluster** - Contains both data and visual layer. Utilizes Thanos with Envoy proxy for short term queries multiple clusters, hosts and IAASs, including the observer cluster itself. Uses Grafana to display dNation dashboards, as well as any aditional dashboards. For Long term Querries it looks into the objectstore service
+
 ### 3.4. IAAS Monitoring
 ![iaas.png](images/iaas.png)
+
 IaaS monitoring uses openstack exporter. The user needs to supply credentials in form of `clouds.yaml` Currently, there's no dNation dashboard, we recommend to use [this dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/). See [Dashboards and Customization](#5-dashboards-and-customisation) on how to add 3rd party dashboards.
+
 ## 4. Example Deployments
 This section provides example deployments of single-cluster, multi-cluster and IAAS monitoring using [KinD](https://kind.sigs.k8s.io/)
+
 ### 4.1. Quickstart Guide
 - Create KinD cluster
-```shell
-kind create cluster --config kind/kind-observer-config.yaml --image kindest/node:v1.31.6 --name observer
-```
+  ```shell
+  kind create cluster --config kind/kind-observer-config.yaml --image kindest/node:v1.31.6 --name observer
+  ```
 - Install monitoring stack  
-```shell
-
-helm repo add dnationcloud https://dnationcloud.github.io/helm-hub/
-
-helm repo update dnationcloud
-
-helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
-
-```
-- Portforward to Grafana
-```bash
-kubectl --namespace default port-forward  svc/dnation-kubernetes-monitoring-stack-grafana 3000:80
-```
+  ```shell
+  helm repo add dnationcloud https://dnationcloud.github.io/helm-hub/
+  helm repo update dnationcloud
+  helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
+  ```
+- Port-forward to Grafana
+  ```bash
+  kubectl --namespace default port-forward  svc/dnation-kubernetes-monitoring-stack-grafana 3000:80
+  ```
 - Access monitoring [http://localhost:30000/d/monitoring/infrastructure-services-monitoring](http://localhost:30000/d/monitoring/infrastructure-services-monitoring)
+
 #### Assignments
 1. Create a cluster and install Monitoring into it
 2. Verify accessibility using UI
+
 ### 4.2. Multicluster Monitoring
 - Spawn a workload cluster in KinD - observer was already created in [previous section](#4-1-quickstart-guide), if not please follow it
-```shell
-kind create cluster --config kind/kind-workload-config.yaml --image kindest/node:v1.31.6 --name workload
-```
+  ```shell
+  kind create cluster --config kind/kind-workload-config.yaml --image kindest/node:v1.31.6 --name workload
+  ```
 - Install k8s monitoring on the cluster using `values-observer.yaml`
-```shell
-helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml
-```
+  ```shell
+  helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml
+  ```
 - Now we connect the clusters
+
 #### 4.2.1 Observer Cluster
 - Install `cert-manager` 
-```shell
-helm --kube-context kind-observer install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.17.2 --set crds.enabled=true
-```
+  ```shell
+  helm --kube-context kind-observer install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.17.2 --set crds.enabled=true
+  ```
 - Create a self signed issuer and a CA issuer with self-signed ca. Use CA issuer to generate client and server certificate.
-```shell
-kubectl --context kind-observer  apply -f multicluster/tls-resources-observer.yaml 
-```
+  ```shell
+  kubectl --context kind-observer  apply -f multicluster/tls-resources-observer.yaml 
+  ```
 - Copy data  from `tls-ca-key-pair`
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: thanos-query-envoy-certs
-type: kubernetes.io/tls
-data:
-  ca.crt: <ca.crt>
-  tls.crt: <tls.crt>
-  tls.key: <tls.key>
-```
+  ```yaml
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: thanos-query-envoy-certs
+  type: kubernetes.io/tls
+  data:
+    ca.crt: <ca.crt>
+    tls.crt: <tls.crt>
+    tls.key: <tls.key>
+  ```
 - Apply additional observer values to mount this secrets
-```shell
-helm --kube-context kind-observer upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml -f multicluster/values-connect-observer.yaml
-```
+  ```shell
+  helm --kube-context kind-observer upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml -f multicluster/values-connect-observer.yaml
+  ```
 - Access monitoring [http://localhost:30000/d/monitoring/infrastructure-services-monitoring](http://localhost:30000/d/monitoring/infrastructure-services-monitoring). You will see the box for workload cluster saying `Down`
-> Hack: monitoring is domain based, this should make it work locally in Kind
+  > Hack: monitoring is domain based, this should make it work locally in Kind
 - Add `query-workload.local` to `/etc/hosts`
-```
-127.0.0.1 query-workload.local
-```
+  ```
+  127.0.0.1 query-workload.local
+  ```
 - Add `query-workload.local` to `/etc/hosts`
-```shell
-kubectl --context kind-observer -n kube-system edit configmap coredns
-```
-```go
-hosts {
+  ```shell
+  kubectl --context kind-observer -n kube-system edit configmap coredns
+  ```
+  ```go
+  hosts {
 	// Docker address of localhost, may be different for you
     172.17.0.1  query-workload.local
     fallthrough
-}
-
-```
+  }
+  ```
 - Restart coredns
+
 #### 4.2.2. Workload Cluster
 - Install ingress nginx
-```shell
-kubectl --context kind-workload apply -f  multicluster/deploy-ingress-nginx.yaml
-```
+  ```shell
+  kubectl --context kind-workload apply -f  multicluster/deploy-ingress-nginx.yaml
+  ```
 - Add the following secrets to workload cluster
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name:thanos-server
-  namespace: monitoring
-type: kubernetes.io/tls
-data:
-# copied from server-secret created by server-certificate (query-workload.local)
-  ca.crt: <ca.crt>
-  tls.crt: <tls.crt>
-  tls.key: <tls.key>
+    ```yaml
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name:thanos-server
+      namespace: monitoring
+    type: kubernetes.io/tls
+    data:
+    # copied from server-secret created by server-certificate (query-workload.local)
+      ca.crt: <ca.crt>
+      tls.crt: <tls.crt>
+      tls.key: <tls.key>
 
----
-apiVersion: v1
-kind: Secret
-metadata:    
-  name: thanos-ca-secret
-  namespace: default
-data:
-  # copy from tls-ca-key-pair
-  ca.crt: <ca.crt>
+    ---
+    apiVersion: v1
+    kind: Secret
+    metadata:    
+      name: thanos-ca-secret
+      namespace: default
+    data:
+      # copy from tls-ca-key-pair
+      ca.crt: <ca.crt>
 
-```
+    ```
 - Apply workload observer values to connect the clusters
-```bash
- helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml -f multicluster/values-connect-workload.yaml 
-```
+  ```bash
+  helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml -f multicluster/values-connect-workload.yaml 
+  ```
+
 #### Assignments
 1. Create a workload cluster
 2. Interconnect with existing observer cluster with monitoring
 3. Verify monitoring of workload cluster
+
 ### 4.3 IaaS Monitoring
 - Acquire application credential of your cloud. An admin access is required. You can use Horizon UI `https://your.openstack.cloud.url/identity/application_credentials/` or via `openstack` cli
 >Warning: If you used Horizon, the secret will be automaticaly generated and shown only once! Make sure to note it down in a secure place i.e. KeyPass
-```shell
-openstack application credential create my-app-cred --secret <generate-your-app-cred-secret-here> --role <admin or reader>
-```
+  ```shell
+  openstack application credential create my-app-cred --secret <generate-your-app-cred-secret-here> --role <admin or reader>
+  ```
 - Admin role is required to access all the metrics, without it the resulting dashboard will be incomplete.  In this example however, reader role is sufficient for demonstration purposes, fill free to use it. Also, in some Openstack deployments, internal API inaccessible from outside  is required to read all the metrics.
 - Create `values-iaas.yaml` and fill in application credentials.
 
@@ -226,6 +240,7 @@ prometheus-openstack-exporter:
   #     - key: ca.crt
   #       path: yaook-ca
 ```
+
 - In real deployments e.g. Yaook, Kolla-Ansible, OSSISM. Internal API is needed to access the metrics. Often, a private CA must be mounted. To do this, follow the commented part of above example. The observer cluster must, of course, have access to the internal api. The exporter might be deployed on a workload cluster as well, which is advised in case of Yaook.
 - Create a file called `values-iaas-dashboard.yaml`. Since dNation K8S monitoring does not provide it's own dashboard for IaaS/Openstack you can use the [recommended dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/).
 
@@ -258,9 +273,10 @@ kube-prometheus-stack:
 ```
 
 - In this kind example. You can also use [values file](iaaas/values-iaas.yaml) provided with this documentation, which combines both above yaml files into one. Just fill in your credentials and apply to observer cluster.
-```bash
-helm upgrade --context kind-observer --install dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
-```
+  ```bash
+  helm upgrade --context kind-observer --install dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
+  ```
+
 #### Assignments
 1. Create a workload cluster
 2. Interconnect with existing observer cluster with monitoring
@@ -268,6 +284,7 @@ helm upgrade --context kind-observer --install dnationcloud/dnation-kubernetes-m
 
 ## 5. Dashboards and Customization
 dNation K8S Monitoring project provides many dashboards, which are written in jsonnet and are therefore highly customisable. User can override default thresholds or change the colors with helm values only, there's no need to edit any Json/Jsonnet file. The values files are self-explanatory  for example:
+
 ```yaml
 dnation-kubernetes-monitoring:
   templates:
@@ -285,6 +302,7 @@ dnation-kubernetes-monitoring:
               critical: 95
               warning: 90
 ```
+
 Another example, can define custom alerts.
 ```yaml
 dnation-kubernetes-monitoring:
@@ -305,7 +323,9 @@ dnation-kubernetes-monitoring:
               critical: 97
               warning: 95
 ```
+
 dNation k8s Monitoring has several pre-made dashboard for k8s apps, e.g. MySQL, Ingress Nginx, Java Spring Acutator, etc. These dashboards can have their panel added to the clusters L1 dashboard. 
+
 ```yaml
 dnation-kubernetes-monitoring:
   clusterMonitoring:
@@ -337,6 +357,7 @@ dnation-kubernetes-monitoring:
             relabelings:
             - *containerLabel
 ```
+
 ### Assignments
 1. Lower thresholds for utilization of the monitoring
 2. Observe changes in reported values
@@ -347,86 +368,76 @@ dnation-kubernetes-monitoring:
 ### 6.1. ETCD, Kube-Proxy fix
 - The metrics of `etcd` and `kube-proxy` control plane components are by default bound to the localhost that prometheus instances **cannot** access.
 - When spawning a new cluster (`kubeadm init`) you can use our config
-```bash
-
-kubeadm init --config=helpers/kubeadm_init.yaml
-
-```
+  ```bash
+  kubeadm init --config=helpers/kubeadm_init.yaml
+  ```
 - On existing clusters, access the node via SSH and do the following
-```bash
-
-# On k8s master node
-
-cd /etc/kubernetes/manifests/
-
-sudo vim etcd.yaml
-
-```
-```yaml
-
-# Add listen-metrics-urls as etcd command option
-
-...
-
-- --listen-metrics-urls=http://0.0.0.0:2381
-
-...
-
-```
+  ```bash
+  # On k8s master node
+  cd /etc/kubernetes/manifests/
+  sudo vim etcd.yaml
+  ```
+  ```yaml
+  # Add listen-metrics-urls as etcd command option
+  ...
+  - --listen-metrics-urls=http://0.0.0.0:2381
+  ...
+  ```
 - Setup `kube-proxy` metrics bind address
    Edit  kube-proxy daemon set
-```shell
-kubectl edit ds kube-proxy -n kube-system
-```
-```yaml
-...containers:
+  ```shell
+  kubectl edit ds kube-proxy -n kube-system
+  ```
+  ```yaml
+  ...containers:
       - command:
         - /usr/local/bin/kube-proxy
         - --config=/var/lib/kube-proxy/config.conf
         - --hostname-override=$(NODE_NAME)
         - --metrics-bind-address=0.0.0.0  # Add metrics-bind-address line
 
-```
-Edit kube-proxy config map
-```shell
-kubectl -n kube-system edit cm kube-proxy
-```
-```yaml
-...
+  ```
+  Edit kube-proxy config map
+  ```shell
+  kubectl -n kube-system edit cm kube-proxy
+  ```
+  ```yaml
+  ...
     kind: KubeProxyConfiguration
     metricsBindAddress: "0.0.0.0:10249" # Add metrics-bind-address host:port
     mode: ""
-```
-Delete the kube-proxy pods and reapply the new configuration
-```shell
-kubectl -n kube-system delete po -l k8s-app=kube-proxy
-```
+  ```
+  Delete the kube-proxy pods and reapply the new configuration
+  ```shell
+  kubectl -n kube-system delete po -l k8s-app=kube-proxy
+  ```
 -  Setup `scheduler` metrics bind address
-```shell
-# On k8s master node
-cd /etc/kubernetes/manifests/
-sudo vim kube-scheduler.yaml
-```
-```yaml
-# Edit bind-address and port command options
-...
-- --bind-address=0.0.0.0
-- --secure-port=10259
-...
-```
+  ```shell
+  # On k8s master node
+  cd /etc/kubernetes/manifests/
+  sudo vim kube-scheduler.yaml
+  ```
+  ```yaml
+  # Edit bind-address and port command options
+  ...
+  - --bind-address=0.0.0.0
+  - --secure-port=10259
+  ...
+  ```
 - Setup `controller-manager` metrics bind address
-```shell
-# On k8s master node
-cd /etc/kubernetes/manifests/
-sudo vim kube-controller-manager.yaml
-```
-```yaml
-# Edit bind-address and port command options
-...
-- --bind-address=0.0.0.0
-- --secure-port=10257
-...
-```
+  ```shell
+  # On k8s master node
+  cd /etc/kubernetes/manifests/
+  sudo vim kube-controller-manager.yaml
+  ```
+  ```yaml
+  # Edit bind-address and port command options
+  ...
+  - --bind-address=0.0.0.0
+  - --secure-port=10257
+  ...
+  ```
+
 ### 6.2. Resources
 * [SCS Monitoring Documentation](https://docs.scs.community/docs/operating-scs/components/monitoring/docs/overview)
 * [dNation Kubernetes Monitoring](https://dnationcloud.github.io/kubernetes-monitoring/)
