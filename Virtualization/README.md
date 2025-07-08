@@ -74,8 +74,8 @@
 
 ## [Performance and Compliance monitoring](Perf-Compl-Monitoring.md)
 * [Netbox, prometheus, Netdata, OpenSearch](Perf-Compl-Monitoring.md#osism-manager-management-tools)
-* [OpenStack Health Monitor](Perf-Compl-Monitoring.md#oshm)
-* [The SCS standards](Perf-Compl-Monitoring.md#standards)
+* [OpenStack Health Monitor](Perf-Compl-Monitoring.md#openstack-health-monitor-oshm)
+* [The SCS standards](Perf-Compl-Monitoring.md#scs-standards)
     * Overview and process
     * SCS Compliance testing
 * [Practical assignments](Perf-Compl-Monitoring.md#assignments-monitoring-and-compliance)
