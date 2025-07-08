@@ -23,26 +23,25 @@
     * Look at role assignments
 
 ## [kolla-ansible and OSISM, Plan your deployment](Kolla-OSISM.md)
-* [Containerization with kolla](kolla.md)
-* [ansible Basics](ansible.md)
-* [Manager node, config repo, vault, gitops](osism.md)
+* [Containerization with kolla](Kolla-OSISM.md#containerized-openstack-with-kolla-ansible)
+* [ansible Basics](Kolla-OSISM.md#ansible-1x2)
+* [Manager node, config repo, vault, gitops](Kolla-OSISM.md#osism-open-source-infrastructure-manager)
     * OSISM overview and manager node
     * Control nodes
     * Compute nodes
     * Network nodes
     * Storage nodes
-<!--* [SW-defined Storage (SDS) with Ceph](Ceph-Intro.md)-->
 <!--* [SW-defined Networking (SDN) with OVN/OvS](OVN-Intro.md)-->
-* [Planning your hardware](HW-Plan.md)
+* [Planning your hardware](Kolla-OSISM.md#planning-hardware)
     * HCI vs. decomposed
     * Optional Seed node
-* [Bootstrapping the manager](Install.md)
+* [Bootstrapping the manager](Kolla-OSISM.md#osism-installation-workflow)
     * Performing the other installation steps
-* [Validating the results](Validation.md)
+* [Validating the results](Kolla-OSISM.md#validating-that-the-installed-environment-works)
     * ARA
     * Smoke tests
-* [The OSISM tool](OSISM-tool.md)
-* [Practical assignments](Assign-OSISM.md)
+* [The OSISM tool](Kolla-OSISM.md#the-osism-tool)
+* [Practical assignments](Kolla-OSISM.md#practical-assignments-for-osism)
     * Create a config repository
     * Bootstrap and install manager
     * Study the OSISM tool on the manager

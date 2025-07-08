@@ -92,7 +92,7 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
 
 ## OSISM: Open Source InfraStructure Manager
 
-### What is [OSISM](https://osism.tech/))?
+### What is [OSISM](https://osism.tech/)?
 * Lifecycle and deployment management tooling built on top of kolla-ansible
   (and significantly contributing to kolla-ansible)
 * Orchestrates the kolla-ansible OpenStack containers plus containers for
