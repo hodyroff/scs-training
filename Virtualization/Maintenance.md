@@ -105,6 +105,7 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
 * The result is that the backend actions are not taken and while the API services may happily accept requests, the requested actions never make any progress
 * <!--TODO: How to detect this somewhat reliably-->
 * <!--TODO: Recommended mitigation actions-->
+* See the [Cinder volume create failure](https://docs.scs.community/docs/iaas/guides/troubleshooting-guide/openstack#cinder-volume-create-failure) guide to see how to detect cinder-rabbit issues.
 
 ### Power loss on storage
 * If your complete (ceph) storage subsystem goes down, while virtual machines are running and writing to storage,
@@ -141,6 +142,12 @@ dragon@cumulus(config:test):~ [0]$
 * Don't do this on a volume backing a running server unless you want to see its volume turn to read-only.
     - Shut it down (`openstack server stop`) and wait for it to be in `SHUTDOWN` state.
     - On a Cloud-in-a-Box, you can use `/usr/local/bin/shutdown-instances.sh` to force-stop all VMs
+
+### Troubleshooting Guide
+There is a [Troubleshooting Guide](https://docs.scs.community/docs/iaas/guides/troubleshooting-guide/)
+available in the [SCS IaaS docs](https://docs.scs.community/docs/iaas/) with information on
+trouble with the Manager, OpenStack database, ceph connection and cinder rabbit trouble and
+ceph medium errors.
 
 ### Practical assignment
 * Trainer will create volumes that are attached to already gone VMs or stuck in reserved.
