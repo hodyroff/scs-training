@@ -48,13 +48,13 @@
     * Study the OSISM tool on the manager
 
 ## [Basic ceph knowledge](Ceph-Knowledge.md)
-* [Ceph architecture and terminology](Ceph-Intro.md)
+* [Ceph architecture and terminology](Ceph-Knowledge.md#introduction-to-ceph)
     * OSDs, Mon, BlueStore, PGs, Pools, Crush map
     * Replication and Erasure coding
     * Block storage (rbd)
     * ObjectStorage (rgw)
-    * Optional: CephFS
-* [Ceph dashboard](Ceph-Dashboard.md)
+<!--* Optional: CephFS -->
+* [Ceph dashboard](Ceph-Knowledge.md#ceph-dashboard)
 * [Ceph tooling (CLI)](Ceph-CLI.md)
     * Performing changes, tuning
 * [Hardware advice](Ceph-Hardware.md)
