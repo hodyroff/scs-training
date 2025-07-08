@@ -59,7 +59,11 @@ who owns and governs the SCS trademarks. When offering SCS trainings, we
 recommend to reach out to the Forum SCS-Standards <scs@osb-alliance.com>
 to ensure that this can be done. We recommend trainees to ensure that
 trainings are offered in alignment with the licensing terms of the ITU
-and the support from the Forum SCS-Standards at the OSBA.
+and the support from the Forum SCS-Standards at the OSBA. The attribution
+requirement (the BY) in the license should ensure that this note here
+can be found. Derived materials need to be made available under such
+terms again (the SA), so we hope that freely sharing will not lead to
+abuse. Please report any copyright violation to the ITU and <s7n@garloff.de>.
 
 ## Table of Contents
 ### [Introduction](Introduction/)
