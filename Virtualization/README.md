@@ -22,7 +22,7 @@
     * Study service catalog
     * Look at role assignments
 
-## kolla-ansible and OSISM, Plan your deployment
+## [kolla-ansible and OSISM, Plan your deployment](Kolla-OSISM.md)
 * [Containerization with kolla](kolla.md)
 * [ansible Basics](ansible.md)
 * [Manager node, config repo, vault, gitops](osism.md)
