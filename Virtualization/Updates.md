@@ -50,30 +50,27 @@
     - Update docker, traefik, netbox `osism update ...` and ensure the facts are in sync (`osism reconciler sync; osism apply facts`).
     - Download container images: `osism apply -e custom pull-container-images`
     - Update infrastructure services:
-```bash
+    ```bash
         set -e
         for svc in common loadbalancer opensearch openvswitch ovn memcached redis mariadb rabbitmq; do
             osism apply -a upgrade $svc
         done
-```
-
+    ```
     - Update OpenStack services (the exact list depends on your deployment)
-```bash
+    ```bash
         set -e
         for svc in keystone horizon placement glance neutron nova cinder designate octavia skyline barbican heat magnum; do
             osism apply -a upgrade $svc
         done
-```
-
+    ```
     - Update prometheus and grafana: `osism apply -a upgrade prometheus; osism apply -a upgrade grafana`
     - Ensure other containers are in sync:
-```bash
+    ```bash
         set -e
         for svc in phpmyadmin cgit homer netdata openstackclient kubernetes clusterapi; do
             osism apply $svc
         done
-```
-
+    ```
     - Clean up unneeded containers: `osism apply cleanup-docker-images -e ireallymeanit=yes`
 
 ### Adding and removing compute nodes
