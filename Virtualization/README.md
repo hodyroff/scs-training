@@ -102,7 +102,7 @@
 * Practical assignment
     * Recover from hang volume
 
-## Updates and Upgrades
+## [Updates and Upgrades](Updates.md)
 * Security advisories and security updates
     * Real-world example
 * Regular maintenance updates
