@@ -55,10 +55,10 @@
     * ObjectStorage (rgw)
 <!--* Optional: CephFS -->
 * [Ceph dashboard](Ceph-Knowledge.md#ceph-dashboard)
-* [Ceph tooling (CLI)](Ceph-CLI.md)
+* [Ceph tooling (CLI)](Ceph-Knowledge.md#ceph-command-line-tooling)
     * Performing changes, tuning
-* [Hardware advice](Ceph-Hardware.md)
-* [Practical assignments](Assign-Ceph.md)
+* [Hardware advice](Ceph-Knowledge.md#planning-hardware-for-ceph)
+* [Practical assignments](Ceph-Knowledge.md#assignments-for-ceph)
     * Using the dashboard
     * Taking OSDs out and adding OSDs in
     * Changing weights
