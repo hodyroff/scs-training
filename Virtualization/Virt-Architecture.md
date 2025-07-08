@@ -4,7 +4,7 @@
 * Virtualization:
     - Create an execution environment for the application that looks like a server (landscape)
 
-## Types of virtual hardware
+### Types of virtual hardware
 * Compute virtualization:
     - Virtual CPUs, virtual memory (RAM)
 * Storage virtualization:
@@ -15,7 +15,7 @@
     - ... connected to virtual networks, routers, ...
     - Virtual firewalls and load-balancers
 
-## Advantages
+### Advantages
 * Assignment granularity
     - Can assign arbitrary amounts (e.g. 4 CPUs, 16 GiB RAM, 155GB disk),
       independent of actual server sizes
@@ -28,7 +28,7 @@
     - horizontal scaling
 * Procurement delay (weeks) vs. SW provisioning (seconds/minutes at worst)
 
-## Common technologies
+### Common technologies
 * Compute virtualization
     - VMware ESXi (proprietary)
     - Xen
@@ -45,7 +45,7 @@
     - Linux: Bridge
     - OpenvSwitch (OvS) and OVN (Open Virtual Network)
 
-## Infrastructure-as-Code
+### Infrastructure-as-Code
 * Automate the set up of virtual hardware completely
     - Not just single servers, but complete landscapes for complicated 
       application workloads
