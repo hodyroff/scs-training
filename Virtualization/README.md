@@ -72,12 +72,13 @@
     * Register public images
     * Onboard a new user (in her own domain)
 
-## Performance and Compliance monitoring
-* [Netbox, prometheus, Netdata, OpenSearch](Netbox-and-friends.md)
-* [OpenStack Health Monitor](OSHM.md)
-* [The SCS standards](Standards.md): Overview and process
+## [Performance and Compliance monitoring](Perf-Compl-Monitoring.md)
+* [Netbox, prometheus, Netdata, OpenSearch](Perf-Compl-Monitoring.md#osism-manager-management-tools)
+* [OpenStack Health Monitor](Perf-Compl-Monitoring.md#oshm)
+* [The SCS standards](Perf-Compl-Monitoring.md#standards)
+    * Overview and process
     * SCS Compliance testing
-* [Practical assignments](Assign-Monitoring.md)
+* [Practical assignments](Perf-Compl-Monitoring.md#assignments-monitoring-and-compliance)
     * Setting up OSHM
     * Studying OSHM dashboard
     * Running SCS compliance tests
