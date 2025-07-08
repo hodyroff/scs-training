@@ -63,7 +63,7 @@
     * Taking OSDs out and adding OSDs in
     * Changing weights
 
-## Basic OSISM administration
+## [Basic OSISM administration](OSISM-Admin.md)
 * [Managing flavors with the flavor manager](Flavor-Manager.md)
 * [Managing public images with the image manager](Image-Manager.md)
 * [Managing domains, projects, users, onboarding](Onboarding.md)
