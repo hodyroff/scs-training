@@ -95,7 +95,7 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
 * The solution is to go in the database :-( and set them to error for deletion
 * Charging customers for stuck loadbalancers may not create enthusiastic responses, so avoid it
 * Known bug in octavia Loadbalancer (affecting ovn provider): The `octavia_api` container leaks file descriptors.
-    - See <https://docs.openstack.org/cinder/2024.2/cli/cinder-manage.html>
+    - See <https://github.com/osism/issues/issues/959>
     - Automated occasional (nightly) restarts of the `octavia_api` container will help to avoid customer impact
         * Alternatively you monitor the FD count or the `octavia_api` availability and restart when the problem approaches / arises
 
@@ -103,9 +103,8 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
 * If your rabbitMQ process is starved of resources, it might fail to deliver all messages
 * Subscribers can lose connections to rabbitMQ
 * The result is that the backend actions are not taken and while the API services may happily accept requests, the requested actions never make any progress
-* <!--TODO: How to detect this somewhat reliably-->
-* <!--TODO: Recommended mitigation actions-->
 * See the [Cinder volume create failure](https://docs.scs.community/docs/iaas/guides/troubleshooting-guide/openstack#cinder-volume-create-failure) guide to see how to detect cinder-rabbit issues.
+<!--TODO: More information here?-->
 
 ### Power loss on storage
 * If your complete (ceph) storage subsystem goes down, while virtual machines are running and writing to storage,
@@ -153,5 +152,3 @@ ceph medium errors.
 * Trainer will create volumes that are attached to already gone VMs or stuck in reserved.
     - Recover
     - Watch out to not leak storage space
-
-

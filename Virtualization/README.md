@@ -83,55 +83,58 @@
     * Running SCS compliance tests
 
 ## [Test and Validation environments](Environments.md)
-* Production, Reference and Test Environments
-* Reference/Development Options
+* [Production, Reference and Test Environments](Environments.md#production-reference-and-test-environments)
+* [Reference/Development Options](Environments.md#options-for-your-environments)
     * Testbed
     * Cloud-in-a-Box
-* Validating changes
-* Practical assignments
+<!--* Validating changes-->
+* [Practical assignments](Environments.md@assignments)
     * Looking at CiaB configuration
     * Look at testbed configuration
 
 ## [Maintenance and dealing with errors](Maintenance.md)
 * [Database cleanup](Maintenance.md#database-cleanup)
-* Stuck volumes
-* Stuck loadbalancer
-* FD leak
-* Stuck RabbitMQ
-* CiaB: Lost CoW file
-* Practical assignment
+* [Stuck volumes](Maintenance.md#stuck-volumes)
+* [Stuck Loadalancers](Maintenance.md#stuck-loadbalancers)
+* [Stuck RabbitMQ](Maintenance.md#rabbitmq-issues)
+* [Power loss on storage](Maintenance.md@power-loss-on-storage)
+* [Troubleshooting Guide](https://docs.scs.community/docs/iaas/guides/troubleshooting-guide/)
+* [Practical assignment](Maintenance.md#practical-assignment)
     * Recover from hang volume
 
 ## [Updates and Upgrades](Updates.md)
-* Security advisories and security updates
+* [Security advisories and security updates](Updates.md#security-updates)
     * Real-world example
-* Hardware maintenance
+* [Rebooting systems](Updates.md#rebooting-systems)
+    * Hardware maintenance
     * Hypervisor/Kernel/Firmware updates
     * Live migration/evacuation
-* Version Upgrades
-* Adding and removing hardware nodes
-* Practical assignment
+* [Version Upgrades](Updates.md#version-upgrades)
+* [Adding and removing compute nodes](Updates.md#adding-and-removing-compute-nodes)
+* [Practical assignment](Updates.md#practical-assignment)
     * Update a service
 
 ## [Supporting users](Support.md)
-* Responsibilities and Data Protection considerations
-* Floating IPs
-* Port security and Security groups
-* cloud-init
-* Keypairs
-* IaC tooling
-* Using the OpenStack API
-* Stateful vs Stateless VMs
+* [Responsibilities and Data Protection considerations](Support.md#responsibilities-and-data-protection-considerations)
+* [Floating IPs](Support.md#floating-ips)
+* [Port security and Security groups](Support.md#security-groups)
+* [cloud-init](Support.md#cloud-init)
+* [Keypairs](Support.md#keypairs)
+* [IaC tooling](Support.md#iac-tooling)
+* [Using the OpenStack API](Support.md#using-the-openstack-api)
+    * `clouds.yaml` examples
+* [Stateful vs Stateless VMs](Support.md#stateful-vs-stateless-design)
     * Pets and cattle
-* Boot failures
+* [Scaling](Support.md#scaling)
+* [Boot failures](Support.md#troubleshooting-boot-issues-self-support)
     * Console log
     * Storage recovery
-* Backups and snapshots
-* Security incidents
+* [Backups and snapshots](Support.md#snapshots-and-backups)
+* [Security incidents](Support.md#security-incidents-provider-perspective)
     * Fraud
     * Hacked VMs
     * DoS/DDoS
-* Practical assignment
+* [Practical assignment](Support.md#practical-assignments-user-perspective)
     * Download a Storage volume
     * Clone a VM
     * Rescue a VM

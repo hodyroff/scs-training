@@ -61,4 +61,4 @@
 
 ### Assignments
 * Review inventory on a testbed setup
-
+* Review a CiaB configuration
