@@ -1,17 +1,20 @@
 ---
-title: SCS Training Course
+title: Sovereign Cloud Stack Training Course
 author: |
   [International Telecommunication Unit](https://itu.int/) (ITU)  
   Place des Nations  
   1211 Geneva 20 Switzerland
 thanks: |
   License: [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en)  
-  Material has been prepared by Kurt Garloff, [S7n Cloud Services GmbH](https://garloff.de/s7n/).  
+  Material has been prepared by Kurt Garloff, [S7n Cloud Services GmbH](https://garloff.de/s7n/) for
+  the ITU due to collaboration in the [govstack](https://govstack.global/) project.  
   Thanks for contributions to [dNation s.r.o](https://dnation.cloud/),
   [VanillaCore GmbH](https://vanillacore.net/), [OSISM GmbH](https://osism.tech/).  
   A lot of material was prepared during the [Sovereign Cloud Stack](https://scs.community/) project
-  at the [OSBA](https://osb-alliance.de/), with funding from the
-  [German Federal Ministry for Economic Affairs and Climate Action](https://bmwk.bund.de).
+  at the [OSBA](https://osb-alliance.de/) by the SCS community, with funding from the
+  [German Federal Ministry for Economic Affairs and Climate Action](https://bmwk.de).  
+  [Sovereign Cloud Stack](https://sovereigncloudstack.org) and SCS are protected trademarks by the
+  OSBA in most countries.
 copyright: ITU
 date: 2025-07-09
 license: CC-BY-SA-4.0
