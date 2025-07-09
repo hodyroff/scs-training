@@ -11,7 +11,8 @@
 
 ### Four pillars of Sovereignty
 
-1. Data Sovereignty
+1. Data Sovereignty: The ability to decide where to store data and to (independently)
+   decide with whom to share data and metadata.
 
 2. Provider Switchability: Freedom of choice between several providers and
    the ability to easily switch between them.
@@ -32,11 +33,11 @@
     1. By making it easier for local providers and allow self-hosting, data sovereignty is supported.
     2. By having many provider adhering to the same [technical standards](https://docs.scs.community/standards), switching providers becomes a lot easier. The standards are covered by [automated continuous tests](https://github.com/SovereignCloudStack/standards/Tests/) and can be certified (*SCS-compatible*)
     3. By having an openly developed complete open source [reference implementation](https://docs.scs.community/docs/category/releases), everyone
-       can adjust technnology and contribute to it, thus delivering on technical sovereignty (*SCS-open*)
+       can adjust technnology, innovate on and contribute to it, thus delivering on technical sovereignty (*SCS-open*). This includes the ability to create and capture value at all layers.
     4. By giving transpareny into operations (e.g. via blog articles, OSHM, Lean Operator Coffee),
        some collaborative element is added to the Ops part of DevOps. [Open Operations](https://openoperations.org/) thus enables the highest level (*SCS-sovereign*).
 * SCS was a project by the Open Source Business Alliance e.V. ([OSBA](https://osb-alliance.de/)) in Europe in the [Gaia-X](https://gaia-x.eu/) context and received public funding from German [BMWK](https://bmwk.bund.de/) 2021 -- 2024.
-* It has collaboratively and openy developed and released 5 versions of *SCS-compatible* IaaS standards,
+* It has collaboratively and openly developed and released 5 versions of *SCS-compatible* IaaS standards,
   1 version of KaaS standards, 8 releases of the reference implementation, has organized two own conferences (SCS summits), 4 Hackathons and has contributed to numerous publications and conferences.
 * The standards evolution is now goverend by the [Forum SCS-Standards](https://sovereigncloudstack.org/)
 
