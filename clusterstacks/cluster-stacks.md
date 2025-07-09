@@ -9,23 +9,7 @@ cluster lifecycles, and dive deep into their deployment, configuration, and
 evolution. Hands-on examples will guide learners through practical examples
 of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 
-## Table of Contents
-
-1. [Introduction](#1-introduction)
-2. [What Are Cluster Stacks?](#2-what-are-cluster-stacks)
-3. [Cluster Stacks in the SCS Ecosystem](#3-cluster-stacks-in-the-scs-ecosystem)
-4. [Architecture Overview](#4-architecture-overview)
-5. [Components and Responsibilities](#5-components-and-responsibilities)
-6. [Quickstart Guide - Docker Infrastructure](#6-quickstart-guide---docker-infrastructure)
-7. [Quickstart Guide - OpenStack Infrastructure](#7-quickstart-guide---openstack-infrastructure)
-8. [Configuration and Customization](#8-configuration-and-customization)
-9. [Building your own Cluster Stacks](#9-building-your-own-cluster-stacks)
-10. [Upgrading Workload Clusters](#10-upgrading-workload-clusters)
-11. [Debugging and Troubleshooting](#11-debugging-and-troubleshooting)
-12. [Summary and Further Learning](#12-summary-and-further-learning)
-13. [Appendices and Resources](#13-appendices-and-resources)
-
-## 1. Introduction
+## Introduction
 
 - Course objectives
   - Explain the motivation behind another layer of abstraction on top
@@ -39,7 +23,7 @@ of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
   - [Cluster API](https://cluster-api.sigs.k8s.io/)
   - [Helm](https://helm.sh/)
 
-## 2. What Are Cluster Stacks?
+## What Are Cluster Stacks?
 
 Cluster Stacks is a framework and a set of reference implementations
 for defining, and managing Kubernetes clusters,
@@ -84,7 +68,7 @@ everything works together, an upgrade from the previous version is possible
 and its function thus is ensured. In addition, the SCS Cluster Stack Operator
 simplifies the use of Cluster Stacks.
 
-## 3. Cluster Stacks in the SCS Ecosystem
+## Cluster Stacks in the SCS Ecosystem
 
 Cluster Stacks are a core concept in the Sovereign Cloud Stack (SCS) ecosystem.
 They define how Kubernetes clusters are composed, deployed, and managed in a
@@ -111,7 +95,7 @@ operations (create, scale, upgrade, delete).
 - Encouraging upstream compatibility, reducing duplication and improving
   long-term sustainability
 
-## 4. Architecture Overview
+## Architecture Overview
 
 [SCS Cluster Stacks overview](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/overview/)
 
@@ -150,7 +134,7 @@ entire stack as a whole at a particular point in time.
 
 ![Cluster Stacks architecture](https://raw.githubusercontent.com/SovereignCloudStack/cluster-stacks-demo/refs/heads/main/hack/images/syself-cluster-stacks-web.png)
 
-## 5. Components and Responsibilities
+## Components and Responsibilities
 
 Cluster Stacks extend CAPI as the foundational tool which provides declarative
 way to manage the lifecycle of Kubernetes clusters. CAPI breaks
@@ -197,7 +181,7 @@ providers/
         └── <k8s_major_minor_version>/
 ```
 
-## 6. Quickstart Guide - Docker Infrastructure
+## Quickstart Guide - Docker Infrastructure
 
 [SCS Cluster Stacks Quickstart guide](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/providers/openstack/quickstart)
 
@@ -206,105 +190,92 @@ providers/
   - [Helm](https://helm.sh/)
   - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
   - [jq](https://jqlang.github.io/jq/)
-- [Install clusterctl](https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl)
 
-```bash
-curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.9.7/clusterctl-linux-amd64 -o clusterctl
-```
+- [Install clusterctl](https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl)
+  ```bash
+  curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.9.7/clusterctl-linux-amd64 -o clusterctl
+  ```
 
 - Bootstrap a management cluster with KinD
-
-```bash
-kind create cluster --config=kind/kind-cluster-with-extramounts.yaml
-```
+  ```bash
+  kind create cluster --config=kind/kind-cluster-with-extramounts.yaml
+  ```
 
 - Transform it into a management cluster with `clusterctl`
-
-```bash
-export CLUSTER_TOPOLOGY=true
-export EXP_CLUSTER_RESOURCE_SET=true
-export EXP_RUNTIME_SDK=true
-clusterctl init --infrastructure docker
-```
+  ```bash
+  export CLUSTER_TOPOLOGY=true
+  export EXP_CLUSTER_RESOURCE_SET=true
+  export EXP_RUNTIME_SDK=true
+  clusterctl init --infrastructure docker
+  ```
 
 - Install Cluster Stack Operator (CSO)
-
-```bash
-helm upgrade -i cso \
--n cso-system \
---create-namespace \
-oci://registry.scs.community/cluster-stacks/cso \
---set clusterStackVariables.ociRepository=registry.scs.community/kaas/cluster-stacks
-
-```
-
-```bash
-kubectl create namespace cluster
-```
+  ```bash
+  helm upgrade -i cso -n cso-system --create-namespace \
+  oci://registry.scs.community/cluster-stacks/cso \
+  --set clusterStackVariables.ociRepository=registry.scs.community/kaas/cluster-stacks
+  ```
+  ```bash
+  kubectl create namespace cluster
+  ```
 
 - Create a basic `clusterstack.yaml` file
-
-```yaml
-apiVersion: clusterstack.x-k8s.io/v1alpha1
-kind: ClusterStack
-metadata:
-  name: docker
-  namespace: cluster
-spec:
-  provider: docker
-  name: scs
-  kubernetesVersion: "1.30"
-  channel: custom
-  autoSubscribe: false
-  noProvider: true
-  versions:
-    - v0-sha.rwvgrna
-```
+  ```yaml
+  apiVersion: clusterstack.x-k8s.io/v1alpha1
+  kind: ClusterStack
+  metadata:
+    name: docker
+    namespace: cluster
+  spec:
+    provider: docker
+    name: scs
+    kubernetesVersion: "1.30"
+    channel: custom
+    autoSubscribe: false
+    noProvider: true
+    versions:
+      - v0-sha.rwvgrna
+  ```
 
 - Apply `clusterstack.yaml`
-
-```bash
-kubectl apply -f clusterstacks/clusterstack.yaml
-```
+  ```bash
+  kubectl apply -f clusterstacks/clusterstack.yaml
+  ```
 
 - Create a `cluster.yaml` file
-
-```yaml
-apiVersion: cluster.x-k8s.io/v1beta1
-kind: Cluster
-metadata:
-  name: docker-testcluster
-  namespace: cluster
-  labels:
-    managed-secret: cloud-config
-spec:
-  topology:
-    class: docker-scs-1-30-v0-sha.rwvgrna
-    controlPlane:
-      replicas: 1
-    version: v1.30.10
-    workers:
-      machineDeployments:
-        - class: default-worker
-          name: md-0
-          replicas: 1
-```
+  ```yaml
+  apiVersion: cluster.x-k8s.io/v1beta1
+  kind: Cluster
+  metadata:
+    name: docker-testcluster
+    namespace: cluster
+    labels:
+      managed-secret: cloud-config
+  spec:
+    topology:
+      class: docker-scs-1-30-v0-sha.rwvgrna
+      controlPlane:
+        replicas: 1
+      version: v1.30.10
+      workers:
+        machineDeployments:
+          - class: default-worker
+            name: md-0
+            replicas: 1
+  ```
 
 - Apply `cluster.yaml`
-
-```bash
-kubectl apply -f clusterstacks/cluster.yaml
-```
+  ```bash
+  kubectl apply -f clusterstacks/cluster.yaml
+  ```
 
 - Get kubeconfig and view cluster node
-
-```bash
-clusterctl get kubeconfig -n cluster docker-testcluster > /tmp/kubeconfig
-```
-
-```bash
-kubectl get nodes --kubeconfig /tmp/kubeconfig
-```
+  ```bash
+  clusterctl get kubeconfig -n cluster docker-testcluster > /tmp/kubeconfig
+  ```
+  ```bash
+  kubectl get nodes --kubeconfig /tmp/kubeconfig
+  ```
 
 - The clusterstack from example installs cilium CNI in the cluster
 
@@ -313,290 +284,282 @@ kubectl get nodes --kubeconfig /tmp/kubeconfig
 1. Create a management cluster, install needed infrastructure and create a
   workload cluster using cluster stack version 1.30 for the proper provider
 2. Verify workload cluster properly running
-3. Deploy a registry service (Harbor) from [Registry training](/registry.md#6-quickstart-guide)
+3. Deploy a registry service (Harbor) from [Registry training](../registry/registry.md#quickstart-guide)
 
-## 7. Quickstart Guide - OpenStack Infrastructure
+## Quickstart Guide - OpenStack Infrastructure
 
 Note: There is the repository [scs-training-kaas-scripts](https://github.com/SovereignCloudStack/scs-training-kaas-scripts)
 with bash scripts that perform the steps in this quick start guide. Ideally, you have a Linux VM
 with some tools installed, use [00-bootstrap-vm-cs.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/00-bootstrap-vm-cs.sh) to install tooling.
 
 - Bootstrap a management cluster with KinD ([01-kind-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/01-kind-cluster.sh))
-
-```bash
-kind create cluster
-```
-
+  ```bash
+  kind create cluster
+  ```
 
 - Transform it into a management cluster with `clusterctl` ([02-deploy-capi.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/02-deploy-capi.sh))
-
-```bash
-export CLUSTER_TOPOLOGY=true
-export EXP_CLUSTER_RESOURCE_SET=true
-export EXP_RUNTIME_SDK=true
-kubectl apply -f https://github.com/k-orc/openstack-resource-controller/releases/latest/download/install.yaml
-clusterctl init --infrastructure openstack
-
-kubectl -n capi-system rollout status deployment
-kubectl -n capo-system rollout status deployment
-```
+  ```bash
+  export CLUSTER_TOPOLOGY=true
+  export EXP_CLUSTER_RESOURCE_SET=true
+  export EXP_RUNTIME_SDK=true
+  kubectl apply -f https://github.com/k-orc/openstack-resource-controller/releases/latest/download/install.yaml
+  clusterctl init --infrastructure openstack
+  
+  kubectl -n capi-system rollout status deployment
+  kubectl -n capo-system rollout status deployment
+  ```
 
 - Create values.yaml for CSO ([03-deploy-cso.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/03-deploy-cso.sh))
-
-```bash
-cat > values.yaml <<EOF
-clusterStackVariables:
-  ociRepository: registry.scs.community/kaas/cluster-stacks
-controllerManager:
-  rbac:
-    additionalRules:
-      - apiGroups:
-          - "openstack.k-orc.cloud"
-        resources:
-          - "images"
-        verbs:
-          - create
-          - delete
-          - get
-          - list
-          - patch
-          - update
-          - watch
-EOF
-```
+  ```bash
+  cat > values.yaml <<EOF
+  clusterStackVariables:
+    ociRepository: registry.scs.community/kaas/cluster-stacks
+  controllerManager:
+    rbac:
+      additionalRules:
+        - apiGroups:
+            - "openstack.k-orc.cloud"
+          resources:
+            - "images"
+          verbs:
+            - create
+            - delete
+            - get
+            - list
+            - patch
+            - update
+            - watch
+  EOF
+  ```
 
 - Install Cluster Stack Operator (CSO) with above values
-
-```bash
-helm upgrade -i cso \
--n cso-system \
---create-namespace \
-oci://registry.scs.community/cluster-stacks/cso \
---values values.yaml
-```
+  ```bash
+  helm upgrade -i cso -n cso-system --create-namespace \
+  oci://registry.scs.community/cluster-stacks/cso \
+  --values values.yaml
+  ```
 
 - Create cluster namespace ([04-cloud-secret.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/04-cloud-secret.sh))
-
-```bash
-kubectl create namespace cluster
-```
+  ```bash
+  kubectl create namespace cluster
+  ```
 
 - Create cloud secret using csp-helper chart (Note: This is done differently in the scripts, which do not use the
 helm charts; 04-cloud-secret.sh creates the secrets for the CAPO, the workload cluster secrets are created later
 per cluster in 07-cluster-secret.sh.)
 
-You need to run the csp-helper chart always. You always need to specify the path to your `clouds.yaml`.
-The `clouds.yaml` should contain also the secrets that you normally split off into `secure.yaml`.
+  You need to run the csp-helper chart always. You always need to specify the path to your `clouds.yaml`.
+  The `clouds.yaml` should contain also the secrets that you normally split off into `secure.yaml`.
 
-If you choose to use clouds.yaml with application credentials (auth_type: `v3applicationcredential`), it is the preferred and more secure option.
-If you opt to use clouds.yaml with password authentication (auth_type: `v3password`), that is also acceptable, but:
-- Ensure that `project_id` is set, `project_name` works only for CAPO, not for OCCM!
-- Using `project_id` guarantees that both CAPO and OCCM function correctly with `v3password` authentication.
+  If you choose to use clouds.yaml with application credentials (`auth_type: v3applicationcredential`), it is the preferred and more secure option.
+  If you opt to use clouds.yaml with password authentication (`auth_type: v3password`), that is also acceptable, but:
+  - Ensure that `project_id` is set, `project_name` works only for CAPO, not for OCCM!
+  - Using `project_id` guarantees that both CAPO and OCCM function correctly with `v3password` authentication.
 
-If the OpenStack API is secured with a certificate issued by a custom CA, include `--set cacert="$(cat /path/to/cacert)"` in your Helm command.
-There is no need to update `clouds.yaml` with the custom CA, passing the `--set cacert=...` parameter is sufficient. 
-The openstack-csp-helper ensures that the CA certificate is available to both CAPO and OCCM.
+  If the OpenStack API is secured with a certificate issued by a custom CA, include `--set cacert="$(cat /path/to/cacert)"` in your Helm command.
+  There is no need to update `clouds.yaml` with the custom CA, passing the `--set cacert=...` parameter is sufficient. 
+  The openstack-csp-helper ensures that the CA certificate is available to both CAPO and OCCM.
 
-If you want to use OVN provider OpenStack Octavia for the Workload LBs set `--set octavia_ovn=true` in the helm command.
+  If you want to use OVN provider OpenStack Octavia for the Workload LBs set `--set octavia_ovn=true` in the helm command.
 
-```bash
-helm upgrade -i openstack-secrets -n cluster --create-namespace https://github.com/SovereignCloudStack/openstack-csp-helper/releases/latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml --set cacert="$(cat /path/to/cacert)" --set octavia_ovn=true
-```
+  ```bash
+  helm upgrade -i openstack-secrets -n cluster --create-namespace https://github.com/SovereignCloudStack/openstack-csp-helper/releases/latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml --set cacert="$(cat /path/to/cacert)" --set octavia_ovn=true
+  ```
 
 - Deploy ClusterStack ([05-deploy-cstack.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/05-deploy-cstack.sh))
+  ```bash
+  cat <<EOF | kubectl apply -f -
+  apiVersion: clusterstack.x-k8s.io/v1alpha1
+  kind: ClusterStack
+  metadata:
+    name: openstack
+    namespace: cluster
+  spec:
+    provider: openstack
+    name: scs
+    kubernetesVersion: "1.32"
+    channel: custom
+    autoSubscribe: false
+    noProvider: true
+    versions:
+      - v0-sha.lvlvyfw
+  EOF
+  ```
 
-```bash
-cat <<EOF | kubectl apply -f -
-apiVersion: clusterstack.x-k8s.io/v1alpha1
-kind: ClusterStack
-metadata:
-  name: openstack
-  namespace: cluster
-spec:
-  provider: openstack
-  name: scs
-  kubernetesVersion: "1.32"
-  channel: custom
-  autoSubscribe: false
-  noProvider: true
-  versions:
-    - v0-sha.lvlvyfw
-EOF
-```
-
-- Check if ClusterClass exist ([06-wait-clusterclass.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/06-wait-clusterclass.sh))
-```bash
-kubectl get clusterclass -n cluster
-```
+- Check if ClusterClass exists ([06-wait-clusterclass.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/06-wait-clusterclass.sh))
+  ```bash
+  kubectl get clusterclass -n cluster
+  ```
 
 - Check whether the image already exists in the OpenStack project or if the OpenStack Resource Controller (ORC) is currently uploading it
 - For demo purposes, it's a good idea to have the image uploaded in advance to avoid delays
 
 - Note: Under normal conditions, cluster creation can proceed even if the image is not yet available. However, we observed a situation where the OpenStackServer resource entered an error state due to the not yet ready image, causing the cluster creation process to stacked.
-Manually deleting the affected OpenStackServer resource and restarting the CAPO controller (`kubectl delete po -l control-plane=capo-controller-manager -n capo-system`) resolved the issue. Please be aware of this behavior, it requires further investigation.
+  Manually deleting the affected OpenStackServer resource and restarting the CAPO controller (`kubectl delete po -l control-plane=capo-controller-manager -n capo-system`) resolved the issue. Please be aware of this behavior, it requires further investigation.
 
-```bash
-kubectl get image -n cluster
-```
+  ```bash
+  kubectl get image -n cluster
+  ```
+
 - New scripts only: Create per-cluster secret: [07-cluster-secret.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/07-cluster-secret.sh)
 
 - Create cluster ([08-create-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/08-create-cluster.sh))
 
-```bash
-cat <<EOF | kubectl apply -f -
-apiVersion: cluster.x-k8s.io/v1beta1
-kind: Cluster
-metadata:
-  name: my-cluster
-  namespace: cluster
-  labels:
-    managed-secret: cloud-config
-spec:
-  clusterNetwork:
-    pods:
-      cidrBlocks:
-      - "172.16.0.0/16"
-    serviceDomain: cluster.local
-    services:
-      cidrBlocks:
-      - "10.96.0.0/12"
-  topology:
-    class: openstack-scs-1-32-v0-sha.lvlvyfw
-    controlPlane:
-      replicas: 1
-    version: v1.32.1
-    # If you want to use octavia-ovn provider for Kubernetes API
-    variables:
-      - name: apiserver_loadbalancer
-        value: "octavia-ovn"
-    workers:
-      machineDeployments:
-        - class: default-worker
-          name: md-0
-          replicas: 1
-EOF
-```
+  ```bash
+  cat <<EOF | kubectl apply -f -
+  apiVersion: cluster.x-k8s.io/v1beta1
+  kind: Cluster
+  metadata:
+    name: my-cluster
+    namespace: cluster
+    labels:
+      managed-secret: cloud-config
+  spec:
+    clusterNetwork:
+      pods:
+        cidrBlocks:
+        - "172.16.0.0/16"
+      serviceDomain: cluster.local
+      services:
+        cidrBlocks:
+        - "10.96.0.0/12"
+    topology:
+      class: openstack-scs-1-32-v0-sha.lvlvyfw
+      controlPlane:
+        replicas: 1
+      version: v1.32.1
+      # If you want to use octavia-ovn provider for Kubernetes API
+      variables:
+        - name: apiserver_loadbalancer
+          value: "octavia-ovn"
+      workers:
+        machineDeployments:
+          - class: default-worker
+            name: md-0
+            replicas: 1
+  EOF
+  ```
 
 - Validate the cluster health ([09-wait-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/09-wait-cluster.sh))
 
-```bash
-clusterctl describe cluster my-cluster -n cluster
-```
+  ```bash
+  clusterctl describe cluster my-cluster -n cluster
+  ```
 
 - Get kubeconfig and play with cluster
 
-```bash
-clusterctl get kubeconfig -n cluster my-cluster > ~/.kube/cluster.my-cluster.yaml
-kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get nodes -o wide
-kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get pods -A
-```
+  ```bash
+  clusterctl get kubeconfig -n cluster my-cluster > ~/.kube/cluster.my-cluster.yaml
+  kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get nodes -o wide
+  kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml get pods -A
+  ```
 
 - You can use the following example to deploy workload (nginx server with html page) with load balancer ([21-deploy-kube-dashboard.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/21-deploy-kube-dashboard.sh))
 
-```bash
-kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml apply -f ./clusterstacks/test-workload-lb.yaml
-```
+  ```bash
+  kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml apply -f ./clusterstacks/test-workload-lb.yaml
+  ```
 
-Get the IP address of the LB (from its status) and try to reach it, e.g. `curl <LB IP address>`
+  Get the IP address of the LB (from its status) and try to reach it, e.g. `curl <LB IP address>`
 
 - Cleanup ([56-cleanup-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/56-cleanup-cluster.sh) and [57-delete-cluster.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/57-delete-cluster.sh))
 
-Tear down both the workload cluster and the bootstrap cluster
+  Tear down both the workload cluster and the bootstrap cluster
 
-Note: Do not forget to cleanup workload LB before you tear down the workload cluster, e.g. `kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml delete -f ./clusterstacks/test-workload-lb.yaml`
-LB blocks the workload cluster deletion if it is not removed beforehand.
+  Note: Do not forget to cleanup workload LB before you tear down the workload cluster, e.g. `kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml delete -f ./clusterstacks/test-workload-lb.yaml`
+  LB blocks the workload cluster deletion if it is not removed beforehand.
 
-```bash
-kubectl delete cluster -n cluster my-cluster
-kind delete cluster
-```
+  ```bash
+  kubectl delete cluster -n cluster my-cluster
+  kind delete cluster
+  ```
 
-## 8. Configuration and Customization
+## Configuration and Customization
 
 - Clusterstacks can be configured with env variables,
   [Envsubst](https://github.com/drone/envsubst), is required to expand
   environment variables specified in CSO
 
-```bash
-GOBIN=/tmp go install github.com/drone/envsubst/v2/cmd/envsubst@latest
-```
+  ```bash
+  GOBIN=/tmp go install github.com/drone/envsubst/v2/cmd/envsubst@latest
+  ```
 
 - User can configure their own repository as a clusterstack source, e.g.
 
-```bash
-export GIT_PROVIDER_B64=Z2l0aHVi  # github
-export GIT_ORG_NAME_B64=U292ZXJlaWduQ2xvdWRTdGFjaw== # SovereignCloudStack
-export GIT_REPOSITORY_NAME_B64=Y2x1c3Rlci1zdGFja3M=  # cluster-stacks
-export GIT_ACCESS_TOKEN_B64=$(echo -n '<my-personal-access-token>' | base64 -w0)
-```
+  ```bash
+  export GIT_PROVIDER_B64=Z2l0aHVi  # github
+  export GIT_ORG_NAME_B64=U292ZXJlaWduQ2xvdWRTdGFjaw== # SovereignCloudStack
+  export GIT_REPOSITORY_NAME_B64=Y2x1c3Rlci1zdGFja3M=  # cluster-stacks
+  export GIT_ACCESS_TOKEN_B64=$(echo -n '<my-personal-access-token>' | base64 -w0)
+  ```
 
 - To use custom OCI registry, e.g.
 
-```bash
-export OCI_REGISTRY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eQ== # registry.scs.community
-export OCI_REPOSITORY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eS9rYWFzL2NsdXN0ZXItc3RhY2tzCg== # registry.scs.community/kaas/cluster-stacks
-```
+  ```bash
+  export OCI_REGISTRY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eQ== # registry.scs.community
+  export OCI_REPOSITORY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eS9rYWFzL2NsdXN0ZXItc3RhY2tzCg== # registry.scs.community/kaas/cluster-stacks
+  ```
 
 - Deploy CSO. The variables will be replaced in the file
 
-```yaml
-# Get the latest CSO release version and apply CSO manifests
-curl -sSL https://github.com/SovereignCloudStack/cluster-stack-operator/releases/latest/download/cso-infrastructure-components.yaml | /tmp/envsubst | kubectl apply -f -
-```
+  ```yaml
+  # Get the latest CSO release version and apply CSO manifests
+  curl -sSL https://github.com/SovereignCloudStack/cluster-stack-operator/releases/latest/download/cso-infrastructure-components.yaml | /tmp/envsubst | kubectl apply -f -
+  ```
 
 - Cluster can be further configured by `spec.topology.variables` field , e.g.
 
-```yaml
-apiVersion: cluster.x-k8s.io/v1beta1
-kind: Cluster
-metadata:
-  name:
-  namespace:
-  labels:
-    managed-secret: cloud-config
-spec:
-  clusterNetwork:
-    pods:
-      cidrBlocks:
-        - 192.168.0.0/16
-    serviceDomain: cluster.local
-    services:
-      cidrBlocks:
-        - 10.96.0.0/12
-  topology:
-    variables: # <-- variables can be set here
-      - name: controller_flavor
-        value: "SCS-4V-8-20"
-      - name: worker_flavor
-        value: "SCS-4V-8-20"
-      - name: external_id
-        value: "ebfe5546-f09f-4f42-ab54-094e457d42ec"
-    class: openstack-alpha-1-29-v2
-    controlPlane:
-      replicas: 2
-    version: v1.29.3
-    workers:
-      machineDeployments:
-        - class: openstack-alpha-1-29-v2
-          failureDomain: nova
-          name: openstack-alpha-1-29-v2
-          replicas: 4
-```
+  ```yaml
+  apiVersion: cluster.x-k8s.io/v1beta1
+  kind: Cluster
+  metadata:
+    name:
+    namespace:
+    labels:
+      managed-secret: cloud-config
+  spec:
+    clusterNetwork:
+      pods:
+        cidrBlocks:
+          - 192.168.0.0/16
+      serviceDomain: cluster.local
+      services:
+        cidrBlocks:
+          - 10.96.0.0/12
+    topology:
+      variables: # <-- variables can be set here
+        - name: controller_flavor
+          value: "SCS-4V-8-20"
+        - name: worker_flavor
+          value: "SCS-4V-8-20"
+        - name: external_id
+          value: "ebfe5546-f09f-4f42-ab54-094e457d42ec"
+      class: openstack-alpha-1-29-v2
+      controlPlane:
+        replicas: 2
+      version: v1.29.3
+      workers:
+        machineDeployments:
+          - class: openstack-alpha-1-29-v2
+            failureDomain: nova
+            name: openstack-alpha-1-29-v2
+            replicas: 4
+  ```
 
 For more details, see available variables [table](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/providers/openstack/configuration#available-variables)
 
 ### Assignments
 
-1. Use environment variables to set own registry from [Quickstart guide assignments](#6-quickstart-guide)
+1. Use environment variables to set own registry from [Quickstart guide assignments](#quickstart-guide---docker-infrastructure)
    as source
 2. Push needed images
 3. Create a workload cluster using own registry as a source
 
-## 9. Building your own Cluster Stacks
+## Building your own Cluster Stacks
 
 This section describes how to develop your own Cluster stack release from scratch.
 
-### 9.1. Directory structure
+### Directory structure
 
 Create a new directory, e.g. `my-clusterstack`. Inside this directory create the following sub-directories:
 
@@ -604,178 +567,178 @@ Create a new directory, e.g. `my-clusterstack`. Inside this directory create the
 - `cluster-addon` - containing helmcharts to be installed as cluster addons, e.g. a CNI of your choice or metrics-server
 - `node-image` (optional) - containing files to build your cluster's node-image - not used in this example.
 
-### 9.2. Cluster Class
+### Cluster Class
 
 - Create directory
 
-```bash
-mkdir -p cluster-class/templates
-```
+  ```bash
+  mkdir -p cluster-class/templates
+  ```
 
 - Create a  `Chart.yaml`, e.g.
 
-```yaml
-apiVersion: v2
-description: "This is my Cluster Stacks Cluster Class"
-name: docker-my-cluster-class-1-32-cluster-class
-type: application
-version: v1
-```
+  ```yaml
+  apiVersion: v2
+  description: "This is my Cluster Stacks Cluster Class"
+  name: docker-my-cluster-class-1-32-cluster-class
+  type: application
+  version: v1
+  ```
 
 - Generate resources using `clusterctl` generator, e.g.
 
-```bash
-clusterctl init --infrastructure docker
-cd templates
-clusterctl generate cluster my-cluster --infrastructure docker --flavor development --kubernetes-version v1.32.0 --control-plane-machine-count=3 --worker-machine-count=3  > my-cluster.yaml
-```
+  ```bash
+  clusterctl init --infrastructure docker
+  cd templates
+  clusterctl generate cluster my-cluster --infrastructure docker --flavor development --kubernetes-version v1.32.0 --control-plane-machine-count=3 --worker-machine-count=3  > my-cluster.yaml
+  ```
 
 - Split the file into different yaml files, e.g. `Kind: Cluster` should be in `cluster.yaml`
--  Move `kind: Cluster` outside of `cluster-class` directorym e.g.
+- Move `kind: Cluster` outside of `cluster-class` directorym e.g.
 
-```bash
-mv cluster.yaml ../../cluster.yaml
-```
+  ```bash
+  mv cluster.yaml ../../cluster.yaml
+  ```
 
 - Remove `my-cluster.yaml`
 
-```bash
-rm my-cluster.yaml
-```
+  ```bash
+  rm my-cluster.yaml
+  ```
 
 - Escape all `{{ }}` so that they are not interpreted by Helm
 
-```bash
-sed -i 's/{{/{{ `{{/g;s/}}/}}` }}/g' *.yaml
-```
+  ```bash
+  sed -i 's/{{/{{ `{{/g;s/}}/}}` }}/g' *.yaml
+  ```
 
 - Verify with
 
-```bash
-helm template .
-```
+  ```bash
+  helm template .
+  ```
 
-### 9.3. Cluster Addon
+### Cluster Addon
 
 - Initialize cluster addon directory
 
-```bash
-cd ..
-mkdir cluster-addon
-cd cluster-addon
-```
+  ```bash
+  cd ..
+  mkdir cluster-addon
+  cd cluster-addon
+  ```
 
 - Create an umbrella helm chart for every cluster addon, e.g. cilium
 
-```bash
-helm create cni
-cd cni
-rm -rf templates
-```
+  ```bash
+  helm create cni
+  cd cni
+  rm -rf templates
+  ```
 
 - Add Cilium as dependency to the Chart.yaml file:
 
-```yaml
-dependencies:
-  - alias: cilium
-    name: cilium
-    repository: https://helm.cilium.io/
-    version: 1.17.2
-```
+  ```yaml
+  dependencies:
+    - alias: cilium
+      name: cilium
+      repository: https://helm.cilium.io/
+      version: 1.17.2
+  ```
 
 - Build dependencies
 
-```bash
-helm dep build
-```
+  ```bash
+  helm dep build
+  ```
 
 - When all dependency helm charts are created, go to the project main directory and create 
   `clusteraddon.yaml` e.g.
 
-```yaml
-apiVersion: clusteraddonconfig.x-k8s.io/v1alpha1
-clusterAddonVersion: clusteraddons.clusterstack.x-k8s.io/v1alpha1
-addonStages:
-AfterControlPlaneInitialized:
-  - name: cni
-    action: apply
-BeforeClusterUpgrade:
-  - name: cni
-    action: apply
-```
+  ```yaml
+  apiVersion: clusteraddonconfig.x-k8s.io/v1alpha1
+  clusterAddonVersion: clusteraddons.clusterstack.x-k8s.io/v1alpha1
+  addonStages:
+  AfterControlPlaneInitialized:
+    - name: cni
+      action: apply
+  BeforeClusterUpgrade:
+    - name: cni
+      action: apply
+  ```
 
-### 9.4. Build clusterstack release using `csctl`
+### Build clusterstack release using `csctl`
 
 - Download [CSCTL](https://github.com/SovereignCloudStack/csctl/releases/latest) and unpack
 
-```bash
-wget https://github.com/SovereignCloudStack/csctl/releases/download/v0.0.5/csctl_0.0.5_linux_amd64.tar.gz
-tar -xzf ~/Downloads/csctl_0.0.5_linux_amd64.tar.gz
-chmod u+x csctt
-sudo mv csctl /usr/local/bin/csctl
-```
+  ```bash
+  wget https://github.com/SovereignCloudStack/csctl/releases/download/v0.0.5/csctl_0.0.5_linux_amd64.tar.gz
+  tar -xzf ~/Downloads/csctl_0.0.5_linux_amd64.tar.gz
+  chmod u+x csctt
+  sudo mv csctl /usr/local/bin/csctl
+  ```
 
 - Configure `csctl`. The configuration of csctl has to be specified in the `csctl.yaml`. It needs to follow this structure:
 
-```yaml
-apiVersion: csctl.clusterstack.x-k8s.io/v1alpha1
-config:
-  kubernetesVersion: v1.32.0
-  clusterStackName: my-clusterstack
-  provider:
-    type: docker
-    apiVersion: docker.csctl.clusterstack.x-k8s.io/v1alpha1
-```
+  ```yaml
+  apiVersion: csctl.clusterstack.x-k8s.io/v1alpha1
+  config:
+    kubernetesVersion: v1.32.0
+    clusterStackName: my-clusterstack
+    provider:
+      type: docker
+      apiVersion: docker.csctl.clusterstack.x-k8s.io/v1alpha1
+  ```
 
 - Verify the file/directory structure
 
-```text
-my-clusterstack/
-	cluster-class/
-		templates/
-			clusterclass.yaml
-			...
-		Chart.yaml
-	cluster-addons/
-		cni/
-			charts/
-				cilium-1.16.6.tgz
-			 Chart.yaml
-	clusteraddons.yaml
-	csctl.yaml
-	cluster.yaml	
-```
+  ```text
+  my-clusterstack/
+  	cluster-class/
+  		templates/
+  			clusterclass.yaml
+  			...
+  		Chart.yaml
+  	cluster-addons/
+  		cni/
+  			charts/
+  				cilium-1.16.6.tgz
+  			 Chart.yaml
+  	clusteraddons.yaml
+  	csctl.yaml
+  	cluster.yaml	
+  ```
 
 - Setup your repository to publish your cluster stack, e.g. for a git repository
 
-```bash
-export GIT_PROVIDER=github #Only github supported
-export GIT_ORG_NAME=<your-org-or-user-name>
-export GIT_REPOSITORY_NAME=<your-repo-name>
-export GIT_ACCESS_TOKEN=<your-github-access-token>
-```
+  ```bash
+  export GIT_PROVIDER=github #Only github supported
+  export GIT_ORG_NAME=<your-org-or-user-name>
+  export GIT_REPOSITORY_NAME=<your-repo-name>
+  export GIT_ACCESS_TOKEN=<your-github-access-token>
+  ```
 
 - For OCI repository, e.g.
 
-```bash
-export OCI_REGISTRY=<your-oci-registry>
-export OCI_REPOSITORY=<your-oci-repository>
-export OCI_ACCESS_TOKEN=<your-oci-access-token>
-export OCI_USERNAME=<your-username>
-export OCI_PASSWORD=<your-password>
-```
+  ```bash
+  export OCI_REGISTRY=<your-oci-registry>
+  export OCI_REPOSITORY=<your-oci-repository>
+  export OCI_ACCESS_TOKEN=<your-oci-access-token>
+  export OCI_USERNAME=<your-username>
+  export OCI_PASSWORD=<your-password>
+  ```
 
 - Create your cluster stack e.g.
 
-```bash
-csctl create . --output ../my-clusterstack-build  --mode hash
-```
+  ```bash
+  csctl create . --output ../my-clusterstack-build  --mode hash
+  ```
 
 - If you want to publish, you can do so by e.g.
 
-```bash
-csctl create . --output ../my-clusterstack-build  --mode hash --publish  --remote oci
-```
+  ```bash
+  csctl create . --output ../my-clusterstack-build  --mode hash --publish  --remote oci
+  ```
 
 ### Assignments
 
@@ -785,7 +748,7 @@ csctl create . --output ../my-clusterstack-build  --mode hash --publish  --remot
 4. Push the implementation to own github repository
 5. Create a workload cluster using this cluster stack
 
-## 10. Upgrading Workload Clusters
+## Upgrading Workload Clusters
 
 In the management cluster the `ClusterStack` object is the central resource
 referencing specific provider, cluster stack and Kubernetes minor version.
@@ -793,7 +756,7 @@ To be able to use multiple different Kubernetes versions new `ClusterStack`
 object needs to be created, as the version is part of `ClusterStack`
 specification. To be able to use specific versions of cluster stacks they
 can be specified in `spec.versions` of given `ClusterStack` object
-(see `clusterstack.yaml` file in [quickstart guide](#6-quickstart-guide)).
+(see `clusterstack.yaml` file in [quickstart guide](#quickstart-guide---docker-infrastructure)).
 
 Preferred alternative is to allow `spec.autoSubscribe: true` in the
 `ClusterStack` definition so that the operator handles discovery and
@@ -803,7 +766,7 @@ Upgrading a workload cluster is done by editing the target `Cluster` object
 and providing it a new `ClusterClass` in `spec.topology.class`. This assumes
 that you have an existing cluster that references a certain `ClusterClass`
 e.g. `docker-scs-1-30-v0-sha.rwvgrna` from the
-[Quickstart guide](#6-quickstart-guide).
+[Quickstart guide](#quickstart-guide---docker-infrastructure).
 
 It is possible to upgrade the Kubernetes version -
 `docker-scs-1-30-v0-sha.rwvgrna` to `docker-scs-1-31-v0-sha.hdl6pjy`. In this
@@ -832,15 +795,15 @@ cluster. Then the target `Cluster` object can be edited:
 
 - Update `spec.topology.class` to the name of the new class
 
-```bash
-kubectl -n cluster edit cluster docker-testcluster
-
-...
-spec:
-  topology:
-    class: docker-scs-1-31-v0-sha.hdl6pjy
-...
-```
+  ```bash
+  kubectl -n cluster edit cluster docker-testcluster
+  
+  ...
+  spec:
+    topology:
+      class: docker-scs-1-31-v0-sha.hdl6pjy
+  ...
+  ```
 
 - If Kubernetes version is to be changed update `spec.topology.version` in
   the same edit to respective Kubernetes version. Right version (e.g. "1.31.6")
@@ -848,59 +811,59 @@ spec:
   the status of `ClusterStackRelease` object with the same name as desired
   target `ClusterClass` or in the cluster stack releases documentation
 
-```bash
-...
-spec:
-  topology:
-    version: v1.31.6
-...
-```
+  ```bash
+  ...
+  spec:
+    topology:
+      version: v1.31.6
+  ...
+  ```
 
 ### Assignments
 
-1. Upgrade Kubernetes version of workload cluster from [Quickstart guide assignments](#6-quickstart-guide)
+1. Upgrade Kubernetes version of workload cluster from [Quickstart guide assignments](#quickstart-guide)
    to 1.31
 2. Verify Kubernetes version and proper function of the workload cluster
 
-## 11. Debugging and Troubleshooting
+## Debugging and Troubleshooting
 
 In case of cluster not working as expected there are steps you can take to
 diagnose the problem.
 
 - Check the latest events
 
-```bash
-kubectl get events -A  --sort-by=.lastTimestamp
-```
+  ```bash
+  kubectl get events -A  --sort-by=.lastTimestamp
+  ```
 
 - Use a tool which conveniently checks all conditions of all resources in a
   Kubernetes cluster ([check-conditions](https://github.com/guettli/check-conditions))
 
-```bash
-go run github.com/guettli/check-conditions@latest all
-```
+  ```bash
+  go run github.com/guettli/check-conditions@latest all
+  ```
 
 - Check the cluster with `clusterctl` tool
 
-```bash
-clusterctl describe cluster -n cluster docker-testcluster
-NAME                                                              READY  SEVERITY  REASON                           SINCE  MESSAGE
-Cluster/docker-testcluster                                        False  Warning   ScalingUp                        3h16m  Scaling up control plane to 1 replicas (actual 0)
-├─ClusterInfrastructure - DockerCluster/docker-testcluster-785wm  True                                              3h16m
-├─ControlPlane - KubeadmControlPlane/docker-testcluster-45grm     False  Warning   ScalingUp                        3h16m  Scaling up control plane to 1 replicas (actual 0)
-│ └─Machine/docker-testcluster-45grm-tx5lt                        False  Warning   BootstrapFailed                  3h13m  1 of 2 completed
-└─Workers
-  └─MachineDeployment/docker-testcluster-md-0-r6z4b               False  Warning   WaitingForAvailableMachines      3h16m  Minimum availability requires 1 replicas, current 0 available
-    └─Machine/docker-testcluster-md-0-r6z4b-hlpj4-q8fkx           False  Info      WaitingForControlPlaneAvailable  3h16m  0 of 2 completed
-```
+  ```bash
+  clusterctl describe cluster -n cluster docker-testcluster
+  NAME                                                              READY  SEVERITY  REASON                           SINCE  MESSAGE
+  Cluster/docker-testcluster                                        False  Warning   ScalingUp                        3h16m  Scaling up control plane to 1 replicas (actual 0)
+  ├─ClusterInfrastructure - DockerCluster/docker-testcluster-785wm  True                                              3h16m
+  ├─ControlPlane - KubeadmControlPlane/docker-testcluster-45grm     False  Warning   ScalingUp                        3h16m  Scaling up control plane to 1 replicas (actual 0)
+  │ └─Machine/docker-testcluster-45grm-tx5lt                        False  Warning   BootstrapFailed                  3h13m  1 of 2 completed
+  └─Workers
+    └─MachineDeployment/docker-testcluster-md-0-r6z4b               False  Warning   WaitingForAvailableMachines      3h16m  Minimum availability requires 1 replicas, current 0 available
+      └─Machine/docker-testcluster-md-0-r6z4b-hlpj4-q8fkx           False  Info      WaitingForControlPlaneAvailable  3h16m  0 of 2 completed
+  ```
 
 - Check the logs, list all logs from all deployments, show for last 10 minutes
 
-```bash
-kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "====== $ns $d"; kubectl logs --since=10m -n $ns deployment/$d; done
-```
+  ```bash
+  kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "====== $ns $d"; kubectl logs --since=10m -n $ns deployment/$d; done
+  ```
 
-## 12. Summary and Further Learning
+## Summary and Further Learning
 
 - Recap of what you’ve learned
   - Cluster Stacks is a framework for fully defining production ready
@@ -925,7 +888,7 @@ kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "==
   - Check out the [Community calendar](https://docs.scs.community/community/collaboration)
     for information on teams meetings
 
-## 13. Appendices and Resources
+## Appendices and Resources
 
 - [Troubleshooting tips](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stack-operator/topics/troubleshoot)
 - [SCS cluster-stacks repository](https://github.com/SovereignCloudStack/cluster-stacks)
