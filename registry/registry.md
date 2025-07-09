@@ -10,23 +10,7 @@ operates within the SCS stack, and learn how to manage it in
 production-grade scenarios. Practical, hands-on examples using [KinD](https://kind.sigs.k8s.io/)
 (Kubernetes in Docker) will reinforce key concepts.
 
-## Table of Contents
-
-1. [Introduction](#1-introduction)
-2. [Motivation and Use Cases](#2-motivation-and-use-cases)
-3. [SCS Registry Instance Overview](#3-scs-registry-instance-overview)
-4. [Persistence](#4-persistence)
-5. [Rate limiting (optional)](#5-rate-limiting-(optional))
-6. [Quickstart Guide](#6-quickstart-guide)
-7. [SCS production deployment](#7-scs-production-deployment)
-8. [Backup and Restore](#8-backup-and-restore)
-9. [Migration](#9-migration)
-10. [High Availability (HA)](#10-high-availability-ha)
-11. [Upgrading Harbor](#11-upgrading-harbor)
-12. [Summary and Next Steps](#12-summary-and-next-steps)
-13. [Appendices and Resources](#13-appendices-and-resources)
-
-## 1. Introduction
+## Introduction
 
 - Course goals
   - Layout motivation behind including container registry in SCS standard
@@ -41,7 +25,7 @@ production-grade scenarios. Practical, hands-on examples using [KinD](https://ki
   - [Kubernetes](https://kubernetes.io/)
   - [FluxCD](https://fluxcd.io/)
 
-## 2. Motivation and Use Cases
+## Motivation and Use Cases
 
 [SCS container registry documentation](https://docs.scs.community/docs/category/container-registry)
 
@@ -96,7 +80,7 @@ rate-limiting.
 
 ![SCS stack](https://sovereigncloudstack.github.io/website/assets/images/201001-SCS-4c-06fe1d5ce5729b4e6bc3ac5190d4dafab09f0374f8e329baeab2b092983a3ea2bc11268e0c783f58f4e991e819375bcf5c6bdc95df977bdea22d145b04f6e934.png)
 
-## 3. SCS Registry Instance Overview
+## SCS Registry Instance Overview
 
 [SCS Documentation](https://docs.scs.community/docs/category/container-registry)
 
@@ -126,7 +110,7 @@ rate-limiting.
 
 [SCS container registry](https://registry.scs.community/)
 
-## 4. Persistence
+## Persistence
 
 [SCS persistence documentation](https://docs.scs.community/docs/container/components/container-registry/docs/persistence)
 
@@ -151,7 +135,7 @@ They can do that variously, based on the Harbor configuration.
   - Alternatively various other storage backends can be used
 - Core services are stateless - do not need storage
 
-## 5. Rate limiting (optional)
+## Rate limiting (optional)
 
 [SCS rate limiting documentation](https://docs.scs.community/docs/container/components/container-registry/docs/rate_limit)
 
@@ -169,22 +153,22 @@ $ kubectl edit ingress -n ingress-nginx ingress-nginx-controller
 
 - [Other ingress annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting)
 
-## 6. Quickstart Guide
+## Quickstart Guide
 
 - Prepare the environment
   - Install prerequisites (KinD, Helm, Docker, kubectl, Flux CLI)
 - Create a KinD cluster
 
-```bash
-kind create cluster
-```
+  ```bash
+  kind create cluster
+  ```
 
 - Install flux into the cluster
 
-```bash
-curl -s https://fluxcd.io/install.sh | sudo FLUX_VERSION=2.2.3 bash
-flux install
-```
+  ```bash
+  curl -s https://fluxcd.io/install.sh | sudo FLUX_VERSION=2.2.3 bash
+  flux install
+  ```
 
 - Install Harbor using Helm
   - Clone the [SCS Harbor deployment repository](https://github.com/SovereignCloudStack/k8s-harbor)
@@ -201,17 +185,17 @@ flux install
 
 - Make accessible on localhost
 
-```bash
-kubectl port-forward svc/harbor 8080:80
-```
+  ```bash
+  kubectl port-forward svc/harbor 8080:80
+  ```
 
 - Accessing the Harbor UI and CLI
   - username: admin
   - password: Harbor12345
 
-```bash
-http://localhost:8080
-```
+  ```bash
+  http://localhost:8080
+  ```
 
 ### Assignments
 
@@ -221,7 +205,7 @@ http://localhost:8080
 4. Setup and verify access
 5. Push an image into the registry and verify through UI
 
-## 7. SCS production deployment
+## SCS production deployment
 
 [Production deployment docs](https://docs.scs.community/docs/container/components/container-registry/docs/scs-deployment)
 
@@ -245,23 +229,23 @@ http://localhost:8080
   - kubectl
 - Harbor installation
 
-```bash
-# Take ingress-nginx-controller LoadBalancer IP address and create DNS record for Harbor.
-kubectl get svc -n ingress-nginx
-NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
-ingress-nginx-controller             LoadBalancer   100.92.14.168   81.163.194.219   80:30799/TCP,443:32482/TCP   2m51s
-ingress-nginx-controller-admission   ClusterIP      100.88.40.231   <none>           443/TCP                      2m51s
-```
+  ```bash
+  # Take ingress-nginx-controller LoadBalancer IP address and create DNS record for Harbor.
+  kubectl get svc -n ingress-nginx
+  NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
+  ingress-nginx-controller             LoadBalancer   100.92.14.168   81.163.194.219   80:30799/TCP,443:32482/TCP   2m51s
+  ingress-nginx-controller-admission   ClusterIP      100.88.40.231   <none>           443/TCP                      2m51s
+  ```
 
 - Secrets generation and installation:
 
-```bash
-base/harbor-secrets.bash # pwgen and htpasswd need to be installed
-envs/public/s3-credentials.bash <accesskey> <secretkey>
-kubectl apply -k envs/public/
-```
+  ```bash
+  base/harbor-secrets.bash # pwgen and htpasswd need to be installed
+  envs/public/s3-credentials.bash <accesskey> <secretkey>
+  kubectl apply -k envs/public/
+  ```
 
-## 8. Backup and Restore
+## Backup and Restore
 
 [SCS Backup and Restore documentation](https://docs.scs.community/docs/container/components/container-registry/docs/backup_and_restore)
 
@@ -421,7 +405,7 @@ There is a [case study of backup, migration and upgrade](https://scs.community/t
 of [production SCS container registry](https://registry.scs.community/) 
 available.
 
-## 9. Migration
+## Migration
 
 [SCS migration documentation](https://docs.scs.community/docs/container/components/container-registry/docs/migration/)
 
@@ -474,7 +458,7 @@ upgrade or scaling the cluster.
 4. Restore the backup into the newly created cluster
 5. Verify new instance functionality and the image presence
 
-## 10. High Availability (HA)
+## High Availability (HA)
 
 [SCS HA documentation](https://docs.scs.community/docs/container/components/container-registry/docs/ha-deployment)
 
@@ -576,7 +560,7 @@ upgrade or scaling the cluster.
 3. Push an image into registry
 4. Simulate one of the nodes down and verify accessibility
 
-## 11. Upgrading Harbor
+## Upgrading Harbor
 
 [SCS upgrade documentation](https://docs.scs.community/docs/container/components/container-registry/docs/upgrade/)
 
@@ -614,7 +598,7 @@ upgrade or scaling the cluster.
 1. Upgrade one of the instances created in previous assignments to newest Harbor version
 2. Verify functionality, access and image presence
 
-## 12. Summary and Next Steps
+## Summary and Next Steps
 
 - Key takeaways from the course
   - What a Registry Is - a service for storing, versioning, and distributing
@@ -633,7 +617,7 @@ upgrade or scaling the cluster.
   - Advanced automation
   - [Monitoring and alerting](./monitoring.md)
 
-## 13. Appendices and Resources
+## Appendices and Resources
 
 - [Harbor documentation](https://goharbor.io/docs/2.1.0/)
 - [SCS Container Registry docs](https://docs.scs.community/docs/category/container-registry)

@@ -71,4 +71,4 @@ abuse. Please report any copyright violation to the ITU and <s7n@garloff.de>.
 ### [SCS Virtualization Layer](Virtualization/)
 ### [SCS Container Layer](clusterstacks/)
 ### [SCS Monitoring](monitoring/)
-### [SCS Registry](registry/registry.md)
+### [SCS Registry](registry/)
