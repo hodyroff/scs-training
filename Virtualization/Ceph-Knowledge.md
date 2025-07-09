@@ -184,24 +184,24 @@
 
 #### OSD operations
 * Taking an OSD (ID `NN`) out for good
-```bash
+  ```bash
 ceph osd crush reweight osd.NN 0.0
 # Wait for rebalancing (check with ceph osd safe-to-destroy NN)
 ceph osd out osd.NN
 systemctl disable --now ceph-osd@NN
 ceph osd purge osd.NN
-```
+  ```
 * Do this for all OSDs on a node (use `ceph osd tree` to find out) ...
     - Expect this to take time, rebalancing moves a lot of data
     - Final step can be done with `osism apply ceph-shrink-osd -e ireallymeanit=yes -e osd_to_kill=NN,MM,...`
     - `ceph osd crush remove nodename`
 
 * Remove broken disk
-```bash
-ceph osd out osd.NN
-systemctl stop ceph-osd@NN
-systemctl disable ceph-osd@NN
-```
+  ```bash
+  ceph osd out osd.NN
+  systemctl stop ceph-osd@NN
+  systemctl disable ceph-osd@NN
+  ```
 * See more examples in <https://docs.scs.community/docs/iaas/guides/operations-guide/ceph/>
 
 * Upstream ceph docu: <https://docs.ceph.com/en/reef/rados/operations/>
