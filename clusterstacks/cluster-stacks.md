@@ -1,4 +1,3 @@
-
 # SCS Cluster Stacks Course
 
 ## Course Overview

@@ -1,3 +1,5 @@
+# SCS Monitoring
+
 ## Course Overview
 This course provides an introduction to SCS Monitoring, a scalable, highly available monitoring stack based on Prometheus, Thanos, Grafana and Loki. The course contains brief overview of used technologies as well as examples and demonstrations using KinD.
 
