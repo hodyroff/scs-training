@@ -5,11 +5,6 @@
 # (c) Kurt Garloff <s7n@garloff.de>, 6.2025
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
-INPUTS = Virtualization/README.md \
-	 clusterstacks/cluster-stacks.md \
-	 monitoring/monitoring.md \
-	 registry/registry.md
-
 VIRTINPUTS = Virtualization/Front.md \
 	Virtualization/Virt-Architecture.md \
 	Virtualization/Kolla-OSISM.md \
@@ -25,7 +20,8 @@ ALLINPUTS = Header.md \
 	 $(VIRTINPUTS) \
 	 clusterstacks/cluster-stacks.md \
 	 monitoring/monitoring.md \
-	 registry/registry.md
+	 registry/registry.md \
+	 References/README.md
 
 SEARCHDIRS = Virtualization:clusterstacks:monitoring:registry
 
