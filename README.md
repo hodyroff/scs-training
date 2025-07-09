@@ -70,5 +70,5 @@ abuse. Please report any copyright violation to the ITU and <s7n@garloff.de>.
 <!--### [Recap Cloud Fundamentals](Fundamentals/)-->
 ### [SCS Virtualization Layer](Virtualization/)
 ### [SCS Container Layer](clusterstacks/)
-### [SCS Monitoring](monitoring/monitoring.md)
+### [SCS Monitoring](monitoring/)
 ### [SCS Registry](registry/registry.md)
