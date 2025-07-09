@@ -38,27 +38,27 @@
 #### Ansible demo: Inventory
 * We follow the instructions at <https://docs.ansible.com/ansible/latest/getting_started/>
 
-Inventory directory `inventory` content `inventory/hosts` (ini format)
-```ini
-[group1]
-hostname1
-IP-address2
-# comment
-
-[group2]
-hostname3
-hostname4
-hostname5
-
-[metagroup:children]
-group1
-group2
-```
-
-Test reachability
-```bash
-ansible -m ping -u ANSIBLEUSER -m ping ROLEORGROUP
-```
+  Inventory directory `inventory` content `inventory/hosts` (ini format):
+  ```ini
+  [group1]
+  hostname1
+  IP-address2
+  # comment
+  
+  [group2]
+  hostname3
+  hostname4
+  hostname5
+  
+  [metagroup:children]
+  group1
+  group2
+  ```
+  
+*  Test reachability
+  ```bash
+  ansible -m ping -u ANSIBLEUSER -m ping ROLEORGROUP
+  ```
 
 * Above introduced groups and metagroups
 * Inventory files can alternatively be kept in yaml format
@@ -219,7 +219,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
     - Your security architects may want network nodes to be separate from compute nodes ...
 
 #### Sizing: Compute Nodes
-* Customer VMs have a mixture of 1:2 ... 1:8 ration vCPU to RAM
+* Customer VMs have a mixture of 1:2 ... 1:8 ratio vCPU to RAM
 * vCPUs can be oversubscribed, unlike memory. 2--3x over-subscription per real core is
   a reasonable sizing approach
 * Compute nodes thus should have 1:8 ... 1:16 ratios
@@ -228,17 +228,17 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 * You could squeeze a bit more by having larger RAM, but you tend to then run against vCPU limits and
   your customers might feel less happy whereas your savings are minimal
 * Reserve some cores (1C +5% of all) and some RAM (4GiB + 4% of all) for the host
-* Turn on hyperthreading if it's secure on your CPU, it add ~20% CPU power
+* Turn on hyperthreading if it's secure on your CPU, it adds ~20% CPU capacity
     - Lower max. over-subscription ratio from 5/Core to 3/Thread then
 
 #### Sizing: Control Nodes
 * Avoid these to hit their limits
-    - Especially rabbitmq and also database are needed and must not be starved no resources
+    - Especially rabbitmq and also database are needed and must not be starved for resources
 * If you run OpenSearch, this alone adds ~32GiB RAM, 4 core requirement (even for smaller clouds)
 * Assume 32GiB for small clouds, double for larger ones (plus OpenSearch)
 * 16 cores is enough, more for large environments (plus OpenSearch)
 * Ensure sufficient and fast storage (database): NVMe (RAID-1)
-* k3s also adds 4GiB RAM, 2 cores plus the requirements needed by workloads running on k3s
+* k3s also adds 4GiB RAM, 2 cores plus the requirements of workloads running on k3s
 
 #### Sizing: Network Nodes
 * Need to deal with lots of flows
@@ -251,7 +251,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 * 1C (2HTs) and 4GB per OSD
     - Double this when using encryption
     - Also add a core and a few GB if you use erasure coding
-* Network I/O very important, fast storage obviously
+* Network I/O is very important, fast storage as well obviously
 * See notes in Ceph Doc
 
 #### Sizing: Manager node:
@@ -261,16 +261,16 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 
 #### Putting it together:
 * Add requirements up when combining roles in not fully decomposed setups
-* Smaller setups will work if you
-    - Carefully design QoS settings to avoid starvation
-    - You avoid too high load
+* Smaller setups will work
+    - If you carefully design QoS settings to avoid starvation
+    - If uou avoid too high load
     - This adds complexity and the engineering time and operational trouble tends to be more
       expensive than the saved hardware cost, at least for production / production-like systems
 
 ### OSISM Installation workflow
 
 #### Overview over the steps
-* Procure hardware, set it up, connecting them to the network
+* Procure hardware, set it up, connecting it to the network
     - With (static) DHCP this works conveniently
 * Bootstrap manager using the Ubuntu auto-install image
     - BMC allows this without physical USB sticks (but some require SMB or PXE server)
@@ -297,7 +297,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 * Server install phases:
     - Server shuts down after first installation phase, after which (virtual) boot image should be removed
     - Server sets up some services (mostly in docker containers) in the second phase and shuts down again
-    - Server is ready after switching it on first the 3rd time
+    - Server is ready after switching it on the 3rd time
 * You can also manually provision the hardware in case you need to
   <https://docs.scs.community/docs/iaas/guides/deploy-guide/provisioning>
 
@@ -311,11 +311,11 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
     - Secrets are stored separately
 * Install `git python3-pip python3-virtualenv sshpass libssh-dev`
 * Run the cookiecutter:
-```bash
-mkdir cookiecutter-output
-docker run \
-  -e TARGET_UID="$(id -u)" -e TARGET_GID="$(id -g)" \
-  -v $(pwd)/cookiecutter-output:/output --rm -it quay.io/osism/cookiecutter
+  ```bash
+  mkdir cookiecutter-output
+  docker run \
+    -e TARGET_UID="$(id -u)" -e TARGET_GID="$(id -g)" \
+    -v $(pwd)/cookiecutter-output:/output --rm -it quay.io/osism/cookiecutter
 ```
 * Answer the questions from cookiecutter, see <https://docs.scs.community/docs/iaas/guides/configuration-guide/configuration-repository/#creating-a-new-configuration-repository>
 * Output is stored in directory `cookiecutter-output/`. Commit and push it to your git.
@@ -384,7 +384,7 @@ docker run \
 * Maintain the order: infra, network, logging/mon, kubernetes (optional), ceph, OpenStack
 * This can be scripted (and there are scripts e.g. for testbed deployments)
     - If you use your own script, ensure you do *not* ignore errors
-    - `set -e` is a must shell scripts
+    - `set -e` is a must in shell scripts
 * For Ceph, the deployment with ceph-ansible is still the default, this will change to
   ceph rook in the future. Ensure you have kubernetes/k3 set up
 
@@ -393,17 +393,17 @@ docker run \
     - E.g. 3x CPU over-subscription assumes that you have HT(SMT) enabled, you might increase to 5x otherwise.
 * It also explains the mechanism how config file templating works and how these are rolled out with
   the ansible playbooks (example: OpenSearch)
-* The service specific hints mostly link the upstream OpenStack docu
+* The service-specific hints mostly link the upstream OpenStack docu
 * The Commons and Services chapters have kolla and OSISM specific information
 
 ### Validating that the installed environment works
 
 #### Connect to the deployed environment
-* The most convenient is to use wireguard to the manager
+* The most convenient is to use a wireguard connection to the manager
 * This creates a tunnel into the environment, even if it has otherwise
   no inbound internet access
     - Access to the manager (192.168.16.10 on testbed/CiaB) and the dashboards ()
-    - Access to the external Floating IP network `` (192.168.112.0/24 - inbound connections to VMs)
+    - Access to the external Floating IP network (192.168.112.0/24 - inbound connections to VMs)
 * Config on manager in `/etc/wireguard/wg0.conf`, client config in dragon home directory
 * Create additional wg configs and devices if you want to connect from multiple hosts simultaneously
     - Change device name (`wg1`), port, virtual server IP 192.168.48.x and virtual client IPs to avoid confusion
@@ -413,7 +413,7 @@ docker run \
 * For an overview of dashboards look at CiaB or testbed documentation
   at <https://docs.scs.community/docs/iaas/guides/configuration-guide/openstack/>
 * The most important ones are linked from Homer at: <https://homer.services.YOURCLOUDDOMAIN/>
-    - Homer should work and link roughly dozen further dashboards
+    - Homer should work and link roughly s dozen further dashboards
 * Check whether Ceph is healthy
     - `ceph healh detail`
     - Dashboard
@@ -438,10 +438,10 @@ docker run \
             = Test this with openstack command line tools (you need the python SDK installed anyway)
             - It is recommended to run compliance checks with**out** admin privileges
             - In case they ever clean up too much, this won't hit anything but itself
-```bash
-# This example assumes you want to name the cloud CiaB-Kurt7 and have a cloud "test" defined in clouds/secure.yaml
-./scs-compliance-check.py scs-compatible-iaas.yaml --subject=CiaB-Kurt7 -a os_cloud=test
-```
+  ```bash
+  # This example assumes you want to name the cloud CiaB-Kurt7 and have a cloud "test" defined in clouds/secure.yaml
+  ./scs-compliance-check.py scs-compatible-iaas.yaml --subject=CiaB-Kurt7 -a os_cloud=test
+  ```
 * OpenStack Health Monitor
     - Will cover this later
     - Running one iteration manually is a good scenario test for the core functionality
@@ -481,11 +481,11 @@ docker run \
 * Perform changes in the checked out configuration repository ON A TEST OR REFERENCE ENVIRONMENT
     - Typically you end up editing some file under `/opt/configuration/environments/`
     - Push the changes (for your test environment) and apply them:
-```bash
-osism apply configuration   # Pull config from git
-osism reconciler sync       # Adjust derived config files
-osism apply facts           # Gather/Update ansible facts
-```
+      ```bash
+      osism apply configuration   # Pull config from git
+      osism reconciler sync       # Adjust derived config files
+      osism apply facts           # Gather/Update ansible facts
+      ```
     - Run the playbooks that consume the new settings: `osism apply PLAYBOOK`
     - If everything works as designed, commit the same changes to the config repository
       of your production environment.
