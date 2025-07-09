@@ -11,11 +11,17 @@ thanks: |
 copyright: ITU
 license: CC-BY-SA-4.0
 toc: true
+toc-depth: 3
+lof: true
+# lot: true
+numbersections: true
+secnumdepth: 2
 header-includes:
   - \usepackage{pmboxdraw}
   - \usepackage{pifont}
   - \usepackage{newunicodechar}
   - \newunicodechar{✓}{\ding{51}}
   - \newunicodechar{✗}{\ding{55}}
+  - \usepackage{titlesec}
+  - \newcommand{\sectionbreak}{\clearpage}
 ---
-
