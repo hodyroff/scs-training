@@ -17,11 +17,15 @@ lof: true
 numbersections: true
 secnumdepth: 2
 header-includes:
+  - \usepackage{titlesec}
+  - \newcommand{\sectionbreak}{\clearpage}
   - \usepackage{pmboxdraw}
   - \usepackage{pifont}
   - \usepackage{newunicodechar}
   - \newunicodechar{✓}{\ding{51}}
   - \newunicodechar{✗}{\ding{55}}
-  - \usepackage{titlesec}
-  - \newcommand{\sectionbreak}{\clearpage}
+  - \newunicodechar{└}{\textSFii}
+  - \newunicodechar{─}{\textSFx}
+  - \newunicodechar{├}{\textSFviii}
+  - \newunicodechar{│}{\textSFxi}
 ---
