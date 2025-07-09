@@ -36,6 +36,7 @@ LFONT = "Lato"
 
 default: $(TARGET)
 sans: $(TARGETLUA)
+all: default sans
 
 $(TARGET): $(ALLINPUTS) Makefile
 	pandoc -V geometry:a4paper,margin=24mm -V fontfamily=$(TFONT) --resource-path=$(SEARCHDIRS) -r markdown -w pdf -o $@ $(ALLINPUTS)
