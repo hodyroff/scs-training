@@ -3,15 +3,7 @@
 ## Course Overview
 This course provides an introduction to SCS Monitoring, a scalable, highly available monitoring stack based on Prometheus, Thanos, Grafana and Loki. The course contains brief overview of used technologies as well as examples and demonstrations using KinD.
 
-## Table of Contents
-1. [Introduction](#1-introduction)
-2. [Motivation and Use Cases](#2-motivation-and-use-cases)
-3. [Monitoring Overview](#3-monitoring-overview)
-4. [Example Deployments](#4-example-deployments)
-5. [Dashboards and Customization](#5-dashboards-and-customization)
-6. [Appendices and Resources](#6-appendices-and-resources)
-
-## 1. Introduction
+## Introduction
 - Course goals
   - Layout motivation behind monitoring stack in SCS infrastructure
   - Provide understanding of SCS Monitoring Stack
@@ -26,7 +18,7 @@ This course provides an introduction to SCS Monitoring, a scalable, highly avail
   - [Loki](https://grafana.com/oss/loki/)
   - [Grafana](https://grafana.com/)
 
-## 2. Motivation and Use Cases
+## Motivation and Use Cases
 Monitoring means real-time metrics and logs that inform the operator about current infrastructure state and possible problems. Monitoring makes it easy to detect problems and makes it easier to solve or debug them.
 
 **The main features of SCS Monitoring:**
@@ -43,11 +35,11 @@ Monitoring means real-time metrics and logs that inform the operator about curre
 - Alerting
 - Matrix chat notifications
 
-## 3. Monitoring Overview
+## Monitoring Overview
 This section provides brief explanation of SCS monitoring stack and it's components.
 
-### 3.1. Visualisation and Data Layer
-![monitoring1.svg](images/monitoring1.svg)
+### Visualisation and Data Layer
+![Data layer Monitoring](images/monitoring1.svg)
 
 - **Data Layer** - for scraping/exporting metrics and logs
 	- Prometheus - collects  real-time metrics and alerts based on time-series data 
@@ -59,26 +51,26 @@ This section provides brief explanation of SCS monitoring stack and it's compone
 	- Grafana - open-source analytics and visualization platform that lets users query, visualize, and alert on data from various sources like Prometheus, Loki, InfluxDB, Elasticsearch, and more. It provides interactive dashboards and customizable panels for monitoring metrics and logs in real time.
 	- dNation K8S Monitoring - series of intuitive, drill-down Grafana dashboards and Prometheus alerts written in Jsonnet. The layered structure  L0 (all clusters and hosts), L1 (cluster/host overview), L2 and in some cases even L3 for detailed information. This design allows  to quickly detect and investigate a problem in users infrastructure.
 
-### 3.2. Monitoring Endpoints
+### Monitoring Endpoints
 SCS monitoring platform can observe various endpoints, such as tcp/http/https through Blackbox exporter, VMs and baremetal nodes through Node exporter, another k8s clusters - see [Multicluster Monitoring](#3-3-multicluster-monitoring) and [IaaS](#3-4-iaas-monitoring)(Openstack)
 
-### 3.3. Multicluster Monitoring
+### Multicluster Monitoring
 The SCS Monitoring Platform supports multi-cluster monitoring, enabling the observation of one or more Kubernetes clusters across various distributions, including K3s, OpenShift, and vanilla Kubernetes. It leverages Prometheus for metric scraping, Thanos for long-term metric storage in object storage services, and Grafana for visualizing metrics through customizable dashboards. Additionally, Loki is used for collecting and aggregating logs, providing a complete observability solution.
 
-![monitoring3.svg](images/monitoring3.svg)
+![Multicluster Monitoring](images/monitoring3.svg)
 
 - **Workload Cluster** - Contains data layer only. Uses Prometheus to scrape metrics and Thanos to store longterm metrics in an objectstore service
 - **Observer cluster** - Contains both data and visual layer. Utilizes Thanos with Envoy proxy for short term queries multiple clusters, hosts and IAASs, including the observer cluster itself. Uses Grafana to display dNation dashboards, as well as any aditional dashboards. For Long term Querries it looks into the objectstore service
 
-### 3.4. IAAS Monitoring
-![iaas.png](images/iaas.png)
+### IAAS Monitoring
+![IaaS Monitoring](images/iaas.png)
 
 IaaS monitoring uses openstack exporter. The user needs to supply credentials in form of `clouds.yaml` Currently, there's no dNation dashboard, we recommend to use [this dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/). See [Dashboards and Customization](#5-dashboards-and-customisation) on how to add 3rd party dashboards.
 
-## 4. Example Deployments
+## Example Deployments
 This section provides example deployments of single-cluster, multi-cluster and IAAS monitoring using [KinD](https://kind.sigs.k8s.io/)
 
-### 4.1. Quickstart Guide
+### Quickstart Guide
 - Create KinD cluster
   ```shell
   kind create cluster --config kind/kind-observer-config.yaml --image kindest/node:v1.31.6 --name observer
@@ -99,7 +91,7 @@ This section provides example deployments of single-cluster, multi-cluster and I
 1. Create a cluster and install Monitoring into it
 2. Verify accessibility using UI
 
-### 4.2. Multicluster Monitoring
+### Multicluster Monitoring
 - Spawn a workload cluster in KinD - observer was already created in [previous section](#4-1-quickstart-guide), if not please follow it
   ```shell
   kind create cluster --config kind/kind-workload-config.yaml --image kindest/node:v1.31.6 --name workload
@@ -110,7 +102,7 @@ This section provides example deployments of single-cluster, multi-cluster and I
   ```
 - Now we connect the clusters
 
-#### 4.2.1 Observer Cluster
+#### Observer Cluster
 - Install `cert-manager` 
   ```shell
   helm --kube-context kind-observer install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.17.2 --set crds.enabled=true
@@ -154,7 +146,7 @@ This section provides example deployments of single-cluster, multi-cluster and I
   ```
 - Restart coredns
 
-#### 4.2.2. Workload Cluster
+#### Workload Cluster
 - Install ingress nginx
   ```shell
   kubectl --context kind-workload apply -f  multicluster/deploy-ingress-nginx.yaml
@@ -194,7 +186,7 @@ This section provides example deployments of single-cluster, multi-cluster and I
 2. Interconnect with existing observer cluster with monitoring
 3. Verify monitoring of workload cluster
 
-### 4.3 IaaS Monitoring
+### IaaS Monitoring
 - Acquire application credential of your cloud. An admin access is required. You can use Horizon UI `https://your.openstack.cloud.url/identity/application_credentials/` or via `openstack` cli
 >Warning: If you used Horizon, the secret will be automaticaly generated and shown only once! Make sure to note it down in a secure place i.e. KeyPass
   ```shell
@@ -203,76 +195,76 @@ This section provides example deployments of single-cluster, multi-cluster and I
 - Admin role is required to access all the metrics, without it the resulting dashboard will be incomplete.  In this example however, reader role is sufficient for demonstration purposes, fill free to use it. Also, in some Openstack deployments, internal API inaccessible from outside  is required to read all the metrics.
 - Create `values-iaas.yaml` and fill in application credentials.
 
-```yaml
-prometheus-openstack-exporter:
-  enabled: true
-  multicloud:
-    enabled: false
-  serviceMonitor:
-    scrapeTimeout: "1m"
-  commonLabels:
-  # change if you chaged release name
-    release: dnation-kubernetes-monitoring-stack 
-# reoplace with your clouds.yaml
-  clouds_yaml_config: |
-    clouds.yaml: |
-        clouds:
-          default:
-            auth:
-              auth_url: <replace>
-              application_credential_id: "<replace>"
-              application_credential_secret: "<replace>"
-            region_name: "<replace>"
-            interface: "public"
-            identity_api_version: 3
-            auth_type: "v3applicationcredential"
-#  Needed only for internal openstack APIs
-#  Demo purposes only, wont be used in KinD
-#  For example in Yaook, uncomment the following:
-            # key: "/etc/ssl/certs/yaook-ca/tls.key"
-            # cert: "/etc/ssl/certs/yaook-ca/tls.crt"
-            # cacert: "/etc/ssl/certs/yaook-ca/ca.crt"
-
-# Mount certificates in case of internal API, e.g. Yaook
-  # extraVolumes:
-  # - name: yaook-ca
-  #   secret:
-  #     secretName: yaook-ca
-  #     items:
-  #     - key: ca.crt
-  #       path: yaook-ca
-```
+  ```yaml
+  prometheus-openstack-exporter:
+    enabled: true
+    multicloud:
+      enabled: false
+    serviceMonitor:
+      scrapeTimeout: "1m"
+    commonLabels:
+    # change if you chaged release name
+      release: dnation-kubernetes-monitoring-stack 
+  # reoplace with your clouds.yaml
+    clouds_yaml_config: |
+      clouds.yaml: |
+          clouds:
+            default:
+              auth:
+                auth_url: <replace>
+                application_credential_id: "<replace>"
+                application_credential_secret: "<replace>"
+              region_name: "<replace>"
+              interface: "public"
+              identity_api_version: 3
+              auth_type: "v3applicationcredential"
+  #  Needed only for internal openstack APIs
+  #  Demo purposes only, wont be used in KinD
+  #  For example in Yaook, uncomment the following:
+              # key: "/etc/ssl/certs/yaook-ca/tls.key"
+              # cert: "/etc/ssl/certs/yaook-ca/tls.crt"
+              # cacert: "/etc/ssl/certs/yaook-ca/ca.crt"
+  
+  # Mount certificates in case of internal API, e.g. Yaook
+    # extraVolumes:
+    # - name: yaook-ca
+    #   secret:
+    #     secretName: yaook-ca
+    #     items:
+    #     - key: ca.crt
+    #       path: yaook-ca
+  ```
 
 - In real deployments e.g. Yaook, Kolla-Ansible, OSSISM. Internal API is needed to access the metrics. Often, a private CA must be mounted. To do this, follow the commented part of above example. The observer cluster must, of course, have access to the internal api. The exporter might be deployed on a workload cluster as well, which is advised in case of Yaook.
 - Create a file called `values-iaas-dashboard.yaml`. Since dNation K8S monitoring does not provide it's own dashboard for IaaS/Openstack you can use the [recommended dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/).
 
-```yaml
-kube-prometheus-stack:
-  grafana:
-    dashboardProviders:
-      dashboardprovidersiaas.yaml:
-        apiVersion: 1
-        providers:
-      # Openstack exporter Dashboard provider
-        - name: iaas
-          folder: 'IaaS'
-          type: file
-          disableDeletion: false
-          editable: true
-          options:
-            path: /var/lib/grafana/dashboards/iaas
-    dashboards:
-      iaas:
-        # Openstack exporter Dashboard
-        openstack-exporter:
-        #Dashboard Id from URL
-          gnetId: 21085
-          revision: 3
-          datasource:
-          - name: DS_PROMETHEUS
-            value: thanos
-
-```
+  ```yaml
+  kube-prometheus-stack:
+    grafana:
+      dashboardProviders:
+        dashboardprovidersiaas.yaml:
+          apiVersion: 1
+          providers:
+        # Openstack exporter Dashboard provider
+          - name: iaas
+            folder: 'IaaS'
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/iaas
+      dashboards:
+        iaas:
+          # Openstack exporter Dashboard
+          openstack-exporter:
+          #Dashboard Id from URL
+            gnetId: 21085
+            revision: 3
+            datasource:
+            - name: DS_PROMETHEUS
+              value: thanos
+  
+  ```
 
 - In this kind example. You can also use [values file](iaaas/values-iaas.yaml) provided with this documentation, which combines both above yaml files into one. Just fill in your credentials and apply to observer cluster.
   ```bash
@@ -284,7 +276,7 @@ kube-prometheus-stack:
 2. Interconnect with existing observer cluster with monitoring
 3. Verify monitoring of workload cluster
 
-## 5. Dashboards and Customization
+## Dashboards and Customization
 dNation K8S Monitoring project provides many dashboards, which are written in jsonnet and are therefore highly customisable. User can override default thresholds or change the colors with helm values only, there's no need to edit any Json/Jsonnet file. The values files are self-explanatory  for example:
 
 ```yaml
@@ -365,9 +357,9 @@ dnation-kubernetes-monitoring:
 2. Observe changes in reported values
 3. Add an ingress Nginx panel to dashboard
 
-## 6 Appendices and Resources
+## Appendices and Resources
 
-### 6.1. ETCD, Kube-Proxy fix
+### ETCD, Kube-Proxy fix
 - The metrics of `etcd` and `kube-proxy` control plane components are by default bound to the localhost that prometheus instances **cannot** access.
 - When spawning a new cluster (`kubeadm init`) you can use our config
   ```bash
@@ -440,7 +432,7 @@ dnation-kubernetes-monitoring:
   ...
   ```
 
-### 6.2. Resources
+### Resources
 * [SCS Monitoring Documentation](https://docs.scs.community/docs/operating-scs/components/monitoring/docs/overview)
 * [dNation Kubernetes Monitoring](https://dnationcloud.github.io/kubernetes-monitoring/)
 

@@ -120,16 +120,16 @@
 * [Port security and Security groups](Support.md#security-groups)
 * [cloud-init](Support.md#cloud-init)
 * [Keypairs](Support.md#keypairs)
+* [Boot failures](Support.md#troubleshooting-boot-issues-self-support)
+    * Console log
+    * Storage recovery
+* [Backups and snapshots](Support.md#snapshots-and-backups)
 * [IaC tooling](Support.md#iac-tooling)
 * [Using the OpenStack API](Support.md#using-the-openstack-api)
     * `clouds.yaml` examples
 * [Stateful vs Stateless VMs](Support.md#stateful-vs-stateless-design)
     * Pets and cattle
 * [Scaling](Support.md#scaling)
-* [Boot failures](Support.md#troubleshooting-boot-issues-self-support)
-    * Console log
-    * Storage recovery
-* [Backups and snapshots](Support.md#snapshots-and-backups)
 * [Security incidents](Support.md#security-incidents-provider-perspective)
     * Fraud
     * Hacked VMs
