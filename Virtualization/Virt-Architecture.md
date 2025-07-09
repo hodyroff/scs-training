@@ -102,159 +102,159 @@ interfaces to control these.
 
 #### Keystone: Raw REST API example (against CiaB)
 * Discovery (`--cacert ...` needed b/c of self-signed certificate)
-```bash
-dragon@cumulus(//):~ [4]$ curl -sS -g --cacert "/etc/ssl/certs/ca-certificates.crt" \
-    -X GET https://api.in-a-box.cloud:5000/v3 \
-    -H "Accept: application/json" | jq .
-```
-```json
-{
-  "version": {
-    "id": "v3.14",
-    "status": "stable",
-    "updated": "2020-04-07T00:00:00Z",
-    "links": [
-      {
-        "rel": "self",
-        "href": "https://api.in-a-box.cloud:5000/v3/"
-      }
-    ],
-    "media-types": [
-      {
-        "base": "application/json",
-        "type": "application/vnd.openstack.identity-v3+json"
-      }
-    ]
+  ```bash
+  dragon@cumulus(//):~ [4]$ curl -sS -g --cacert "/etc/ssl/certs/ca-certificates.crt" \
+      -X GET https://api.in-a-box.cloud:5000/v3 \
+      -H "Accept: application/json" | jq .
+  ```
+  ```json
+  {
+    "version": {
+      "id": "v3.14",
+      "status": "stable",
+      "updated": "2020-04-07T00:00:00Z",
+      "links": [
+        {
+          "rel": "self",
+          "href": "https://api.in-a-box.cloud:5000/v3/"
+        }
+      ],
+      "media-types": [
+        {
+          "base": "application/json",
+          "type": "application/vnd.openstack.identity-v3+json"
+        }
+      ]
+    }
   }
-}
-```
-The services are versioned and have versioned (and microversioned) APIs.
+  ```
+  The services are versioned and have versioned (and microversioned) APIs.
 
 * Password authentication
-```bash
-curl -sS --cacert "/etc/ssl/certs/ca-certificates.crt" \
--X POST https://api.in-a-box.cloud:5000/v3/auth/tokens \
--H "Accept: application/json" -H "Content-Type: application/json" -d '
-> {
-  "auth": {
-    "identity": {
-      "methods": [
-        "password"
-      ],
-      "password": {
-        "user": {
-          "name": "test",
-          "password": "test",
-          "domain": {
-            "name": "test"
+  ```bash
+  curl -sS --cacert "/etc/ssl/certs/ca-certificates.crt" \
+  -X POST https://api.in-a-box.cloud:5000/v3/auth/tokens \
+  -H "Accept: application/json" -H "Content-Type: application/json" -d '
+  > {
+    "auth": {
+      "identity": {
+        "methods": [
+          "password"
+        ],
+        "password": {
+          "user": {
+            "name": "test",
+            "password": "test",
+            "domain": {
+              "name": "test"
+            }
           }
         }
       }
-    }
-  },
-  "scope": {
-    "project": {
-      "name": "test"
+    },
+    "scope": {
+      "project": {
+        "name": "test"
+      }
     }
   }
-}
-' | jq
-```
-```json
-{
-  "token": {
-    "methods": [
-      "password"
-    ],
-    "user": {
-      "domain": {
-        "id": "b294a22221d54c909557f23b65a53166",
+  ' | jq
+  ```
+  ```json
+  {
+    "token": {
+      "methods": [
+        "password"
+      ],
+      "user": {
+        "domain": {
+          "id": "b294a22221d54c909557f23b65a53166",
+          "name": "test"
+        },
+        "id": "b4438103db904341b88e0e5f9d9f5540",
+        "name": "test",
+        "password_expires_at": null
+      },
+      "audit_ids": [
+        "lmk5WwvXR5eBvBx2Dh2z5w"
+      ],
+      "expires_at": "2025-05-08T14:38:37.000000Z",
+      "issued_at": "2025-05-07T14:38:37.000000Z",
+      "project": {
+        "domain": {
+          "id": "b294a22221d54c909557f23b65a53166",
+          "name": "test"
+        },
+        "id": "0ecdbb271d8245f0b458bc1e4526a133",
         "name": "test"
       },
-      "id": "b4438103db904341b88e0e5f9d9f5540",
-      "name": "test",
-      "password_expires_at": null
-    },
-    "audit_ids": [
-      "lmk5WwvXR5eBvBx2Dh2z5w"
-    ],
-    "expires_at": "2025-05-08T14:38:37.000000Z",
-    "issued_at": "2025-05-07T14:38:37.000000Z",
-    "project": {
-      "domain": {
-        "id": "b294a22221d54c909557f23b65a53166",
-        "name": "test"
-      },
-      "id": "0ecdbb271d8245f0b458bc1e4526a133",
-      "name": "test"
-    },
-    "is_domain": false,
-    "roles": [
-      {
-        "id": "4095d94d72cb484b85d204d5b5ef913e",
-        "name": "reader"
-      },
-      {
-        "id": "72ca54fa55c24fa69c4bdd0803e8014c",
-        "name": "member"
-      },
-      {
-        "id": "aaf15f40660a4e58bcd80b661ca30061",
-        "name": "load-balancer_member"
-      },
-      {
-        "id": "0c9a55df33a94b55bdcf7bb652b88e22",
-        "name": "creator"
-      }
-    ],
-    "catalog": [
-      {
-        "endpoints": [
-          {
-            "id": "3b95334448364dab92bd46e75dcab326",
-            "interface": "public",
-            "region_id": "RegionOne",
-            "url": "https://api.in-a-box.cloud:9998",
-            "region": "RegionOne"
-          },
-          {
-            "id": "b74a9a69c48b4f44993d6b6cede248c1",
-            "interface": "internal",
-            "region_id": "RegionOne",
-            "url": "https://api.in-a-box.cloud:9998",
-            "region": "RegionOne"
-          }
-        ],
-        "id": "037ce0fe8e5246a58f2ca435e321834f",
-        "type": "panel",
-        "name": "skyline"
-      },
-[...]
-      {
-        "endpoints": [
-          {
-            "id": "737da81d4d7e43e7b2d9ced0dec2ab36",
-            "interface": "public",
-            "region_id": "RegionOne",
-            "url": "https://api.in-a-box.cloud:8780",
-            "region": "RegionOne"
-          },
-          {
-            "id": "e49affd2bb0341c5ad30cd4b3bd4bb1a",
-            "interface": "internal",
-            "region_id": "RegionOne",
-            "url": "https://api.in-a-box.cloud:8780",
-            "region": "RegionOne"
-          }
-        ],
-        "id": "f7a6b12baa5b46c094a647356c7b54b0",
-        "type": "placement",
-        "name": "placement"
-      }
-    ]
+      "is_domain": false,
+      "roles": [
+        {
+          "id": "4095d94d72cb484b85d204d5b5ef913e",
+          "name": "reader"
+        },
+        {
+          "id": "72ca54fa55c24fa69c4bdd0803e8014c",
+          "name": "member"
+        },
+        {
+          "id": "aaf15f40660a4e58bcd80b661ca30061",
+          "name": "load-balancer_member"
+        },
+        {
+          "id": "0c9a55df33a94b55bdcf7bb652b88e22",
+          "name": "creator"
+        }
+      ],
+      "catalog": [
+        {
+          "endpoints": [
+            {
+              "id": "3b95334448364dab92bd46e75dcab326",
+              "interface": "public",
+              "region_id": "RegionOne",
+              "url": "https://api.in-a-box.cloud:9998",
+              "region": "RegionOne"
+            },
+            {
+              "id": "b74a9a69c48b4f44993d6b6cede248c1",
+              "interface": "internal",
+              "region_id": "RegionOne",
+              "url": "https://api.in-a-box.cloud:9998",
+              "region": "RegionOne"
+            }
+          ],
+          "id": "037ce0fe8e5246a58f2ca435e321834f",
+          "type": "panel",
+          "name": "skyline"
+        },
+  [...]
+        {
+          "endpoints": [
+            {
+              "id": "737da81d4d7e43e7b2d9ced0dec2ab36",
+              "interface": "public",
+              "region_id": "RegionOne",
+              "url": "https://api.in-a-box.cloud:8780",
+              "region": "RegionOne"
+            },
+            {
+              "id": "e49affd2bb0341c5ad30cd4b3bd4bb1a",
+              "interface": "internal",
+              "region_id": "RegionOne",
+              "url": "https://api.in-a-box.cloud:8780",
+              "region": "RegionOne"
+            }
+          ],
+          "id": "f7a6b12baa5b46c094a647356c7b54b0",
+          "type": "placement",
+          "name": "placement"
+        }
+      ]
+    }
   }
-}
-```
+  ```
 
 * All services are identified by unique 16byte ids, resources also carry 16 byte uuids (typically in 8-4-4-4-12 notation).
   Tools typically support addressing resources by name, but names are *not* enforced to be unique everywhere.
@@ -262,29 +262,29 @@ curl -sS --cacert "/etc/ssl/certs/ca-certificates.crt" \
 * Much easier: Store keystone endpoint and credentials in `~/.config/openstack/clouds.yaml` and `secure.yaml` and
   issue `openstack --os-cloud test catalog list`.
 
-`~/.config/openstack/clouds.yaml`
-```yaml
----
-clouds:
-  test:
-    auth:
-      username: test
-      project_name: test
-      auth_url: https://api.in-a-box.cloud:5000/v3
-      project_domain_name: test
-      user_domain_name: test
-    cacert: /etc/ssl/certs/ca-certificates.crt
-    identity_api_version: 3
-```
-
-`~/.config/openstack/secure.yaml`
-```yaml
----
-clouds:
-  test:
-    auth:
-      password: test
-```
+  `~/.config/openstack/clouds.yaml`
+  ```yaml
+  ---
+  clouds:
+    test:
+      auth:
+        username: test
+        project_name: test
+        auth_url: https://api.in-a-box.cloud:5000/v3
+        project_domain_name: test
+        user_domain_name: test
+      cacert: /etc/ssl/certs/ca-certificates.crt
+      identity_api_version: 3
+  ```
+  
+  `~/.config/openstack/secure.yaml`
+  ```yaml
+  ---
+  clouds:
+    test:
+      auth:
+        password: test
+  ```
 
 #### OpenStack Core services
 | Type | Name | Function |
