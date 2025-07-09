@@ -16,7 +16,9 @@
     - This may include documentation
     - The following information may be such helpful infos and is all written from a user perspective
 
-### Floating IPs
+### Typical user challenges
+
+#### Floating IPs
 * Making a VM reachable from the outside typically requires several steps on OpenStack
     - Connecting the network port to a network that is connected to a router that is connected to the outside network
     - Allocating a floating IP from the outside network and attaching it to the network port of that VM
@@ -26,7 +28,7 @@
     - You just see the fixed IP address of the network port
     - Traffic from the outside is DNAT'ted and appears to be directed to the network port from within the VM
 
-### Security Groups
+#### Security Groups
 * A security group is a list of ALLOW rules for a group of network ports
     - Most security groups allow all outgoing traffic
         * Related packets (responses to outgoing packets) are allowed back in
@@ -39,7 +41,7 @@
         * This also means that adding a port to a security group that's referenced by this or by another security group can mean updating a lot of network filtering rules
             - This can limit scalability of network operations for setups with lots of VMs; consider assigning IP ranges and filtering for them instead in such setups
 
-### cloud-init
+#### cloud-init
 * While clouds (OpenStack is no different from AWS here) typically support users in creating and using their own private images, they provide mechanisms to use generic images and customize them on (first) boot
 * The customization is done by providing metadata: `user_data` by the user (and `vendor_data` by the cloud provider, which however is seldomly used) which the generic image then picks up and uses it to adjust its behavior
 * This can be used to do things like
@@ -55,7 +57,7 @@
     - Read the documentation to get an idea of all the possibilities
     - On Windows, [cloudbase-init](https://cloudbase.it/cloudbase-init/) does provide similar functionality
 
-### Keypairs
+#### Keypairs
 * One thing almost always required on first boot of Linux VMs is the injection of an authorized public ssh key, so the owner of the VM can login and investigate and configure things
     - For production VMs, it may be best-practice to *not* allow any login
 * The key injection is done by OpenStack providing the keypair selected in horizon or via the API in the metadata, which cloud-init then picks up
@@ -66,6 +68,47 @@
 * There is no way to recover a lost secret key, so you might lose ssh access to your VMs
     - Most cloud images do not allow a console login by default
         * OpenStack offers a novnc console for VMs that you can use for emergency access if you configured your VM to allow local password authenticated logins
+
+#### Troubleshooting boot issues (self-support)
+* When a created VM does not become accessible, this can be debugged in a number of ways
+    - Most Linux images are configured to write the boot log to the serial console. This is captured by OpenStack and can be accessed via horizon or via `openstack console log show`
+    - Most Linux and Windows images create output to a virtual VGA graphics card. This can be accessed via horizon or by pointing a web browser to the URL given by `openstack console url show`. Many images also allow input this way, so you could log in if local console logins are allowed.
+* If you have created your own image, you may be able to observe trouble from the bootloader to locate and load the operating system.
+    - This does not typically happen on generic images provided by the provider
+* You may see trouble with your root filesystem which may have suffered corruption on a crash
+    - This can be recovered by attaching the volume to another VM and using filesystem recovery tools
+    - For local storage, you can boot with a rescue image (`openstack server rescue`)
+* Your volume may be read-only and reject WRITE requests
+    - This is due to locks held when ceph went down and needs support from the cloud provider; it is described above in the Maintenance section
+* Your VM might have booted perfectly and you just fail to reach it via the network
+    - Double check network settings:
+        * Do you have a floating IP assigned or another VM attached to the same router to access it?
+        * Is the service (ssh) running and the port allowed in firewall and security group rules?
+* You may reach it via ssh, but it rejects your login
+    - Did you inject the right public ssh key?
+        * `openstack server show` and horizon can show you which ssh key was specified for injection upon VM creation
+        * If the metadata service was broken on first VM boot, the ssh key might not have been injected. Throw away the VM and recreate it then (assuming that no valuable data is held on a local root volume)
+    - Did you specify the right private ssh key when connecting?
+        * Use `ssh -v` to get more debug output ...
+        * Beware that ssh-agents may offer added keys ahead of the one you just specified. (`SSH_AUTH_SOCK ssh -i ~/.ssh/privkey.pem logname@host` helps then).
+    - Note that username/password authentication via ssh is not normally enabled in cloud VMs due to security considerations
+
+#### Snapshots and backups
+* Definitions
+    - A snapshot is a point-in-time state of a storage device.
+    - A backup is a copy of a storage devices.
+* Snapshots:
+    - Are typically created within the same storage backend
+    - This allows for quick and cheap creation, using copy-on-write
+        * Beware that the state of a read-write mounted volume is not necessarily consistent (`sync` helps) due to dirty caches
+    - Are useful to protect against user errors or failed application changes etc.
+    - The cost of snapshots increase as they age (as they diverge more)
+* Backups:
+    - Should be stored on a different storage backend, thus also providing protection against storage backend breakage
+    - Are typically slow to create as full copies are created
+    - Snapshots can be backed up (by creating a temporary volume)
+        * For read-write mounted volumes, this is the only way to have a backup that at least comes close to a consistent filesystem
+    - OpenStack even offers incremental backups, only saving the block-level changes since the last backup
 
 ### IaC tooling
 * Cloud-natives do not create VMs via the (horizon or skyline) web interface and then login to VMs to do manual configuration
@@ -85,7 +128,7 @@
 * Fully automating the deployment makes testing, upgrading, recovering from incidents, ... a lot easier and in general allows development speed and test coverage to increase by factors
     - This is probably *the* main benefit of cloud computing
 
-### Using the OpenStack API
+#### Using the OpenStack API
 * Most tools assume a `clouds.yaml` style configuration
     - You keep two config files, `~/.config/openstack/clouds.yaml` and `~/.config/openstack/secure.yaml` where you can have several entries, one per OpenStack project
         * Reminder: An OpenStack project is a workspace for virtual resources with associated roles (user authorizations) in a cloud
@@ -154,7 +197,7 @@ clouds:
 * The application credential is valid for one project (which is selected during creation) and can be limited in validity.
 * By default, appcreds are `restricted` which means that appcreds can not be used to authenticate to create more appcreds.
 
-### Stateful vs Stateless design
+#### Stateful vs Stateless design
 * Cloud native deployments seek to make most or better all VMs stateless.
     - Stateless means that you can throw them away without losing any valuable data
     - Think about a web application, where all configuration comes from the outside (git and vault) and where all
@@ -169,7 +212,7 @@ clouds:
 * Stateless VMs are sometimes called cattle -- in contrast to pets (or snowflakes) that are manually maintained VMs that need operator care, backups etc.
 * If some VMs (backend, database) hold persistent data, treat them differently
 
-### Scaling
+#### Scaling
 * Horizontal scaling (using more VMs to work in parallel) is typically easy to do with stateless VMs
 * Vertical scaling (creating larger VMs) is supported by OpenStack
     - You can hot(un)plug disks and network ports into running VMs
@@ -179,48 +222,6 @@ clouds:
 * Autoscaling (horizontal scaling) in OpenStack can be done via [heat](https://wiki.openstack.org/wiki/Heat/AutoScaling) orchestration templates
     - This is not very popular and SCS standards do not require this functionality to be present
     - Many workloads that would benefit from autoscaling are containerized and use the Kubernetes mechanisms for autoscaling
-
-### Troubleshooting boot issues (self-support)
-* When a created VM does not become accessible, this can be debugged in a number of ways
-    - Most Linux images are configured to write the boot log to the serial console. This is captured by OpenStack and can be accessed via horizon or via `openstack console log show`
-    - Most Linux and Windows images create output to a virtual VGA graphics card. This can be accessed via horizon or by pointing a web browser to the URL given by `openstack console url show`. Many images also allow input this way, so you could log in if local console logins are allowed.
-* If you have created your own image, you may be able to observe trouble from the bootloader to locate and load the operating system.
-    - This does not typically happen on generic images provided by the provider
-* You may see trouble with your root filesystem which may have suffered corruption on a crash
-    - This can be recovered by attaching the volume to another VM and using filesystem recovery tools
-    - For local storage, you can boot with a rescue image (`openstack server rescue`)
-* Your volume may be read-only and reject WRITE requests
-    - This is due to locks held when ceph went down and needs support from the cloud provider; it is described above in the Maintenance section
-* Your VM might have booted perfectly and you just fail to reach it via the network
-    - Double check network settings:
-        * Do you have a floating IP assigned or another VM attached to the same router to access it?
-        * Is the service (ssh) running and the port allowed in firewall and security group rules?
-* You may reach it via ssh, but it rejects your login
-    - Did you inject the right public ssh key?
-        * `openstack server show` and horizon can show you which ssh key was specified for injection upon VM creation
-        * If the metadata service was broken on first VM boot, the ssh key might not have been injected. Throw away the VM and recreate it then (assuming that no valuable data is held on a local root volume)
-    - Did you specify the right private ssh key when connecting?
-        * Use `ssh -v` to get more debug output ...
-        * Beware that ssh-agents may offer added keys ahead of the one you just specified. (`SSH_AUTH_SOCK ssh -i ~/.ssh/privkey.pem logname@host` helps then).
-    - Note that username/password authentication via ssh is not normally enabled in cloud VMs due to security considerations
-
-
-### Snapshots and backups
-* Definitions
-    - A snapshot is a point-in-time state of a storage device.
-    - A backup is a copy of a storage devices.
-* Snapshots:
-    - Are typically created within the same storage backend
-    - This allows for quick and cheap creation, using copy-on-write
-        * Beware that the state of a read-write mounted volume is not necessarily consistent (`sync` helps) due to dirty caches
-    - Are useful to protect against user errors or failed application changes etc.
-    - The cost of snapshots increase as they age (as they diverge more)
-* Backups:
-    - Should be stored on a different storage backend, thus also providing protection against storage backend breakage
-    - Are typically slow to create as full copies are created
-    - Snapshots can be backed up (by creating a temporary volume)
-        * For read-write mounted volumes, this is the only way to have a backup that at least comes close to a consistent filesystem
-    - OpenStack even offers incremental backups, only saving the block-level changes since the last backup
 
 
 ### Security incidents (provider perspective)

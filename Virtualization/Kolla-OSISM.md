@@ -10,9 +10,9 @@
 * Is an OpenStack upstream project (with OSISM staff being important core contributors)
 * Is well documented <https://docs.openstack.org/kolla-ansible/latest/>
 
-## Ansible 1x2
+### Ansible 1x2
 
-### Ansible concepts
+#### Ansible concepts
 * Ansible is a configuration management system that uses ssh to connect to managed nodes (agent-less)
 * These are kept track of in an inventory
 * Gathered information on those nodes are called facts
@@ -21,7 +21,7 @@
 
 ![Ansible hosts](ansible_inv_start.svg)
 
-### Ansible Playbooks
+#### Ansible Playbooks
 * An *ansible playbook* is a set of *ansible plays*
 * An *ansible play* applies *tasks* to the applicable managed nodes (mapped hosts)
 * Tasks are often composed of *ansible roles*, which are reusable fragments with
@@ -35,7 +35,7 @@
 * An *ansible collection* is a format to bundle a set of playbooks, roles, modules and plugins that
     can be used independently
 
-### Ansible demo: Inventory
+#### Ansible demo: Inventory
 * We follow the instructions at <https://docs.ansible.com/ansible/latest/getting_started/>
 
 Inventory directory `inventory` content `inventory/hosts` (ini format)
@@ -65,7 +65,7 @@ ansible -m ping -u ANSIBLEUSER -m ping ROLEORGROUP
 * You can set per host variables `host_vars/nodename/vars.yaml`
 * Follow <https://docs.ansible.com/ansible/latest/getting_started/get_started_inventory.html>
 
-### Ansible demo: playbooks
+#### Ansible demo: playbooks
 `playbooks/testplay.yaml`
 ```yaml
 - name: ping-and-echo-and-touch
@@ -90,9 +90,9 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
 ```
 * Playbooks <https://docs.ansible.com/ansible/latest/getting_started/get_started_playbook.html>
 
-## OSISM: Open Source InfraStructure Manager
+### OSISM: Open Source InfraStructure Manager
 
-### What is [OSISM](https://osism.tech/)?
+#### What is [OSISM](https://osism.tech/)?
 * Lifecycle and deployment management tooling built on top of kolla-ansible
   (and significantly contributing to kolla-ansible)
 * Orchestrates the kolla-ansible OpenStack containers plus containers for
@@ -110,7 +110,7 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
 * Most of the following information is specific to OSISM (or kolla-ansible),
   though concepts on other tooling is similar.
 
-### Digression: Comparison OSISM and yaook
+#### Digression: Comparison OSISM and yaook
 * yaook also uses containerized OpenStack services
     - Not currently using the kolla ones though, but custom-built
 * The service containers are not managed via ansible and docker, but
@@ -128,7 +128,7 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
 * Used by a number of production environments (amongst which StackIT, not SCS-compliant,
   and upcoming UhuruTec/Yorizon which will be SCS-compatible).
 
-### The OSISM manager node
+#### The OSISM manager node
 * It is the ansible control node of your setup
 * Acts as central control point for all changes, the only node where you login during
   normal operations
@@ -150,7 +150,7 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
         * Rendered OpenStack config files in `/etc/kolla/`, collected logs in `/var/log/kolla/`
 * Deployment scripts in `/opt/configuration/scripts/`
 
-### Node type: Control node
+#### Node type: Control node
 * Control nodes host infrastructure and monitoring
     - Database (mariadb/galera cluster, proxysql, memcached)
     - rabbitmq
@@ -170,7 +170,7 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
     - aodh (if enabled)
 * Avoid overloading them
 
-### Node type: Compute node
+#### Node type: Compute node
 * Compute nodes host the virtual machines
 * To do so, they host a few OpenStack services
     - cinder, iSCSI (tgtd, iscsid)
@@ -179,22 +179,22 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
 * Also prometheus, fluentd
 * Capacity determined by RAM and CPU cores
 
-### Node type: Network node
+#### Node type: Network node
 * Networking functions
     - neutron
     - octavia
     - openvswitch and OVN
 
-### Node type: Storage node
+#### Node type: Storage node
 * Ceph containers
     - OSDs
     - Mon+Mgr, MDS, RGW
 
-## Planning hardware
+### Planning hardware
 
 See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 
-### Hyperconverged vs. Fully decomposed
+#### Hyperconverged vs. Fully decomposed
 * We need some nodes to run OSISM
     - 1 manager node (M)
     - 3 control plane nodes (M)
@@ -218,7 +218,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
     - More decomposed setups can more easily scale
     - Your security architects may want network nodes to be separate from compute nodes ...
 
-### Sizing: Compute Nodes
+#### Sizing: Compute Nodes
 * Customer VMs have a mixture of 1:2 ... 1:8 ration vCPU to RAM
 * vCPUs can be oversubscribed, unlike memory. 2--3x oversubscription per real core is
   a reasonable sizing approach
@@ -231,7 +231,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 * Turn on hyperthreading if it's secure on your CPU, it add ~20% CPU power
     - Lower max. oversubscription ratio from 5/Core to 3/Thread then
 
-### Sizing: Control Nodes
+#### Sizing: Control Nodes
 * Avoid these to hit their limits
     - Especially rabbitmq and also database are needed and must not be starved no resources
 * If you run OpenSearch, this alone adds ~32GiB RAM, 4 core requirement (even for smaller clouds)
@@ -240,26 +240,26 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 * Ensure sufficient and fast storage (database): NVMe (RAID-1)
 * k3s also adds 4GiB RAM, 2 cores plus the requirements needed by workloads running on k3s
 
-### Sizing: Network Nodes
+#### Sizing: Network Nodes
 * Need to deal with lots of flows
 * 16GiB plus 4C for low network utilization
     - double for medium
     - double again for high
 * Good network I/O (obviously)
 
-### Sizing: Storage nodes
+#### Sizing: Storage nodes
 * 1C (2HTs) and 4GB per OSD
     - Double this when using encryption
     - Also add a core and a few GB if you use erasure coding
 * Network I/O very important, fast storage obviously
 * See notes in Ceph Doc
 
-### Sizing: Manager node:
+#### Sizing: Manager node:
 * 32GB, more if you want to use OpenSearch
 * 8C, more for large environments / OpenSearch
 * Storage: SSD/NVMe; use 2x1.9TB to have sufficient space for caching packages and containers
 
-### Putting it together:
+#### Putting it together:
 * Add requirements up when combinig roles in not fully decomposed setups
 * Smaller setups will work if you
     - Carefully design QoS settings to avoid starvation
@@ -267,9 +267,9 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
     - This adds complexity and the engineering time and operational trouble tends to be more
       expensive than the saved hardware cost, at least for production / production-like systems
 
-## OSISM Installation workflow
+### OSISM Installation workflow
 
-### Overview over the steps
+#### Overview over the steps
 * Procure hardware, set it up, connecting them to the network
     - With (static) DHCP this works conveniently
 * Bootstrap manager using the Ubuntu autoinstall image
@@ -283,7 +283,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
     - Customize the setup according to your needs
     - Roll the configuration using the ansible playbooks (via osism CLI)
 
-### Bootstrapping hardware (BareMetal provisioning) - Manager and all other reosource nodes
+#### Bootstrapping hardware (BareMetal provisioning) - Manager and all other reosource nodes
 * Autoinstall images are available from OSISM <https://github.com/osism/node-image>
     - Variants based on disk setup (SCSI/SSD sda vs. NVMe nvme0n1)
     - If nothing matches (and you have enough machines to want to avoid manual adjustments)
@@ -301,7 +301,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 * You can also manually provision the hardware in case you need to
   <https://docs.scs.community/docs/iaas/guides/deploy-guide/provisioning>
 
-### Creating the configuration repository (seed node)
+#### Creating the configuration repository (seed node)
 * This should be prepared on the operators control outside of the cloud
     - A desktop system (preferrably Linux, but Mac or WSL work as well) that supports docker
     - A small VM somewhere can be setup if needed; it can be disposed after config repo and manager node are set up
@@ -320,7 +320,7 @@ docker run \
 * Answer the questions from cookiecutter, see <https://docs.scs.community/docs/iaas/guides/configuration-guide/configuration-repository/#creating-a-new-configuration-repository>
 * Output is stored in directory `cookiecutter-output/`. Commit and push it to your git.
 
-###  Secrets handling
+####  Secrets handling
 * There is a subdirectory `cookiecutter-output/secrets/` which is *not* (and should *never* be) commited to git
 * Ensure to save the contents of this directory at a safe and secure place!
 * `secrets/vaultpass` contains the password for your ansible vault and is stored as a `keepass` file.
@@ -329,7 +329,7 @@ docker run \
 * Makefile targets to get ansibale vault secrets, see <https://docs.scs.community/docs/iaas/guides/configuration-guide/configuration-repository/#working-with-encrypted-files>, e.g. `make ansible_vault_show FILE=all`
 * Keepass clients exist for many operating systems (incl. Android), there is also a nextcloud app
 
-### Inventory
+#### Inventory
 <https://docs.scs.community/docs/iaas/guides/configuration-guide/configuration-repository/#step-4-post-processing-of-the-generated-configuration>
 
 * Cookiecutter creates node `node01` for your manager. Adjust it to the real name.
@@ -353,20 +353,20 @@ docker run \
 * Changes should always be commited and push to git
 * `osism apply configuration` gets the latest status from git (overwrites local changes if any)
 
-### Manager
+#### Manager
 * Setting the operator user: <https://docs.scs.community/docs/iaas/guides/deploy-guide/manager#step-1-create-operator-user>
 * Also apply network settings, bootstrap and reboot the manager node
 * Deploy the manager service and set vault password (it's in your keepass vault if you did not move it elsewhere)
 * These steps should work without any errors
 
-### Nodes
+#### Nodes
 * Do the bare metal provisioning as described before
 * Make them managed by applying the bootstrap steps <https://docs.scs.community/docs/iaas/guides/deploy-guide/bootstrap>
 * All nodes should be reachable (cf. step 6 with `osism apply ping`), resolve any issues prior to proceeding
     - Remember that an ansible ping verifies that ansible can log in via ssh to manage the host
     - This is why the final steps are `osism apply sshconfig` and `osism apply known-hosts`
 
-### Network
+#### Network
 * If you use VLANs, Link aggregation (802.3ad, also called bonding or trunking), you will need to adjust
   your network settings.
 * For Ubuntu hosts (since OSISM 6.1.0), netplan is used,
@@ -378,7 +378,7 @@ docker run \
     - Note: This is for the loadbalancer(s) in from of the Infra/OpenStack API services, not the
       loadbalancers that cloud users create with the OpenStack octavia service
 
-### Nodes: Infrastructure, Network, Logging/Monitoring, Ceph, OpenStack
+#### Nodes: Infrastructure, Network, Logging/Monitoring, Ceph, OpenStack
 * <https://docs.scs.community/docs/iaas/guides/deploy-guide/services/>
   covers this well
 * Maintain the order: infra, network, logging/mon, kubernetes (optional), ceph, OpenStack
@@ -388,7 +388,7 @@ docker run \
 * For Ceph, the deployment with ceph-ansible is still the default, this will change to
   ceph rook in the future. Ensure you have kubernetes/k3 set up
 
-### OpenStack tuning
+#### OpenStack tuning
 * See <https://docs.scs.community/docs/iaas/guides/configuration-guide/openstack/>
     - E.g. 3x CPU oversubscription assumes that you have HT(SMT) enabled, you might increase to 5x otherwise.
 * It also explains the mechanism how config file tepmlating works and how these are rolled out with
@@ -396,9 +396,9 @@ docker run \
 * The service specific hints mostly link the upstream OpenStack docu
 * The Commons and Services chapters have kolla and OSISM specific information
 
-## Validating that the installed environment works
+### Validating that the installed environment works
 
-### Connect to the deployed environment
+#### Connect to the deployed environment
 * The most convenient is to use wireguard to the manager
 * This creates a tunnel into the environment, even if it has otherwise
   no inbound internet access
@@ -409,7 +409,7 @@ docker run \
     - Change device name (`wg1`), port, virtual server IP 192.168.48.x and virtual client IPs to avoid confusion
     - Obviously, you would want to change the secrets as well in case you want to avoid impersonation of admins
 
-### Visual inspection
+#### Visual inspection
 * For an overview of dashboards look at CiaB or testbed documentation
   at <https://docs.scs.community/docs/iaas/guides/configuration-guide/openstack/>
 * The most important ones are linked from Homer at: <https://homer.services.YOURCLOUDDOMAIN/>
@@ -421,12 +421,12 @@ docker run \
     - You can login to the Default domain with the admin credentials from vault
     - On CiaB, there is also a test domain with a test user with password test
 
-### Reviewing install logs
+#### Reviewing install logs
 * ARA records the outcome from all playbooks
     - There should not be any failures
 * osism logs
 
-### Testing
+#### Testing
 * RefStack is the framework used by (former) OpenStack InterOp Working Group to run the
   InterOp Guideline tests. In general, you can use it to run sets of Tempest tests.
     - Tempest is the test framework and test case collection from OpenStack
@@ -451,9 +451,9 @@ docker run \
     - You should get a run without any error or timeout -- i.e. no red color.
     - Same comment as for SCS Compliance test: Run this with normal project `member` privileges, not as admin
 
-## The OSISM tool
+### The OSISM tool
 
-### osismclient
+#### osismclient
 * All management happens on the manager node
     - Most of it by calling the osism command line tool
     - It's a wrapper to call the `osism` program in the `osismclient` container
@@ -466,7 +466,7 @@ docker run \
 * With some docker versions, the commands may output a spurious `\r` (CR) at every line,
   so filter this out when doing scripting.
 
-### OSISM playbooks
+#### OSISM playbooks
 * `osism apply PLAYBOOK` runs ansible playbooks with the appropriate settings
     - `osism apply -a stop PLAYBOOK` would typically stop the service referenced by `PLAYBOOK`
     - `osism apply -a upgrade PLAYBOOK` would get the latest version of a service (container) and then
@@ -477,7 +477,7 @@ docker run \
     - The playbook summary allows you to see whether that is the case (`changed=`)
 * `osism get facts/hosts/hostvars/tasks/...` also just wraps ansible
 
-### Performing changes workflow
+#### Performing changes workflow
 * Perform changes in the checked out configuration repository ON A TEST OR REFERENCE ENVIRONMENT
     - Typically you end up editing some file under `/opt/configuration/environments/`
     - Push the changes (for your test environment) and apply them:
@@ -499,9 +499,9 @@ osism apply facts           # Gather/Update ansible facts
         * Be mindful of hierarchies or cultural habits that e.g. prevent questioning higher ranked people
         * Think a moment about AF447 or Fukushima
 
-## Practical assignments for OSISM
+### Practical assignments for OSISM
 
-### Create a config repository (seed node)
+#### Create a config repository (seed node)
 * Decide where to store the git config repository
 * Decide where to store the secrets
 * Get a name/domain for your (test) cloud
@@ -509,12 +509,12 @@ osism apply facts           # Gather/Update ansible facts
 * Ensure you store the secrets in a safe place
 * Adjust manager inventory on git repo as needed
 
-### Bootstrap and install manager (manager node) -- if we have a real lab env
+#### Bootstrap and install manager (manager node) -- if we have a real lab env
 * Identify the suitable auto installation image
 * Perform installation
 * Run scripts to make manager managed
 
-### Study the OSISM tool on the manager (can do this on testbed or CiaB)
+#### Study the OSISM tool on the manager (can do this on testbed or CiaB)
 * Get the manager and the main components version
 * Look at the inventory
 * Facts collection

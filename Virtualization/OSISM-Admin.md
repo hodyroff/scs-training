@@ -1,6 +1,8 @@
-## OpenStack Flavor-Manager
+## OSISM manager tooling
 
-### Purpose
+### OpenStack Flavor-Manager
+
+#### Purpose
 * SCS prescribes a flavor naming scheme in standard [scs-0100](https://docs.scs.community/standards/scs-0100-v3-flavor-naming)
     - Flavor names like `SCS-nV-m` denote a flavor with `n` vCPUs and `m` GiB of RAM, the `V` denotes that
       vCPUs might be oversubscribed (up to 5x, or 3x for a hyperthread), but they need to be secure
@@ -22,7 +24,7 @@
 * The SCS compliance checks test for these.
 - The SCS flavor manager allows to create these flavors
 
-### Usage
+#### Usage
 * On the manager node, run `osism manage flavors --help`
 ```bash
 dragon@testbed-manager(test):~/.config/openstack [0]$ osism manage flavors --help
@@ -40,9 +42,9 @@ options:
   --recommended         Also create recommended flavors
 ```
 
-## Image Manager
+### Image Manager
 
-### Purpose
+#### Purpose
 * Cloud providers must allow users to upload their own images (within fair use limits)
 * For convenience, we recommend they offer public images that are centrally maintained
     - This saves work to customers by not having to upload standard vanilla upstream images
@@ -56,7 +58,7 @@ options:
 * The Image Manager helps the cloud operator to register compliant public images and to regularly
   provide updated versions of them.
 
-### Usage
+#### Usage
 * On the manager node, run
 ```bash
 dragon@testbed-manager(test):~ [0]$ osism manage image --help
@@ -78,14 +80,14 @@ options:
                         Path to the directory containing all image files or path to single image file
 ```
 
-### Available images (as of 2025-05)
+#### Available images (as of 2025-05)
 - Debian 12, Debian 11
 - Ubuntu 24.04, Ubuntu 22.04, Ubuntu 22.04 Minimal
 - Rocky 9, AlmaLinux 9, CentOS Stream 9
 - openSUSE Leap 15.6
 - Cirros 0.6.3, Cirros 0.6.2
 
-### Example
+#### Example
 * Example: Register AlmaLinux 9
 ```bash
 dragon@testbed-manager(test):~ [0]$ osism manage image --cloud admin --latest --filter "AlmaLinux"`
@@ -129,9 +131,9 @@ dragon@testbed-manager(test):~ [0]$ osism manage image --cloud admin --latest --
 * Image was converted to raw to allow for Copy-on-Write usage with ceph
     - This took a bit of time (4min30s) on ceph on the testbed's ceph
 
-## Onboarding users
+### Onboarding users
 
-### Workflow
+#### Workflow
 * Create a domain
 * Create first user in domain
     - For self-service capabilities (recommended): Assign domain-scoped manager role for domain
@@ -145,13 +147,13 @@ dragon@testbed-manager(test):~ [0]$ osism manage image --cloud admin --latest --
 
 <!--TODO Explaining domains, users, roles, ... here-->
 
-## Assignments Manager
+### Assignments Manager
 
-### Image registration
+#### Image registration
 - Add a Debian 12 image using the openstack image manager
 - Add Ubuntu 24.04
 
-### User onboarding
+#### User onboarding
 - Perform the steps using the openstack CLI (optional: python SDK)
     * Domain creation
     * First user in Domain

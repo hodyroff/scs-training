@@ -1,6 +1,8 @@
 ## Introduction to CEPH
 
-### What is ceph?
+### Ceph overview
+
+#### What is ceph?
 * Distributed storage system
     - Performance (throughput) scales with the size of the Ceph cluster
     - Robustness by replication (or erasure-coding)
@@ -18,7 +20,7 @@
     - OSS: drbd, glusterfs, ...
     - Commercial: Huawei FusionStorage, PureStorage, Scality, NetApp, vSAN, ...
 
-### Ceph terminology
+#### Ceph terminology
 * Read <https://docs.ceph.com/en/latest/architecture/>
 * Ceph Monitor cluster (Mons) maintains the *cluster state* (maps)
     - Cluster Map contains `FSID`, list of pools, placement groups, OSDs, crush map
@@ -38,7 +40,7 @@
     - Clients can only issue writes to the *Primary* (first member of the PG) who is
       then responsible to replicate the data to the *Secondaries*.
 
-### Ceph replication strategies
+#### Ceph replication strategies
 * Replication strategy is set by pool
 * For high availability `size=3`, `min_size=2` is typically used
     - Each object is written to three OSDs.
@@ -57,7 +59,7 @@
     - Net capacity is K/(K+M) of gross capacity, e.g. 3/(3+2) = 60%
     - Considered less proven than 3x replication
 
-### Block storage: Rados Block Device
+#### Block storage: Rados Block Device
 * Client code that exposes ceph storage as a block device ("image")
     - A set of freely addressable blocks
     - Like a disk
@@ -73,7 +75,7 @@
     - Pro: Makes live migration work without block migration
     - Con: Local storage does not have the expected performance characteristics
 
-### Object storage: Rados Gateway (rgw)
+#### Object storage: Rados Gateway (rgw)
 * Expose object storage interface for ceph objects
     - Supports S3 API
         - without necessarily imposing the bucket number and global bucket namespace limitations of AWS
@@ -86,7 +88,7 @@
 * Uses pools `.rgw.root`, `default.rgw.buckets.index`, `default.rgw.buckets.data`, `default.rgw.control`,
     `default.rgw.log`, and `default.rgw.meta` on a standard OSISM ceph-ansible installation.
 
-### File Storage: CephFS
+#### File Storage: CephFS
 * A layer on top of ceph objects that exposes them as a POSIX-like distributed filesystem
 * Starts the MetaData Service Daemon (MDS)
 * Stores metadata for the filesystem hierarchy (in pools `cephfs_metadata`) and file data (in pool `cephfs_data`)
@@ -99,7 +101,7 @@
     - Cache coherency is a challenge for distributed filesystems (and was not satisfactorily tackled
       on NFS prior to v4.1)
 
-### Ceph versions
+#### Ceph versions
 * There is roughly one new stable release per year (spring), with version number N.2.0
     - Bugfixes (typically backports) result in N.2.X patch releases (4-6 weeks)
     - Bugfixes provided upstream for 2 years
@@ -110,9 +112,9 @@
     - OSISM currently offers Quincy (17.2.x) and Reef (18.2.x)
 * See <https://docs.ceph.com/en/latest/releases/#ceph-releases-index>
 
-## Ceph Dashboard
+### Ceph Dashboard
 
-### Where?
+#### Where?
 * The Ceph Dashboard is available at <https://manager.systems.YOURCLOUDDOMAIN:7000/>,
   e.g. on <http://manager.systems.in-a-box.cloud:7000/> on a CiaB system
   (after connecting via the wireguard tunnel).
@@ -123,7 +125,7 @@
 * The homer service also links some dashboards.
   Homer is at <https://homer.services.YOURCLOUDDOMAIN/>
 
-### Ceph Dashboard: Main page
+#### Ceph Dashboard: Main page
 ![Ceph Dashboard Main Page](Screenshot_Ceph1.png)
 
 * Health Status
@@ -131,7 +133,7 @@
 * Activity
 * Stats (Inventory)
 
-### Ceph Dashboard: OSDs
+#### Ceph Dashboard: OSDs
 ![Ceph OSD Page](Screenshot_Ceph2.png)
 
 * List of OSDs with their status
@@ -139,29 +141,29 @@
 * Be careful!
 * Screenshot taken from a CiaB Ceph (reconfigured for 2 LVs on each of the 2 NVMes)
 
-### Ceph Dashboard: Pools
+#### Ceph Dashboard: Pools
 ![Ceph Pool List](Screenshot_Ceph3.png)
 
 * List taken from CiaB install (number of PGs reduced for less used pools)
 * Clients and replication settings displayed
 * Note that lists are typically paginated (only show 25 entries per page)
 
-### Ceph Dashboard: Images
+#### Ceph Dashboard: Images
 ![Ceph Images List](Screenshot_Ceph4.png)
 
 * A few OS images (names correspond to glance IDs)
 * A 10GB volume as child from image (names correspond to cinder IDs)
 
-## Ceph Command line tooling
+### Ceph Command line tooling
 
-### Command line tools
+#### Command line tools
 * Are installed in the `cephclient` container on the manager node
     - Beware of extra `\r` (`^M`) in output from docker (depends on your setup)
       when creating scripts
 * Expose the full functionality (more comprehensive than the dashboard)
 * Needed for automation (scripts, playbooks, ...)
 
-### Information and stats
+#### Information and stats
 * `ceph health`
 * `ceph status`
 * `ceph -w`     # watch health msgs
@@ -174,13 +176,13 @@
 * `ceph pg ls-by-pool volumes` # this takes a while
 * `rbd -p images ls`    # List RBD objects in image pool, `-p volumes` is interesting as well
 
-### Explore, get and set config options
+#### Explore, get and set config options
 * `ceph config ls`
 * `ceph config get osd.11 bdev_enable_discard`
 * `ceph config set osd.11 bdev_enable`  # Do this for all devices if you go for it
 * `ceph config set osd.11 bdev_async_discard true`  # Ditto
 
-### OSD operations
+#### OSD operations
 * Taking an OSD (ID `NN`) out for good
 ```bash
 ceph osd crush reweight osd.NN 0.0
@@ -205,15 +207,15 @@ systemctl disable ceph-osd@NN
 * Upstream ceph docu: <https://docs.ceph.com/en/reef/rados/operations/>
   (This is for reef, use the version that you have in use.)
 
-### Ceph tuning
+#### Ceph tuning
 * See hints at <https://docs.scs.community/docs/iaas/guides/configuration-guide/ceph/>
 * Kernel sysctl settings: Typically suitable out of the box in OSISM deployment
 * Defaults for PGs are set for a small cluster. Enable autoscaler for pools or increase manually for larger clusters (10+ OSDs)
 * There are also hints how to setup WAL and DB if those are not co-located on the same NVMe anyway
 
-## Planning hardware for Ceph
+### Planning hardware for Ceph
 
-### Considerations
+#### Considerations
 * Store one OSD on one device
     - So one server with 4 NVMEs should host 4 OSDs
     - If you can, keep separate (small) boot drives
@@ -230,7 +232,7 @@ systemctl disable ceph-osd@NN
     - 5y @ 3 DWPD rating recommended when exposed as high performance block storage
     - Power Loss Protection allows safe write caching (required by SCS flavor spec for local storage)
 
-### Encryption
+#### Encryption
 * Encryption of data-at-rest is possible by using dm-crypt (LUKS)
     - Costs [some performance](https://scs.community/2023/02/24/impact-of-disk-encryption/)
     - CPU impact not too bad for modern CPUs with hardware AES support
@@ -241,7 +243,7 @@ systemctl disable ceph-osd@NN
           with most BIOSes (which wait for a password to boot, sigh).
     - Example: See testbed config
 
-### Network, I/O, reserverations
+#### Network, I/O, reservations
 * Ensure low-latency, high-bandwidth networking between Ceph OSD nodes
     - Replication and rebalancing can easily saturate two 25GBps links
         * No surprise considering that a single 4x PCIe v4 NVMe has up to 7.5GB/s bandwidth,
@@ -256,13 +258,13 @@ systemctl disable ceph-osd@NN
     - 2x25 Gbps (w/ link aggregation) is good, more (4x25Gbps, 2x40Gbps, 2x100Gbps) is beneficial
     - Reserve one full core (2HTs), 4GB RAM per OSD, an additional core for encryption
 
-## Assignments for Ceph
+### Assignments for Ceph
 
-### Dashboard
+#### Dashboard
 * Log in to the dashboard
 * Look at Health, OSDs, Pools, RBD images
 
-### Take OSD out and add back in
+#### Take OSD out and add back in
 * Practice this on a non-production system
 * Ensure ceph is healthy and has 4 or more OSDs
     - Remember CLI commands?

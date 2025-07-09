@@ -1,10 +1,12 @@
-## Virtualizing Hardware
+## Virtualization overview
+
+### Virtualizing Hardware
 
 * Applications are written to run on servers
 * Virtualization:
     - Create an execution environment for the application that looks like a server (landscape)
 
-### Types of virtual hardware
+#### Types of virtual hardware
 * Compute virtualization:
     - Virtual CPUs, virtual memory (RAM)
 * Storage virtualization:
@@ -15,7 +17,7 @@
     - ... connected to virtual networks, routers, ...
     - Virtual firewalls and load-balancers
 
-### Advantages
+#### Advantages
 * Assignment granularity
     - Can assign arbitrary amounts (e.g. 4 CPUs, 16 GiB RAM, 155GB disk),
       independent of actual server sizes
@@ -28,7 +30,7 @@
     - horizontal scaling
 * Procurement delay (weeks) vs. SW provisioning (seconds/minutes at worst)
 
-### Common technologies
+#### Common technologies
 * Compute virtualization
     - VMware ESXi (proprietary)
     - Xen
@@ -45,7 +47,7 @@
     - Linux: Bridge
     - OpenvSwitch (OvS) and OVN (Open Virtual Network)
 
-### Infrastructure-as-Code
+#### Infrastructure-as-Code
 * Automate the set up of virtual hardware completely
     - Not just single servers, but complete landscapes for complicated 
       application workloads
@@ -66,16 +68,16 @@
         * For an upgrade
     - Typically scales trivially
 
-## OpenStack Architecture overview
+### OpenStack Architecture overview
 
-### What is it?
+#### What is OpenStack?
 
 A set of services that manages virtualized resources and gives users
 interfaces to control these.
 
 ![OpenStack Architecture Overview](openstack-overview.svg)
 
-### How is it built?
+#### How is it built?
 
 * API services
     * Independent processes for Compute, Block Storage, Images, Networking, LoadBalancers, Identity, etc.
@@ -89,7 +91,7 @@ interfaces to control these.
     * Tables are each owned by one service
 * Identity service has a central role
 
-### Keystone: Identity service has a central role
+#### Keystone: Identity service has a central role
 * User authenticates to keystone (typically with some secret) and gets a token
 * Token can be validated by individual services
 * Tokens have a scope that determines what you can do with them
@@ -98,7 +100,7 @@ interfaces to control these.
     * Project scope
 * Identity service hosts the service catalogue
 
-### Keystone: Raw REST API example (against CiaB)
+#### Keystone: Raw REST API example (against CiaB)
 * Discovery (`--cacert ...` needed b/c of self-signed certificate)
 ```bash
 dragon@cumulus(//):~ [4]$ curl -sS -g --cacert "/etc/ssl/certs/ca-certificates.crt" \
@@ -284,8 +286,7 @@ clouds:
       password: test
 ```
 
-
-### OpenStack Core services
+#### OpenStack Core services
 | Type | Name | Function |
 |------|------|----------|
 | identity | keystone | Identity and Access management |
@@ -300,7 +301,7 @@ Note on swift: We require an S3 compatible service. (Ideally, both S3 and Swift 
 
 Note on terminology: OpenStack calls hosts (hardware nodes) hypervisors and VMs instances or servers.
 
-### Other standard OpenStack services
+#### Other standard OpenStack services
 | Type | Name | Function and Notes |
 |------|------|--------------------|
 | orchestration | heat | Deploy sets of resources (like cloudformation, heat-cfn) |
@@ -308,13 +309,13 @@ Note on terminology: OpenStack calls hosts (hardware nodes) hypervisors and VMs 
 | load-balancer | octavia | L4 and L7 load balancing |
 | key-manager | barbican | Secrets management (e.g. for L7 LB, like vault) |
 
-### Internal OpenStack services
+#### Internal OpenStack services
 | Type | Name | Function and Notes |
 |------|------|--------------------|
 | placement | placement | Determine where VMs are started (scheduler), typically only used internally |
 | telemetry | ceilometer | Collect usage/metering data (typically not exposed) |
 
-### Optional OpenStack services
+#### Optional OpenStack services
 | Type | Name | Function and Notes |
 |------|------|--------------------|
 | metric | gnocchi | Aggregation of metering data |
@@ -329,19 +330,21 @@ sahara - big data, cloudkitty - metering, watcher - optimization), see
 <https://www.openstack.org/software/>. They have varying degrees of maturity and
 they are not supported by default in the SCS reference implementaton.
 
-### Dashboard: Horizon
+#### Dashboard: Horizon
 Horizon is the traditional dashboard that almost every OpenStack cloud offers.
 It takes a bit of time to get used to.
+
 ![Horizon Screenshot](Screenshot_Horizon.png)
 
-### Dashboard: Skyline
+#### Dashboard: Skyline
 Skyline is a relatively new project and only offered on some clouds.
 It has a more modern look and can easily be extended.
+
 ![Skyline Dashboard](Screenshot_Skyline.png)
 
 Both dashboards allow to download clouds.yaml or old-style openrc files.
 
-## Internal infrastructure
+### Internal infrastructure
 
 OpenStack requires queuing and a database to work
 
@@ -359,9 +362,9 @@ OpenStack requires queuing and a database to work
     * Log aggregation and search
     * k3s Cluster (for extensibility)
 
-## OpenStack user managment
+### OpenStack user managment
 
-### Domains and Projects
+#### Domains and Projects
 * Resources belong to projects (formerly called tenants)
 * Projects are structured into domains (optional, mandatory in SCS)
 * Domains are thus containers (realms) for
@@ -377,7 +380,7 @@ OpenStack requires queuing and a database to work
     - The `admin` can however assign rights across domain boundaries if so wanted (not typically
       a good idea)
 
-### Role assignments
+#### Role assignments
 * Roles are rights (privileges) that users have towards projects
     - For example "User `XYZ@domA` has the right `reader` in project `ABC@domA`.
 * Standard roles with increasing level of privilege:
@@ -395,34 +398,34 @@ OpenStack requires queuing and a database to work
     - Resellers or IT managers would have `manager` privilege for their domain(s)
 * Role assignment can be indirected via group membership.
 
-## Security Architecture
+### Security Architecture
 
-### Compute separation
+#### Compute separation
 * Hardware virtualization technology separates VMs from each other
     - SCS mandates microcode and hypervisor/kernel mitigations to be active against known CPU vulnerabilities
     - SCS mandates Hyperthreading to be switched off if it's not secure ([scs-0100](https://docs.scs.community/standards/scs-0100-v3-flavor-naming))
 * Highest security environments might want to use dedicated hosts or assign dedicated host groups (host aggregates) to avoid sharing hardware with untrusted users.
 
-### Network separation
+#### Network separation
 * User-controlled networks are separated using encapsulation or VxLAN technology
 * Internal control traffic is encrypted (https)
 * User plane traffic can be encrypted by application operator, optionally using container side-cars or optionally done at the virtualization layer (at the cost of performance)
 
-### Storage separation
+#### Storage separation
 * ceph enforces storage isolation
 * users can use luks for sensitive data
 * optional disk encryption, exposed via storage class
 
-### Archictecture
+#### Archictecture
 * Secrets are stored in ansible vault or external vaults (keepass, hashicorop vault/openbao)
 * Internal control traffic encrypted
 * Secure delegation of administrative powers with domain-manager role limited to own domain
 * CI jobs with security scans
 * Constant validation of code (CI) allows quick reaction to vulnerabilities
 
-## Assignments Virtualization Architecture
+### Assignments Virtualization Architecture
 
-### Service catalogue (CiaB)
+#### Service catalogue (CiaB)
 * Retrieve it using openstack CLI tooling (alternatively: python SDK)
     - What services do you see?
     - Why are there several endpoints per service?
@@ -430,7 +433,7 @@ OpenStack requires queuing and a database to work
 * Get a token from keystone
 * List networks (and external networks) for a project
 
-### Domains, projects, roles
+#### Domains, projects, roles
 * What are domains good for?
 * Create a new domain (admin privileges required)
     - Create a domain-manager for it
@@ -440,7 +443,7 @@ OpenStack requires queuing and a database to work
 * Review all roles (admin privileges)
     - Explain line by line
 
-### Digression: Setting up or using a CiaB for testing
+#### Digression: Setting up or using a CiaB for testing
 <https://docs.scs.community/docs/iaas/deployment-examples/testbed/>
 
 * A Cloud-in-a-Box (CiaB) is an SCS setup for a single node

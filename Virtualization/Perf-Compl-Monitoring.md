@@ -1,33 +1,35 @@
-## OSISM manager management tools
+## IaaS Monitoring and Compliance
+
+### OSISM manager management tools
 
 See [Testbed Guide](https://docs.scs.community/docs/iaas/deployment-examples/testbed/usage)
 or [Ciab Guide](https://docs.scs.community/docs/iaas/deployment-examples/cloud-in-a-box/#webinterfaces)
 for a list of webinterfaces to manage your infrastructure.
 
-### Homer
+#### Homer
 A dashboard with links to the specific dashboards.
 
-### Netbox
+#### Netbox
 IP address and asset management.
 
-### ARA
+#### ARA
 Ansible Runbook Records.
 
-### RabbitMQ
+#### RabbitMQ
 The queuing service between all OpenStack services.
 
-### phpMyAdmin
+#### phpMyAdmin
 Database access.
 
-### Flower
+#### Flower
 Celery reconciler task queue.
 
-### Netdata
+#### Netdata
 Live realtime monitoring.
 
-## OpenStack Health Monitor (OSHM)
+### OpenStack Health Monitor (OSHM)
 
-### What it does
+#### What it does
 * OpenStack is a scenario test that was created ~9 years ago to simulate a
   customer deployment scenario that was claimed not t work correctly and
   attempted to reproduce the issue. The issue would only happen occasionally ...
@@ -44,7 +46,7 @@ Live realtime monitoring.
     - Thus a successor project (using cucumber/gherkin) has been created which will
       in the future replace the old OSHM
 
-### Setup
+#### Setup
 * It is a snowflake setup: Create a driver VM in which you run the script
     - Actually you can run this from any machine that supports bash and openstack CLI
     - But we prefer to run it in the same cloud
@@ -59,7 +61,7 @@ Live realtime monitoring.
 * Documentation at: <https://docs.scs.community/docs/operating-scs/guides/openstack-health-monitor/Debian12-Install>
     - Takes ~1hr to set up when doing for the first time
 
-### Dashboard
+#### Dashboard
 * Looking at 1 or 2 day views to understand the current state of your cloud
     - Use 30d or 6m for long-time trends
     - You can zoom in with the mouse
@@ -77,16 +79,16 @@ Live realtime monitoring.
           have been validated and the cloud start provisioning the resource. It can take
           some time which you want to monitor as well
 
-### OSHM and SCS certification
+#### OSHM and SCS certification
 * Our compliance dashboard currently links the OSHM dashboards
     - This is not a requirement for achieving *SCS-compatible* certification
     - It will be a requirement for the upcoming *SCS-sovereign* certification
 * It's best practice to have it and even share with the SCS community
     - Making quality transparent improves quality ...
 
-## SCS Standards
+### SCS Standards
 
-### Why standards?
+#### Why standards?
 * You can easily build cloud and container infrastructure from the same
   technologies that behaves very differently to the users.
     - Even more so if you are using different technologies
@@ -105,7 +107,7 @@ Live realtime monitoring.
     - These are only useful to a subset of users and result in hard to avoid
       lock-in
 
-### Standardization process
+#### Standardization process
 * It's an open collaborative democractic process
     - Governance by SCS project (until 2024) and now Forum SCS-Standards
       in OSBA (non-profit)
@@ -120,7 +122,7 @@ Live realtime monitoring.
     - In exceptional cases, the certification body (Forum SCS-Standards) may require documentation
       from the provider and can not (fully) test compliance.
 
-### Running tests manually
+#### Running tests manually
 * The tests are all available on github where the standards live:
   In the <https://github.com/SovereignCloudStack/standards> repository. Tests are in the `Tests/` subdirectory.
 * Running all IaaS tests: `./scs-compliance-check.py scs-compatible-iaas.yaml --subject=NAME -a os_cloud=CLOUD`
@@ -149,7 +151,7 @@ Live realtime monitoring.
       future. Yet the SCS community tries to keep the required amount of resources
       (and thus the required quota) low.
 
-### Automated compliance tests
+#### Automated compliance tests
 * <https://zuul.sovereignit.cloud> runs many jobs
     - CI checks triggered by github
     - Security pipeline
@@ -169,16 +171,16 @@ Live realtime monitoring.
         * You may pay the same fees without becoming member and received the entitlement to SCS certification
 
 
-## Assignments Monitoring and Compliance
+### Assignments Monitoring and Compliance
 
-### Compliance tests
+#### Compliance tests
 * Run a single test against a test environment
     - Use our CiaB setup if you have no access to your own
 * Run the complete compliance suite
     - Rerun it with high verbosity (debugging) enabled
 * Find the compliance status of the tested SCS clouds on the public SCS web pages
 
-### OpenStack Health Monitor (30')
+#### OpenStack Health Monitor (30')
 * Do this in pairs: Setup the OSHM
     - Find relevant docs page
     - Driver VM via GUI or by following instructions
