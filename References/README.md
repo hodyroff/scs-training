@@ -54,10 +54,10 @@
 
 ## GovStack
 * govstack <https://govstack.global/> is an international project to
-    - [GovSpecs](https://www.govstack.global/our-offerings/govspecs/): Specify building blocks that support governments to provide digital services to their citizens, businesses, civil society, ...
-    - [GovTest](https://www.govstack.global/our-offerings/govtest/): Tests for compliance with GovSpecs
-    - [GovLearn](https://www.govstack.global/our-offerings/govlearn/): Learning opportunities around the GovSpec Building Blocks
-    - [GovMarket](https://www.govstack.global/our-offerings/govmarket/): Implementations of these specifications
+    - Specify building blocks that support governments to provide digital services to their citizens, businesses, civil society, ... ([GovSpecs](https://www.govstack.global/our-offerings/govspecs/)) 
+    - Tests for compliance with GovSpecs ([GovTest](https://www.govstack.global/our-offerings/govtest/))
+    - Learning opportunities around the GovSpec Building Blocks ([GovLearn](https://www.govstack.global/our-offerings/govlearn/))
+    - Implementations of these specifications ([GovMarket](https://www.govstack.global/our-offerings/govmarket/)) 
 * A number of blocks have been specified, identity management, payment, etc., see <https://govstack.gitbook.io>
     - One of them is a cloud building block
 * Govstack is supported by German [BMZ](https://www.bmz.de/en), [GIZ](https://giz.de/), [DIAL](https://dial.global/), [ITU](https://itu.int), [Estonia](https://vm.ee/en)
