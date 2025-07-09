@@ -185,11 +185,11 @@
 #### OSD operations
 * Taking an OSD (ID `NN`) out for good
   ```bash
-ceph osd crush reweight osd.NN 0.0
-# Wait for rebalancing (check with ceph osd safe-to-destroy NN)
-ceph osd out osd.NN
-systemctl disable --now ceph-osd@NN
-ceph osd purge osd.NN
+  ceph osd crush reweight osd.NN 0.0
+  # Wait for rebalancing (check with ceph osd safe-to-destroy NN)
+  ceph osd out osd.NN
+  systemctl disable --now ceph-osd@NN
+  ceph osd purge osd.NN
   ```
 * Do this for all OSDs on a node (use `ceph osd tree` to find out) ...
     - Expect this to take time, rebalancing moves a lot of data
