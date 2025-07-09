@@ -25,7 +25,7 @@ Note:
 - This diagram shows the high-level architecture of Cluster Stacks
 - CAPI (Cluster API) is a Kubernetes sub-project that provides declarative APIs for creating and managing Kubernetes clusters
 - There's a management cluster that runs the Cluster API controllers
-- These controllers manage the lifecycle of workload clusters
+- These controllers manage the life-cycle of workload clusters
 - The architecture follows the "managing Kubernetes with Kubernetes" pattern
 - Cluster Stack Operator (CSO) extends CAPI to work with Cluster Stacks
 - Each workload cluster is defined by a ClusterStack that specifies both cluster configuration and add-ons
@@ -106,7 +106,7 @@ Note:
 <!-- .element: class="fragment" data-fragment-index="3" -->
 
 ### Control Flow Between Components
-- CAPI handles infrastructure lifecycle
+- CAPI handles infrastructure life-cycle
 <!-- .element: class="fragment" data-fragment-index="4" -->
 - CSO extends with add-on management
 <!-- .element: class="fragment" data-fragment-index="5" -->

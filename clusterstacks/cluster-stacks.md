@@ -5,7 +5,7 @@
 This course explores the concept of [Cluster Stacks](https://docs.scs.community/docs/container/components/cluster-stacks/components/cluster-stacks/overview) within the
 [Sovereign Cloud Stack (SCS)](https://www.sovereigncloudstack.org/) ecosystem.
 We'll break down their architecture, explain how they standardize Kubernetes
-cluster lifecycles, and dive deep into their deployment, configuration, and
+cluster life-cycles, and dive deep into their deployment, configuration, and
 evolution. Hands-on examples will guide learners through practical examples
 of common scenarios using local [KinD](https://kind.sigs.k8s.io/) clusters.
 
@@ -86,7 +86,7 @@ technologies. Cluster Stacks contribute to this goal by:
   encapsulating best practices into reusable building blocks
 
 It builds on established Kubernetes community projects, especially Cluster API
-(CAPI), which provides a Kubernetes-native way to manage cluster lifecycle
+(CAPI), which provides a Kubernetes-native way to manage cluster life-cycle
 operations (create, scale, upgrade, delete).
 
 - Using Cluster API CRDs (Custom Resource Definitions) for defining
@@ -137,7 +137,7 @@ entire stack as a whole at a particular point in time.
 ## Components and Responsibilities
 
 Cluster Stacks extend CAPI as the foundational tool which provides declarative
-way to manage the lifecycle of Kubernetes clusters. CAPI breaks
+way to manage the life-cycle of Kubernetes clusters. CAPI breaks
 responsibilities across several core controller types, each handling
 a distinct layer of concern. It is responsible for defining the core
 cluster objects and their reconciliation logic.
@@ -476,7 +476,7 @@ per cluster in 07-cluster-secret.sh.)
 
 ## Configuration and Customization
 
-- Clusterstacks can be configured with env variables,
+- Cluster stacks can be configured with env variables,
   [Envsubst](https://github.com/drone/envsubst), is required to expand
   environment variables specified in CSO
 
@@ -594,7 +594,7 @@ Create a new directory, e.g. `my-clusterstack`. Inside this directory create the
   ```
 
 - Split the file into different yaml files, e.g. `Kind: Cluster` should be in `cluster.yaml`
-- Move `kind: Cluster` outside of `cluster-class` directorym e.g.
+- Move `kind: Cluster` outside of `cluster-class` directory e.g.
 
   ```bash
   mv cluster.yaml ../../cluster.yaml
@@ -756,7 +756,7 @@ To be able to use multiple different Kubernetes versions new `ClusterStack`
 object needs to be created, as the version is part of `ClusterStack`
 specification. To be able to use specific versions of cluster stacks they
 can be specified in `spec.versions` of given `ClusterStack` object
-(see `clusterstack.yaml` file in [quickstart guide](#quickstart-guide---docker-infrastructure)).
+(see `clusterstack.yaml` file in [Quickstart guide](#quickstart-guide---docker-infrastructure)).
 
 Preferred alternative is to allow `spec.autoSubscribe: true` in the
 `ClusterStack` definition so that the operator handles discovery and

@@ -80,7 +80,7 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
         * `openstack --os-cloud=admin volume set --status error UUID`
     - Now you can clean them up
 * If this does not work:
-    - Check in ceph whether there is an object in the `images` or `volumes` pool that needs deleting
+    - Check in Ceph whether there is an object in the `images` or `volumes` pool that needs deleting
         * Be very careful!
     - If they're not gone yet, you may need to remove them from the database as well
 * Charging customers for unusable volume may not create enthusiastic responses
@@ -107,7 +107,7 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
 <!--TODO: More information here?-->
 
 ### Power loss on storage
-* If your complete (ceph) storage subsystem goes down, while virtual machines are running and writing to storage,
+* If your complete (Ceph) storage subsystem goes down, while virtual machines are running and writing to storage,
   this will result in bad behavior
 * This is a typical situation after a power outage, but also happens, when a Cloud-in-a-Box gets shut down
   without stopping all VMs before.
@@ -115,15 +115,15 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
     - Typically the VMs will no longer boot
     - Checking the console log (`openstack console log show` or using noVNC from horizon), one can see that their
       root disks are read-only
-    - This is cinder/ceph refusing to let them write
+    - This is cinder/Ceph refusing to let them write
 * Recovery: Drop locks from rbd devices that correspond to your volume
     - See example below
 
-### Recovering from locks held after surprise ceph shutdown
+### Recovering from locks held after surprise Ceph shutdown
 * This affects volumes in `volumes` pool with name `volume-${VOLUUID}` and "local" root disks
   in pool `vms` named `${VMUUID}_disk` (in case you have the instance's root disks stored
-  on ceph)
-* Cinder locks these disk files (unless you use `multiattach: True`) in ceph RBD so they
+  on Ceph)
+* Cinder locks these disk files (unless you use `multiattach: True`) in Ceph RBD so they
   can not be accessed read-write by more than one VM (thus the read-only character of
   your root disk).
 * Example with a running VM booted from volume `82b99323-3b69-4b05-9cb9-770324235099`:
@@ -145,8 +145,8 @@ dragon@cumulus(config:test):~ [0]$
 ### Troubleshooting Guide
 There is a [Troubleshooting Guide](https://docs.scs.community/docs/iaas/guides/troubleshooting-guide/)
 available in the [SCS IaaS docs](https://docs.scs.community/docs/iaas/) with information on
-trouble with the Manager, OpenStack database, ceph connection and cinder rabbit trouble and
-ceph medium errors.
+trouble with the Manager, OpenStack database, Ceph connection and cinder rabbit trouble and
+Ceph medium errors.
 
 ### Practical assignment
 * Trainer will create volumes that are attached to already gone VMs or stuck in reserved.

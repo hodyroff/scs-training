@@ -10,7 +10,7 @@
     - `SCS-nC-m-20s` would denote a flavor with `n` dedicated Cores (the `C`) and 20 GiB SSD/NVMe
       (the `s`) root disk.
     - Decoding can be done with a simple web tool <https://flavors.scs.community/>.
-    - The scheme allows for many more details (such as hypervisor, cpu generation, GPU, ...) 
+    - The scheme allows for many more details (such as hypervisor, CPU generation, GPU, ...) 
       to be specified via the name, but these are really only used for special requirements.
     - The scheme also prescribes metadata (`extra_specs`) for discoverability
     - Flavors that do not start with `SCS-` are allowed and don't need to comply
@@ -140,7 +140,7 @@ dragon@testbed-manager(test):~ [0]$ osism manage image --cloud admin --latest --
         * !NOTE! Never ever confuse `admin` privileges with `manager`. An `admin` owns your cloud.
 * Create first project in domain, assign project-scoped `member` (+`load-balancer_member` + `creator`) roles
     - Optional convenience: Create first network with subnet, first router, connect to public network and subnet
-    - Default security group (with egress and only internal traffic allowed) should nbe automatically there
+    - Default security group (with egress and only internal traffic allowed) should be automatically there
 * Recommendation: Automate these steps
     - Script
     - Workflow triggered from customer platform
@@ -157,7 +157,7 @@ dragon@testbed-manager(test):~ [0]$ osism manage image --cloud admin --latest --
 - Perform the steps using the openstack CLI (optional: python SDK)
     * Domain creation
     * First user in Domain
-        - Optional: Give domain-scoped manager privs to user
+        - Optional: Give domain-scoped manager privileges to user
     * Create first project
     * Assign `member`, `load-balancer_member`, `creator` roles for project to user
     * Optional: Net, subnet, router settings

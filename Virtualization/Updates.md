@@ -29,7 +29,7 @@
         * The scheduler (placement) service selects a new host according to the normal scheduling rules (e.g. affinity groups), so ensure that you have enough hosts available
     - Performance: 
         * This works by copying RAM content over in several passes (delta migration) -- workloads that do lots of writes to memory will take a while
-        * VMs with only networked volumes (or "local" storage backed by ceph) don't have any trouble with moving disk contents, really local storage however needs a block-migration service that can be slow to copy disks over
+        * VMs with only networked volumes (or "local" storage backed by Ceph) don't have any trouble with moving disk contents, really local storage however needs a block-migration service that can be slow to copy disks over
         * The VM will run a bit slower during the copy process and may be down for a few seconds during the final copy and restart process
         * Gratuitous ARP packets should inform switches on new location of VM ports, so network disruption should be short as well
 * Rebooting a large set of compute hosts can still be a tedious process

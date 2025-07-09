@@ -189,7 +189,7 @@ Note:
 - All sensitive information should be base64 encoded
 - Beyond operator configuration, individual clusters can be customized
 - The Cluster spec.topology.variables field allows for provider-specific customization
-- Common customizations include:
+- Common customization include:
   - Compute flavors for control plane and worker nodes
   - Network configurations (CIDRs, external networks)
   - Storage classes and volume configurations
@@ -238,7 +238,7 @@ spec:
 Note:
 - This example shows how to customize a cluster using topology variables
 - The cluster network can be customized for pods and services
-- Variables provide provider-specific customizations
+- Variables provide provider-specific customization
 - For OpenStack, these include:
   - `controller_flavor` and `worker_flavor` - VM flavors for nodes
   - `external_id` - ID of the external network
@@ -246,7 +246,7 @@ Note:
 - This customization capability is important for enterprise environments
 - Variables must match what the ClusterClass template expects
 - Proper documentation of available variables is essential
-- This approach allows standardized deployments while permitting necessary customizations
+- This approach allows standardized deployments while permitting necessary customization
 - For full details on available variables, refer to the SCS ClusterStacks documentation
 
 ----
@@ -271,7 +271,7 @@ Note:
 - Use clusterctl to generate baseline CAPI resources
 - Create umbrella Helm charts for add-ons like CNI
 - The csctl tool helps build and publish your custom Cluster Stack
-- This approach allows for standardization while enabling organization-specific customizations
+- This approach allows for standardization while enabling organization-specific customization
 - Custom stacks can incorporate specific security policies or organizational requirements
 
 ----
@@ -343,7 +343,7 @@ Note:
 <!-- .element: class="fragment" data-fragment-index="1" -->
 - KinD enables user-level access to Kubernetes in SCS environments
 <!-- .element: class="fragment" data-fragment-index="2" -->
-- Hands-on exercises have given practical experience with the full lifecycle
+- Hands-on exercises have given practical experience with the full life-cycle
 <!-- .element: class="fragment" data-fragment-index="3" -->
 
 **Get Involved with the Community**

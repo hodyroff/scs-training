@@ -1,7 +1,7 @@
 # Introduction and Recap: Cloud fundamentals – using SCS
 
 ## Basic terms
-* [What is Govstack](govstack)?
+* [What is GovStack](govstack)?
 * [What is Sovereign Cloud Stack](scs)?
 * [About digital sovereignty](digisov)
 

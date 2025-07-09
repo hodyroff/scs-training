@@ -43,7 +43,7 @@ Note:
 - Command-line utility provided by Cluster API (CAPI)
 - Automates installing Cluster API providers into a management cluster
 <!-- .element: class="fragment" data-fragment-index="0" -->
-- Helps create workload clusters and manage their lifecycle
+- Helps create workload clusters and manage their life-cycle
 <!-- .element: class="fragment" data-fragment-index="1" -->
 - Essential for working with ClusterStacks
 <!-- .element: class="fragment" data-fragment-index="2" -->
@@ -80,7 +80,7 @@ clusterctl version
 Note:
 - The `clusterctl` tool is a command-line utility provided by Cluster API (CAPI)
 - It automates the process of installing Cluster API providers into a management cluster
-- It also helps with creating workload clusters and managing their lifecycle
+- It also helps with creating workload clusters and managing their life-cycle
 - Moving it to `/usr/local/bin/` makes it available system-wide
 - No sudo is needed for running the commands after installation
 - If you prefer not to use sudo for installation, you can install it to `~/bin/` instead (ensure this directory is in your PATH):

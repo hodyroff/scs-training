@@ -2,7 +2,7 @@
 
 Note:
 - We're starting with Cluster Stacks, the foundation of the SCS Container Layer
-- This component provides standardized Kubernetes cluster lifecycle management
+- This component provides standardized Kubernetes cluster life-cycle management
 - We'll cover the architecture, components, and practical implementation
 - By the end of this section, you'll be able to deploy and manage K8s clusters using Cluster Stacks
 
@@ -39,7 +39,7 @@ A framework and reference implementations for defining and managing Kubernetes c
 
 - Standardize cluster deployments with declarative configurations
 <!-- .element: class="fragment" data-fragment-index="0" -->
-- Build on Cluster API (CAPI) for Kubernetes-native lifecycle management
+- Build on Cluster API (CAPI) for Kubernetes-native life-cycle management
 <!-- .element: class="fragment" data-fragment-index="1" -->
 - Combine Kubernetes components and add-ons as tested distributions
 <!-- .element: class="fragment" data-fragment-index="2" -->
@@ -48,7 +48,7 @@ A framework and reference implementations for defining and managing Kubernetes c
 
 Note:
 - Cluster Stacks provide a standardized approach to K8s cluster management
-- They're built on Cluster API (CAPI), a Kubernetes SIG project for cluster lifecycle management
+- They're built on Cluster API (CAPI), a Kubernetes SIG project for cluster life-cycle management
 - The key innovation is combining both core K8s configuration and essential add-ons (like CNI)
 - Each Cluster Stack is tested as a whole, ensuring components work together
 - Think of them as distributions that define the entire cluster, not just the Kubernetes components

@@ -59,8 +59,8 @@ The SCS Monitoring Platform supports multi-cluster monitoring, enabling the obse
 
 ![Multicluster Monitoring](images/monitoring3.svg)
 
-- **Workload Cluster** - Contains data layer only. Uses Prometheus to scrape metrics and Thanos to store longterm metrics in an objectstore service
-- **Observer cluster** - Contains both data and visual layer. Utilizes Thanos with Envoy proxy for short term queries multiple clusters, hosts and IAASs, including the observer cluster itself. Uses Grafana to display dNation dashboards, as well as any aditional dashboards. For Long term Querries it looks into the objectstore service
+- **Workload Cluster** - Contains data layer only. Uses Prometheus to scrape metrics and Thanos to store long term metrics in an object-store service
+- **Observer cluster** - Contains both data and visual layer. Utilizes Thanos with Envoy proxy for short term queries multiple clusters, hosts and IaaSs, including the observer cluster itself. Uses Grafana to display dNation dashboards, as well as any additional dashboards. For Long term queries it looks into the object-store service
 
 ### IAAS Monitoring
 ![IaaS Monitoring](images/iaas.png){width=480}
@@ -187,8 +187,8 @@ This section provides example deployments of single-cluster, multi-cluster and I
 3. Verify monitoring of workload cluster
 
 ### IaaS Monitoring
-- Acquire application credential of your cloud. An admin access is required. You can use Horizon UI `https://your.openstack.cloud.url/identity/application_credentials/` or via `openstack` cli
->Warning: If you used Horizon, the secret will be automaticaly generated and shown only once! Make sure to note it down in a secure place i.e. KeyPass
+- Acquire application credential of your cloud. An admin access is required. You can use Horizon UI `https://your.openstack.cloud.url/identity/application_credentials/` or via `openstack` CLI
+>Warning: If you used Horizon, the secret will be automatically generated and shown only once! Make sure to note it down in a secure place i.e. KeyPass
   ```shell
   openstack application credential create my-app-cred --secret <generate-your-app-cred-secret-here> --role <admin or reader>
   ```
@@ -235,7 +235,7 @@ This section provides example deployments of single-cluster, multi-cluster and I
     #       path: yaook-ca
   ```
 
-- In real deployments e.g. Yaook, Kolla-Ansible, OSSISM. Internal API is needed to access the metrics. Often, a private CA must be mounted. To do this, follow the commented part of above example. The observer cluster must, of course, have access to the internal api. The exporter might be deployed on a workload cluster as well, which is advised in case of Yaook.
+- In real deployments e.g. Yaook, Kolla-Ansible, OSISM. Internal API is needed to access the metrics. Often, a private CA must be mounted. To do this, follow the commented part of above example. The observer cluster must, of course, have access to the internal api. The exporter might be deployed on a workload cluster as well, which is advised in case of Yaook.
 - Create a file called `values-iaas-dashboard.yaml`. Since dNation K8S monitoring does not provide it's own dashboard for IaaS/Openstack you can use the [recommended dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/).
 
   ```yaml
@@ -277,7 +277,7 @@ This section provides example deployments of single-cluster, multi-cluster and I
 3. Verify monitoring of workload cluster
 
 ## Dashboards and Customization
-dNation K8S Monitoring project provides many dashboards, which are written in jsonnet and are therefore highly customisable. User can override default thresholds or change the colors with helm values only, there's no need to edit any Json/Jsonnet file. The values files are self-explanatory  for example:
+dNation K8S Monitoring project provides many dashboards, which are written in Jsonnet and are therefore highly customizable. User can override default thresholds or change the colors with helm values only, there's no need to edit any Json/Jsonnet file. The values files are self-explanatory  for example:
 
 ```yaml
 dnation-kubernetes-monitoring:
@@ -318,7 +318,7 @@ dnation-kubernetes-monitoring:
               warning: 95
 ```
 
-dNation k8s Monitoring has several pre-made dashboard for k8s apps, e.g. MySQL, Ingress Nginx, Java Spring Acutator, etc. These dashboards can have their panel added to the clusters L1 dashboard. 
+dNation k8s Monitoring has several pre-made dashboard for k8s apps, e.g. MySQL, Ingress Nginx, Java Spring Actuator, etc. These dashboards can have their panel added to the clusters L1 dashboard. 
 
 ```yaml
 dnation-kubernetes-monitoring:

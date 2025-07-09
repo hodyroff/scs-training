@@ -93,7 +93,7 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
 ### OSISM: Open Source InfraStructure Manager
 
 #### What is [OSISM](https://osism.tech/)?
-* Lifecycle and deployment management tooling built on top of kolla-ansible
+* Life-cycle and deployment management tooling built on top of kolla-ansible
   (and significantly contributing to kolla-ansible)
 * Orchestrates the kolla-ansible OpenStack containers plus containers for
     - Infrastructure services (database, queuing, ...)
@@ -137,7 +137,7 @@ ansible-playbook -i inventory -u ANSIBLEUSER playbook/testplay.yaml
       `osism reconciler` prepared for this
     - Other nodes are technically accessible (`osism console` command), but this may
       be against policy (except maybe for debugging). Local changes are strongly
-      discouraged and potentially destroy the managability/trustworthiness of the
+      discouraged and potentially destroy the manageability/trustworthiness of the
       system.
 * Hosts management tooling
     - ARA, netbox, database, phpmyadmin, OpenSearch(optional)
@@ -220,7 +220,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 
 #### Sizing: Compute Nodes
 * Customer VMs have a mixture of 1:2 ... 1:8 ration vCPU to RAM
-* vCPUs can be oversubscribed, unlike memory. 2--3x oversubscription per real core is
+* vCPUs can be oversubscribed, unlike memory. 2--3x over-subscription per real core is
   a reasonable sizing approach
 * Compute nodes thus should have 1:8 ... 1:16 ratios
     - E.g. 64 core w/ 768 GiB RAM, 96 core with 1024 GiB RAM
@@ -229,7 +229,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
   your customers might feel less happy whereas your savings are minimal
 * Reserve some cores (1C +5% of all) and some RAM (4GiB + 4% of all) for the host
 * Turn on hyperthreading if it's secure on your CPU, it add ~20% CPU power
-    - Lower max. oversubscription ratio from 5/Core to 3/Thread then
+    - Lower max. over-subscription ratio from 5/Core to 3/Thread then
 
 #### Sizing: Control Nodes
 * Avoid these to hit their limits
@@ -260,7 +260,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 * Storage: SSD/NVMe; use 2x1.9TB to have sufficient space for caching packages and containers
 
 #### Putting it together:
-* Add requirements up when combinig roles in not fully decomposed setups
+* Add requirements up when combining roles in not fully decomposed setups
 * Smaller setups will work if you
     - Carefully design QoS settings to avoid starvation
     - You avoid too high load
@@ -272,22 +272,22 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 #### Overview over the steps
 * Procure hardware, set it up, connecting them to the network
     - With (static) DHCP this works conveniently
-* Bootstrap manager using the Ubuntu autoinstall image
+* Bootstrap manager using the Ubuntu auto-install image
     - BMC allows this without physical USB sticks (but some require SMB or PXE server)
     - Firmware upgrades, NVMe reformatting, ... may conveniently be done now
 * On seed node (can be the admin's Linux/Mac/WSL desktop system):
     - Create configuration repository using cookiecutter
     - Setup manager from seed node
 * On manager node
-    - Configure inventory, select roles (control, compute, cetwork, storage)
+    - Configure inventory, select roles (control, compute, network, storage)
     - Customize the setup according to your needs
-    - Roll the configuration using the ansible playbooks (via osism CLI)
+    - Roll the configuration using the ansible playbooks (via OSISM CLI)
 
-#### Bootstrapping hardware (BareMetal provisioning) - Manager and all other reosource nodes
-* Autoinstall images are available from OSISM <https://github.com/osism/node-image>
+#### Bootstrapping hardware (BareMetal provisioning) - Manager and all other resource nodes
+* Auto-install images are available from OSISM <https://github.com/osism/node-image>
     - Variants based on disk setup (SCSI/SSD sda vs. NVMe nvme0n1)
     - If nothing matches (and you have enough machines to want to avoid manual adjustments)
-      you can build your own autoinstall images
+      you can build your own auto-install images
 * On server hardware, you can attach the boot image as virtual drive
     - Some BMC implementations allow to just upload the images, others require a SMB/CIFS server
     - You can set up a PXE server and have servers do a PXE boot
@@ -303,7 +303,7 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 
 #### Creating the configuration repository (seed node)
 * This should be prepared on the operators control outside of the cloud
-    - A desktop system (preferrably Linux, but Mac or WSL work as well) that supports docker
+    - A desktop system (preferably Linux, but Mac or WSL work as well) that supports docker
     - A small VM somewhere can be setup if needed; it can be disposed after config repo and manager node are set up
 * Follow the steps on <https://docs.scs.community/docs/iaas/guides/deploy-guide/seed>
 * Chose where you want to store your configuration repository
@@ -321,12 +321,12 @@ docker run \
 * Output is stored in directory `cookiecutter-output/`. Commit and push it to your git.
 
 ####  Secrets handling
-* There is a subdirectory `cookiecutter-output/secrets/` which is *not* (and should *never* be) commited to git
+* There is a sub-directory `cookiecutter-output/secrets/` which is *not* (and should *never* be) committed to git
 * Ensure to save the contents of this directory at a safe and secure place!
 * `secrets/vaultpass` contains the password for your ansible vault and is stored as a `keepass` file.
     - The *initial* password for the Keepass file is `password`. Change it.
     - Alternatively handle the secrets in another vault of your choice.
-* Makefile targets to get ansibale vault secrets, see <https://docs.scs.community/docs/iaas/guides/configuration-guide/configuration-repository/#working-with-encrypted-files>, e.g. `make ansible_vault_show FILE=all`
+* Makefile targets to get ansible vault secrets, see <https://docs.scs.community/docs/iaas/guides/configuration-guide/configuration-repository/#working-with-encrypted-files>, e.g. `make ansible_vault_show FILE=all`
 * Keepass clients exist for many operating systems (incl. Android), there is also a nextcloud app
 
 #### Inventory
@@ -342,15 +342,15 @@ docker run \
     - Set the `ansible_host` 
 * Set the manager inventory in `environments//manager/hosts`
     - You can set `host_vars` in `environments/manager/host_vars/`
-* Gloabl settings: DNS, NTP, .... `environments/configuration.yml`
-* Deploy TLS (SSL) certficates in `environments/kolla/certificates/haproxy.pem` and `haproxy-internal.pem`
+* Global settings: DNS, NTP, .... `environments/configuration.yml`
+* Deploy TLS (SSL) certificates in `environments/kolla/certificates/haproxy.pem` and `haproxy-internal.pem`
 * Parameter reference: <https://docs.scs.community/docs/iaas/guides/configuration-guide/configuration-repository/#parameter-reference>
 * Later (on the manager host in `/opt/configuration/`) : Adjust the inventory
     - List the nodes and add them to the roles `[manager]`, `[monitoring]`, `[control]`,
       `[network]`, `[ceph-control]`, `[ceph-resource]`, `[ceph-rgw:children]` in `inventory/20-roles`.
 * You can set `host_vars` there in `inventory/host_vars/NODE.yml`
     - You can also assign vars to group (Group vars), use `generic` for all groups.
-* Changes should always be commited and push to git
+* Changes should always be committed and push to git
 * `osism apply configuration` gets the latest status from git (overwrites local changes if any)
 
 #### Manager
@@ -390,8 +390,8 @@ docker run \
 
 #### OpenStack tuning
 * See <https://docs.scs.community/docs/iaas/guides/configuration-guide/openstack/>
-    - E.g. 3x CPU oversubscription assumes that you have HT(SMT) enabled, you might increase to 5x otherwise.
-* It also explains the mechanism how config file tepmlating works and how these are rolled out with
+    - E.g. 3x CPU over-subscription assumes that you have HT(SMT) enabled, you might increase to 5x otherwise.
+* It also explains the mechanism how config file templating works and how these are rolled out with
   the ansible playbooks (example: OpenSearch)
 * The service specific hints mostly link the upstream OpenStack docu
 * The Commons and Services chapters have kolla and OSISM specific information
@@ -403,7 +403,7 @@ docker run \
 * This creates a tunnel into the environment, even if it has otherwise
   no inbound internet access
     - Access to the manager (192.168.16.10 on testbed/CiaB) and the dashboards ()
-    - Access to the external Floating IP networki `` (192.168.112.0/24 - inbound connections to VMs)
+    - Access to the external Floating IP network `` (192.168.112.0/24 - inbound connections to VMs)
 * Config on manager in `/etc/wireguard/wg0.conf`, client config in dragon home directory
 * Create additional wg configs and devices if you want to connect from multiple hosts simultaneously
     - Change device name (`wg1`), port, virtual server IP 192.168.48.x and virtual client IPs to avoid confusion
@@ -445,7 +445,7 @@ docker run \
 * OpenStack Health Monitor
     - Will cover this later
     - Running one iteration manually is a good scenario test for the core functionality
-      (Catalog, Router, Networks, Subnets, Floating IPs, Security Groups, Images, BlockStorage,
+      (Catalog, Router, Networks, Subnets, Floating IPs, Security Groups, Images, Block Storage,
        VMs, metadata-service, LoadBalancer) and also checks the availability of a number
        of other services.
     - You should get a run without any error or timeout -- i.e. no red color.

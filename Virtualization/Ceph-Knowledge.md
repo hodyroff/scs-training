@@ -2,7 +2,7 @@
 
 ### Ceph overview
 
-#### What is ceph?
+#### What is Ceph?
 * Distributed storage system
     - Performance (throughput) scales with the size of the Ceph cluster
     - Robustness by replication (or erasure-coding)
@@ -10,8 +10,8 @@
     - Avoiding bottleneck by direct communication between client and OSD (CRUSH map)
     - Object and data scrubbing
     - Invented 2009 by Sage Weil (@Inktank, later acquired by RedHat)
-* Provides Object Storage (rados gateway aka rgw with S3 and Swift protocol suppport),
-  Block Storage (rados block device, rbd) and file system (cephfs) support.
+* Provides Object Storage (rados gateway aka rgw with S3 and Swift protocol support),
+  Block Storage (rados block device, rbd) and file system (CephFS) support.
 * Cephx authentication: Kerberos-like tickets can be retrieved via a shared secret and
   grant time-limited access to clients.
 * Proven in enterprise environments for heavy-duty block and object storage needs
@@ -24,7 +24,7 @@
 * Read <https://docs.ceph.com/en/latest/architecture/>
 * Ceph Monitor cluster (Mons) maintains the *cluster state* (maps)
     - Cluster Map contains `FSID`, list of pools, placement groups, OSDs, crush map
-* Ceph Manager povides that administrative interfaces and additional monitoring
+* Ceph Manager provides that administrative interfaces and additional monitoring
     - It runs typically alongside the Mons and is required these days for normal operation
 * OSDs keep the data by writing them to local storage and by replicating them to other OSDs
     - Several options exist for local storage, preferred format is bluestore nowadays
@@ -60,11 +60,11 @@
     - Considered less proven than 3x replication
 
 #### Block storage: Rados Block Device
-* Client code that exposes ceph storage as a block device ("image")
+* Client code that exposes Ceph storage as a block device ("image")
     - A set of freely addressable blocks
     - Like a disk
-* Stores blocks of e.g. 4MB as ceph rados objects
-* Available as linux kernel driver (rbd) and supported by libvirt
+* Stores blocks of e.g. 4MB as Ceph rados objects
+* Available as Linux kernel driver (rbd) and supported by libvirt
     - Acts like other block devices (e.g. SCSI disks)
 * Block size considerations:
     - Writes cause Read-Modify-Write cycles, which becomes worse for larger blocks
@@ -76,7 +76,7 @@
     - Con: Local storage does not have the expected performance characteristics
 
 #### Object storage: Rados Gateway (rgw)
-* Expose object storage interface for ceph objects
+* Expose object storage interface for Ceph objects
     - Supports S3 API
         - without necessarily imposing the bucket number and global bucket namespace limitations of AWS
     - Supports Swift API
@@ -89,22 +89,22 @@
     `default.rgw.log`, and `default.rgw.meta` on a standard OSISM ceph-ansible installation.
 
 #### File Storage: CephFS
-* A layer on top of ceph objects that exposes them as a POSIX-like distributed filesystem
+* A layer on top of ceph objects that exposes them as a POSIX-like distributed file-system
 * Starts the MetaData Service Daemon (MDS)
-* Stores metadata for the filesystem hierarchy (in pools `cephfs_metadata`) and file data (in pool `cephfs_data`)
-* Linux Kernel driver for cephfs exists
-* OpenStack Manila driver exists to provide access as shared filesystem
+* Stores metadata for the file-system hierarchy (in pools `cephfs_metadata`) and file data (in pool `cephfs_data`)
+* Linux Kernel driver for CephFS exists
+* OpenStack Manila driver exists to provide access as shared file-system
     - Can be used to provide K8s rwx (read-write many) storage
 * Conservative storage people consider CephFS as not yet sufficiently proven
-    - POSIX filesystems have a surprising amount of complexity due to locking needs to avoid races between
+    - POSIX file-systems have a surprising amount of complexity due to locking needs to avoid races between
       renames, deletions, writes etc.
-    - Cache coherency is a challenge for distributed filesystems (and was not satisfactorily tackled
+    - Cache coherency is a challenge for distributed file-systems (and was not satisfactorily tackled
       on NFS prior to v4.1)
 
 #### Ceph versions
 * There is roughly one new stable release per year (spring), with version number N.2.0
-    - Bugfixes (typically backports) result in N.2.X patch releases (4-6 weeks)
-    - Bugfixes provided upstream for 2 years
+    - Bug fixes (typically back-ports) result in N.2.X patch releases (4-6 weeks)
+    - Bug fixes provided upstream for 2 years
 * Rolling (online) updates supported from previous two stable releases
 * "Oceanic" release names, with increasing first letters
 * Ceph users tend to be conservative and adopt new stable releases late
@@ -252,7 +252,7 @@
       user data and/or control traffic
 * Storage nodes obviously need lots of I/O bandwidth
     - Many 4x M.2 PCIe slots for NVMEs; SAS with 12Gbps (or SATA with 6Gbps) is no comparison
-      to 4x16Gps of a PCIe4 x4 link, PCIe5 is twice as good, but not yet mainstream
+      to 4x16Gbps of a PCIe4 x4 link, PCIe5 is twice as good, but not yet mainstream
     - Even SATA-connected SSD devices are still much better than hard disks due to
       twice the bandwidth and two orders of magnitude better seek times / IOPS.
     - 2x25 Gbps (w/ link aggregation) is good, more (4x25Gbps, 2x40Gbps, 2x100Gbps) is beneficial

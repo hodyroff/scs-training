@@ -31,7 +31,7 @@ Note:
 
 ## Cluster API (CAPI)
 
-- Kubernetes SIG project for cluster lifecycle management
+- Kubernetes SIG project for cluster life-cycle management
 <!-- .element: class="fragment" data-fragment-index="0" -->
 - Kubernetes-native way to create, upgrade, and manage clusters
 <!-- .element: class="fragment" data-fragment-index="1" -->
@@ -41,7 +41,7 @@ Note:
 <!-- .element: class="fragment" data-fragment-index="3" -->
 
 Note:
-- CAPI emerged from Kubernetes SIG Cluster Lifecycle
+- CAPI emerged from Kubernetes SIG Cluster Life-cycle
 - It takes a Kubernetes-native approach: managing clusters using Kubernetes CRDs and controllers
 - The "Kubernetes managing Kubernetes" pattern is central to its design
 - CAPI includes several key components:

@@ -10,7 +10,7 @@
 * Compute virtualization:
     - Virtual CPUs, virtual memory (RAM)
 * Storage virtualization:
-    - Virtual Harddisks (block storage, "volumes")
+    - Virtual Hard disks (block storage, "volumes")
     - Shared Storage (NFS/CIFS) and Object Storage options
 * Network virtualization
     - Virtual Network Cards (Ports)
@@ -23,9 +23,9 @@
       independent of actual server sizes
         * Of course real hardware must have sufficient capacity
     - Fractional amounts (shared resources) possible
-* Changing assignement on the fly
+* Changing assignment on the fly
     - aka vertical scaling
-    - Hotplug vs. Coldplug (reboots)
+    - Hot-plug vs. Cold-plug (reboots)
 * Additional servers, disks, ... for scalable software
     - horizontal scaling
 * Procurement delay (weeks) vs. SW provisioning (seconds/minutes at worst)
@@ -256,7 +256,7 @@ interfaces to control these.
   }
   ```
 
-* All services are identified by unique 16byte ids, resources also carry 16 byte uuids (typically in 8-4-4-4-12 notation).
+* All services are identified by unique 16byte ids, resources also carry 16 byte UUIDs (typically in 8-4-4-4-12 notation).
   Tools typically support addressing resources by name, but names are *not* enforced to be unique everywhere.
 
 * Much easier: Store keystone endpoint and credentials in `~/.config/openstack/clouds.yaml` and `secure.yaml` and
@@ -321,14 +321,14 @@ Note on terminology: OpenStack calls hosts (hardware nodes) hypervisors and VMs 
 | metric | gnocchi | Aggregation of metering data |
 | alarming | aodh | Trigger notifications |
 | clustering | senlin | Manage sets of resources |
-| sharev2 | manila | Shared filesystems (NFS,CIFS,...) |
+| sharev2 | manila | Shared file-systems (NFS,CIFS,...) |
 | baremetal | ironic | Bare Metal instance management |
 | container-infra | magnum | Manage container clusters |
 
 Many more "big tent" services exist (trove - database, zaqar - queuing, mistral - workflow,
 sahara - big data, cloudkitty - metering, watcher - optimization), see
 <https://www.openstack.org/software/>. They have varying degrees of maturity and
-they are not supported by default in the SCS reference implementaton.
+they are not supported by default in the SCS reference implementation.
 
 #### Dashboard: Horizon
 Horizon is the traditional dashboard that almost every OpenStack cloud offers.
@@ -358,11 +358,11 @@ OpenStack requires queuing and a database to work
 
 * OSISM comes with significantly more infrastructure
     * Monitoring
-    * Lifecycle management
+    * Life-cycle management
     * Log aggregation and search
     * k3s Cluster (for extensibility)
 
-### OpenStack user managment
+### OpenStack user management
 
 #### Domains and Projects
 * Resources belong to projects (formerly called tenants)
@@ -402,7 +402,7 @@ OpenStack requires queuing and a database to work
 
 #### Compute separation
 * Hardware virtualization technology separates VMs from each other
-    - SCS mandates microcode and hypervisor/kernel mitigations to be active against known CPU vulnerabilities
+    - SCS mandates microcode and hypervisor/kernel mitigation to be active against known CPU vulnerabilities
     - SCS mandates Hyperthreading to be switched off if it's not secure ([scs-0100](https://docs.scs.community/standards/scs-0100-v3-flavor-naming))
 * Highest security environments might want to use dedicated hosts or assign dedicated host groups (host aggregates) to avoid sharing hardware with untrusted users.
 
@@ -413,10 +413,10 @@ OpenStack requires queuing and a database to work
 
 #### Storage separation
 * ceph enforces storage isolation
-* users can use luks for sensitive data
+* users can use LUKS for sensitive data
 * optional disk encryption, exposed via storage class
 
-#### Archictecture
+#### Architecture
 * Secrets are stored in ansible vault or external vaults (keepass, hashicorop vault/openbao)
 * Internal control traffic encrypted
 * Secure delegation of administrative powers with domain-manager role limited to own domain

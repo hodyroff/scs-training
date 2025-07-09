@@ -4,7 +4,7 @@
 
 See [Testbed Guide](https://docs.scs.community/docs/iaas/deployment-examples/testbed/usage)
 or [Ciab Guide](https://docs.scs.community/docs/iaas/deployment-examples/cloud-in-a-box/#webinterfaces)
-for a list of webinterfaces to manage your infrastructure.
+for a list of web-interfaces to manage your infrastructure.
 
 #### Homer
 A dashboard with links to the specific dashboards.
@@ -25,7 +25,7 @@ Database access.
 Celery reconciler task queue.
 
 #### Netdata
-Live realtime monitoring.
+Live real-time monitoring.
 
 ### OpenStack Health Monitor (OSHM)
 
@@ -36,7 +36,7 @@ Live realtime monitoring.
     - Was written as bash script using openstack CLI
     - Runs many iterations to expose issue
 * It has long outgrown its initial purpose
-    - Lots of options to make deployemnt scenario more complex to trigger
+    - Lots of options to make deployment scenario more complex to trigger
       more exotic issues (that have been observed in real clouds though)
     - Records timing of commands and thus measures control plane performance
     - Has three minimal benchmarks (CPU, Net, Disk) to also record user performance
@@ -55,7 +55,7 @@ Live realtime monitoring.
     - Ideally you have a second OpenStack project where the resources under
       test are created, tested, cleaned up.
 * Driver VM then also runs telegraf, influxdb, grafana
-    - Log files are stored in filesystem and are optionally pushed to Object Storage
+    - Log files are stored in file-system and are optionally pushed to Object Storage
     - Console output is optimized for readability (unlike log files), attach to it via `tmux attach`
     - Autostart realized via injecting keys into tmux ...
 * Documentation at: <https://docs.scs.community/docs/operating-scs/guides/openstack-health-monitor/Debian12-Install>
@@ -108,12 +108,12 @@ Live realtime monitoring.
       lock-in
 
 #### Standardization process
-* It's an open collaborative democractic process
+* It's an open collaborative democratic process
     - Governance by SCS project (until 2024) and now Forum SCS-Standards
       in OSBA (non-profit)
-* Process defined by stanard SCS-0001 <https://docs.scs.community/standards/scs-0001-v1-sovereign-cloud-standards>
-    - Standards have a lifecycle (Draft, Stable, Obsolete) and are versioned
-    - A subset of current stabilized standards is chosed to comprise *SCS-compatible IaaS*
+* Process defined by standard SCS-0001 <https://docs.scs.community/standards/scs-0001-v1-sovereign-cloud-standards>
+    - Standards have a life-cycle (Draft, Stable, Obsolete) and are versioned
+    - A subset of current stabilized standards is chosen to comprise *SCS-compatible IaaS*
       and *SCS-compatible KaaS*. These *certification scopes* are versioned as well.
 * Standards come with one or several test cases that can be run manually or automatically
     - We have moved from github actions to a zuul pipeline to run the tests nightly
@@ -124,7 +124,7 @@ Live realtime monitoring.
 
 #### Running tests manually
 * The tests are all available on github where the standards live:
-  In the <https://github.com/SovereignCloudStack/standards> repository. Tests are in the `Tests/` subdirectory.
+  In the <https://github.com/SovereignCloudStack/standards> repository. Tests are in the `Tests/` sub-directory.
 * Running all IaaS tests: `./scs-compliance-check.py scs-compatible-iaas.yaml --subject=NAME -a os_cloud=CLOUD`
   assuming you have the cloud `CLOUD` defined in your `clouds.yaml` and `secure.yaml`.
 * Running single tests: Navigate the directory structure:
@@ -157,11 +157,11 @@ Live realtime monitoring.
     - Security pipeline
     - Dependency collection (SBOM)
     - Compliance checks (job: `scs-check-all`)
-* The results of the compliace checks are collected by the compliance monitor
+* The results of the compliance checks are collected by the compliance monitor
     - Failures are not immediately reported to avoid false positives
     - Instead case is reviewed by responsible engineer and reported to cloud provider
         * This avoids spurious (non-reproducible) failures to display non-compliance
-        * It also givess CSPs an opportunity to get back into compliance quickly
+        * It also gives CSPs an opportunity to get back into compliance quickly
         * Compliance engineer has also access to detailed log files
     * Curated results at: <https://compliance.sovereignit.cloud/page/table>
     * These are also mirrored at the docs page

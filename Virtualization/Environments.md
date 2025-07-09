@@ -7,7 +7,7 @@
 * Your customers typically expect very reliable cloud services
     - Unavailability is very bad, losing data is worse
 * Cloud environments must be changed often
-    - E.g. for deploying security fixes, for increasing capacity, for deployung upgrades, etc.
+    - E.g. for deploying security fixes, for increasing capacity, for deploying upgrades, etc.
 * In order to do changes with confidence, you need to test them
     - Validating that the changes are good
     - Validating that your roll out procedures work reliably
@@ -38,7 +38,7 @@
 * The default setup for a testbed uses 7 nodes:
     - 1 Manager node (SCS-4V-16-50)
     * 3 Control and Network node (SCS-8V-32-50)
-    * 3 Comppute and Storage nodes (SCS-8V-32-50)
+    * 3 Compute and Storage nodes (SCS-8V-32-50)
     * 3x3 = 9 Volumes (for OSDs) 20GiB each
 * Testbed has basic HA properties
 * It's not hardened for production and has predefined passwords
@@ -51,7 +51,7 @@
     - It can be deployed in a virtual machine (use SCSI disk driver!)
 * It has fairly minimal requirements:
     - 32GiB RAM, 4 cores, 400GB disk space, disable k3s and OpenSearch for small setups
-    - A 8 core 96GiB machine with 2 4TB NVMes works really rather well and survices quite some workloads
+    - A 8 core 96GiB machine with 2 4TB NVMes works really rather well and survives quite some workloads
         - Keep 16GiB free for the host, more if k3s and OpenSearch are running
 * Fully automated installation process with very limited adaptability
 * Uses self-signed certificates and predefined passwords.

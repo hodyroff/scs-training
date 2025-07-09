@@ -73,13 +73,13 @@
 * When a created VM does not become accessible, this can be debugged in a number of ways
     - Most Linux images are configured to write the boot log to the serial console. This is captured by OpenStack and can be accessed via horizon or via `openstack console log show`
     - Most Linux and Windows images create output to a virtual VGA graphics card. This can be accessed via horizon or by pointing a web browser to the URL given by `openstack console url show`. Many images also allow input this way, so you could log in if local console logins are allowed.
-* If you have created your own image, you may be able to observe trouble from the bootloader to locate and load the operating system.
+* If you have created your own image, you may be able to observe trouble from the boot-loader to locate and load the operating system.
     - This does not typically happen on generic images provided by the provider
-* You may see trouble with your root filesystem which may have suffered corruption on a crash
-    - This can be recovered by attaching the volume to another VM and using filesystem recovery tools
+* You may see trouble with your root file-system which may have suffered corruption on a crash
+    - This can be recovered by attaching the volume to another VM and using file-system recovery tools
     - For local storage, you can boot with a rescue image (`openstack server rescue`)
 * Your volume may be read-only and reject WRITE requests
-    - This is due to locks held when ceph went down and needs support from the cloud provider; it is described above in the Maintenance section
+    - This is due to locks held when Caph went down and needs support from the cloud provider; it is described above in the Maintenance section
 * Your VM might have booted perfectly and you just fail to reach it via the network
     - Double check network settings:
         * Do you have a floating IP assigned or another VM attached to the same router to access it?
@@ -107,7 +107,7 @@
     - Should be stored on a different storage backend, thus also providing protection against storage backend breakage
     - Are typically slow to create as full copies are created
     - Snapshots can be backed up (by creating a temporary volume)
-        * For read-write mounted volumes, this is the only way to have a backup that at least comes close to a consistent filesystem
+        * For read-write mounted volumes, this is the only way to have a backup that at least comes close to a consistent file-system
     - OpenStack even offers incremental backups, only saving the block-level changes since the last backup
 
 ### IaC tooling
@@ -117,7 +117,7 @@
     - All configuration inside the VM can be bootstrapped by cloud-init; using a configuration management system (such as ansible) is typically enabled then to take over
 * The OpenStack APIs can be used by a number of Infra-as-Code tools
     - `openstackclient` command line interface
-    - python openstacksdk
+    - python OpenStackSDK
     - Ansible
     - opentofu (which is a free fork of the now proprietary terraform)
     - ...
@@ -216,7 +216,7 @@ clouds:
 * Horizontal scaling (using more VMs to work in parallel) is typically easy to do with stateless VMs
 * Vertical scaling (creating larger VMs) is supported by OpenStack
     - You can hot(un)plug disks and network ports into running VMs
-    - Changing the number of vCPUs or the amout of memory requires a VM resize operation
+    - Changing the number of vCPUs or the amour of memory requires a VM resize operation
         * This causes a reboot of the VM
         * Don't forget to confirm the resize after the rebooted VM has been checked
 * Autoscaling (horizontal scaling) in OpenStack can be done via [heat](https://wiki.openstack.org/wiki/Heat/AutoScaling) orchestration templates
@@ -232,7 +232,7 @@ clouds:
 * Your customers may fail to secure their virtual environments accurately
     - If they are hacked into, it does *not* in any way breach your integrity as a public cloud provider
     - By design, you can have evil customers next to legit ones and they are protected from each other
-        * While a high degree of security isolation is a condition sine qua non for any public cloud, performance isolation may not be as perfect, especially if you allow oversubscription. (SCS Standards allow for moderate CPU oversubscription for V-type vCPUs.)
+        * While a high degree of security isolation is a condition sine qua non for any public cloud, performance isolation may not be as perfect, especially if you allow over-subscription. (SCS Standards allow for moderate CPU over-subscription for V-type vCPUs.)
         * Without any throttling, evil users might also cause a large load on your control plane (API), so the API response times for legit customers may deteriorate
     - In practice, you still want to get rid of evil customers and help your legit customers to secure their environment to avoid reputational damage
         * And of course you want your bills to be paid

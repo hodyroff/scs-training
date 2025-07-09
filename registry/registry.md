@@ -38,7 +38,7 @@ authentication, vulnerability scanning, signing...
 [SCS maintains standard requirements](https://github.com/SovereignCloudStack/standards/blob/main/Standards/scs-0212-v1-requirements-for-container-registries.md) for such a 
 registry implementation contain a list of required and desirable features.
 
-As sumarized in a [SCS decision record](https://github.com/SovereignCloudStack/standards/blob/main/Standards/scs-0218-v1-container-registry-for-scs-standard-implementation.md) Harbor meets these
+As summarized in a [SCS decision record](https://github.com/SovereignCloudStack/standards/blob/main/Standards/scs-0218-v1-container-registry-for-scs-standard-implementation.md) Harbor meets these
 requirements best as seen in comparison table:
 
 | Features                            | Harbor                                  | Quay                                                                | Dragonfly                     |
@@ -75,7 +75,7 @@ rate-limiting.
   - Private registry - own images
   - Proxy registry - mirror external images, avoid rate-limiting, reject
     unsuitable images
-  - Air-gapped registry - security enclaves...
+  - Air-gaped registry - security enclaves...
 - Placement in SCS stack - part of SCS standard
 
 ![SCS stack](https://sovereigncloudstack.github.io/website/assets/images/201001-SCS-4c-06fe1d5ce5729b4e6bc3ac5190d4dafab09f0374f8e329baeab2b092983a3ea2bc11268e0c783f58f4e991e819375bcf5c6bdc95df977bdea22d145b04f6e934.png)
@@ -118,7 +118,7 @@ Harbor, by design, consists of multiple (micro)services that need to store data.
 They can do that variously, based on the Harbor configuration.
 
 - Redis - Key value storage used as a login session cache, a registry manifest 
-  cache, and a queue for the jobservice (e.g. Trivy)
+  cache, and a queue for the job-service (e.g. Trivy)
   - By default it is deployed as "internal" single node database into the same 
     Kubernetes cluster as Harbor - as a StatefulSet with 1 replica mounting a
     PV (helm value: redis.type.internal)
@@ -359,7 +359,7 @@ $ kubectl edit ingress -n ingress-nginx ingress-nginx-controller
   EOF
   ```
 
-  - Install velero cli to control the process
+  - Install velero CLI to control the process
 
   ```bash
   wget https://github.com/vmware-tanzu/velero/releases/download/v1.10.2/velero-v1.10.2-linux-amd64.tar.gz 
@@ -468,7 +468,7 @@ upgrade or scaling the cluster.
     environments that pull images continuously
 - Scalability and Load Distribution
   - HA setups allow to scale Harbor horizontally, distributing load across
-    multiple instances of the API, jobservice, or registry components
+    multiple instances of the API, job-service, or registry components
 - This leads to faster response times and a more resilient service under heavy 
   usage (e.g., during large image pushes or massive cluster rollouts)
 - Harbor HA architecture
@@ -493,7 +493,7 @@ upgrade or scaling the cluster.
     - Routes traffic to the core, portal, jobservice, and registry components
     - Can be a simple NGINX ingress or external L4/L7 load balancer
 - Trying out HA deployment in KinD
-  - Create a multinode KinD cluster
+  - Create a multi-node KinD cluster
 
   ```bash
   cat <<EOF > kind-multinode.yaml
