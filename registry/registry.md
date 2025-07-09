@@ -421,14 +421,14 @@ upgrade or scaling the cluster.
   - One Harbor instance to another
   - Docker registry to Harbor
 - Process
-  - Using the same tools as in [backup and restore](#8-backup-and-restore)
+  - Using the same tools as in [backup and restore](#backup-and-restore)
   - Backup Harbor resources in source cluster to a storage target accessible
     to both clusters
   - Restore the backup to target cluster
 - KinD-based migration lab
-  - Using existing KinD deployment from [Quickstart guide](#6-quickstart-guide), add a new
+  - Using existing KinD deployment from [Quickstart guide](#quickstart-guide), add a new
     migration target cluster and install velero into it using the process
-    described in [Backup and Restore](#8-backup-and-restore). Optionally name
+    described in [Backup and Restore](#backup-and-restore). Optionally name
     the target cluster.
 
   ```bash 
@@ -442,7 +442,7 @@ upgrade or scaling the cluster.
   velero backup get
   ```
 
-  - Restore the backup saved in [Backup and Restore](#8-backup-and-restore)
+  - Restore the backup saved in [Backup and Restore](#backup-and-restore)
     in the target cluster
 
   ```bash
@@ -451,7 +451,7 @@ upgrade or scaling the cluster.
 
 ### Assignments
 
-1. Using the process from [Quickstart guide assignments](#6-quickstart-guide)
+1. Using the process from [Quickstart guide assignments](#quickstart-guide)
    create a second Kubernetes cluster
 2. Setup a S3 compatible MinIO backup target reachable from both clusters
 3. Backup the original Harbor instance using velero

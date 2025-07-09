@@ -52,7 +52,7 @@ This section provides brief explanation of SCS monitoring stack and it's compone
 	- dNation K8S Monitoring - series of intuitive, drill-down Grafana dashboards and Prometheus alerts written in Jsonnet. The layered structure  L0 (all clusters and hosts), L1 (cluster/host overview), L2 and in some cases even L3 for detailed information. This design allows  to quickly detect and investigate a problem in users infrastructure.
 
 ### Monitoring Endpoints
-SCS monitoring platform can observe various endpoints, such as tcp/http/https through Blackbox exporter, VMs and baremetal nodes through Node exporter, another k8s clusters - see [Multicluster Monitoring](#3-3-multicluster-monitoring) and [IaaS](#3-4-iaas-monitoring)(Openstack)
+SCS monitoring platform can observe various endpoints, such as tcp/http/https through Blackbox exporter, VMs and baremetal nodes through Node exporter, another k8s clusters - see [Multicluster Monitoring](#multicluster-monitoring) and [IaaS](#iaas-monitoring)(Openstack)
 
 ### Multicluster Monitoring
 The SCS Monitoring Platform supports multi-cluster monitoring, enabling the observation of one or more Kubernetes clusters across various distributions, including K3s, OpenShift, and vanilla Kubernetes. It leverages Prometheus for metric scraping, Thanos for long-term metric storage in object storage services, and Grafana for visualizing metrics through customizable dashboards. Additionally, Loki is used for collecting and aggregating logs, providing a complete observability solution.
@@ -63,9 +63,9 @@ The SCS Monitoring Platform supports multi-cluster monitoring, enabling the obse
 - **Observer cluster** - Contains both data and visual layer. Utilizes Thanos with Envoy proxy for short term queries multiple clusters, hosts and IAASs, including the observer cluster itself. Uses Grafana to display dNation dashboards, as well as any aditional dashboards. For Long term Querries it looks into the objectstore service
 
 ### IAAS Monitoring
-![IaaS Monitoring](images/iaas.png)
+![IaaS Monitoring](images/iaas.png){width=480}
 
-IaaS monitoring uses openstack exporter. The user needs to supply credentials in form of `clouds.yaml` Currently, there's no dNation dashboard, we recommend to use [this dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/). See [Dashboards and Customization](#5-dashboards-and-customisation) on how to add 3rd party dashboards.
+IaaS monitoring uses openstack exporter. The user needs to supply credentials in form of `clouds.yaml` Currently, there's no dNation dashboard, we recommend to use [this dashboard](https://grafana.com/grafana/dashboards/21085-openstack-overview/). See [Dashboards and Customization](#dashboards-and-customisation) on how to add 3rd party dashboards.
 
 ## Example Deployments
 This section provides example deployments of single-cluster, multi-cluster and IAAS monitoring using [KinD](https://kind.sigs.k8s.io/)
@@ -92,7 +92,7 @@ This section provides example deployments of single-cluster, multi-cluster and I
 2. Verify accessibility using UI
 
 ### Multicluster Monitoring
-- Spawn a workload cluster in KinD - observer was already created in [previous section](#4-1-quickstart-guide), if not please follow it
+- Spawn a workload cluster in KinD - observer was already created in [previous section](#quickstart-guide), if not please follow it
   ```shell
   kind create cluster --config kind/kind-workload-config.yaml --image kindest/node:v1.31.6 --name workload
   ```

@@ -1,1 +1,1 @@
-# Virtualization Layer: Operating Sovereign Cloud Stack IaaS
+# Virtualization Layer: Operating SCS IaaS
