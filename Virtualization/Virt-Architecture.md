@@ -4,7 +4,7 @@
 
 * Applications are written to run on servers
 * Virtualization:
-    - Create an execution environment for the application that looks like a server (landscape)
+    - In software, create an execution environment for the application that looks like a server (landscape)
 
 #### Types of virtual hardware
 * Compute virtualization:
@@ -45,7 +45,7 @@
     - Layer3 networks (routed)
     - Cloud: VPC
     - Linux: Bridge
-    - OpenvSwitch (OvS) and OVN (Open Virtual Network)
+    - **OpenvSwitch** (OvS) and **OVN** (Open Virtual Network)
 
 #### Infrastructure-as-Code
 * Automate the set up of virtual hardware completely
@@ -66,6 +66,7 @@
         * In case of failure
         * In case of a security breach
         * For an upgrade
+    - No backups needed
     - Typically scales trivially
 
 ### OpenStack Architecture overview
@@ -287,6 +288,7 @@ interfaces to control these.
   ```
 
 #### OpenStack Core services
+
 | Type | Name | Function |
 |------|------|----------|
 | identity | keystone | Identity and Access management |
@@ -302,6 +304,7 @@ Note on swift: We require an S3 compatible service. (Ideally, both S3 and Swift 
 Note on terminology: OpenStack calls hosts (hardware nodes) hypervisors and VMs instances or servers.
 
 #### Other standard OpenStack services
+
 | Type | Name | Function and Notes |
 |------|------|--------------------|
 | orchestration | heat | Deploy sets of resources (like cloudformation, heat-cfn) |
@@ -310,12 +313,14 @@ Note on terminology: OpenStack calls hosts (hardware nodes) hypervisors and VMs 
 | key-manager | barbican | Secrets management (e.g. for L7 LB, like vault) |
 
 #### Internal OpenStack services
+
 | Type | Name | Function and Notes |
 |------|------|--------------------|
 | placement | placement | Determine where VMs are started (scheduler), typically only used internally |
 | telemetry | ceilometer | Collect usage/metering data (typically not exposed) |
 
 #### Optional OpenStack services
+
 | Type | Name | Function and Notes |
 |------|------|--------------------|
 | metric | gnocchi | Aggregation of metering data |
@@ -366,11 +371,11 @@ OpenStack requires queuing and a database to work
 
 #### Domains and Projects
 * Resources belong to projects (formerly called tenants)
+    - Think of project as a workspace container for virtualized resources
 * Projects are structured into domains (optional, mandatory in SCS)
 * Domains are thus containers (realms) for
     - Projects
-    - Users
-    - Groups
+    - Users and Groups
 * `Domain_Name:Project_Name`, `Domain_Name:User_Name`, `Domain_Name:Group_Name`
   tuples are unique identifiers. (The corresponding IDs are unique as well, of course.)
 * The `domain_manager` role can be handed to customers to manage projects, users and
@@ -456,7 +461,7 @@ OpenStack requires queuing and a database to work
       more is better.
         * For small setups, consider disabling k3s and OpenSearch
     - Recommended: 96GiB+ RAM, 8+ cores, 2x2+TB NVMe
-        * Demo System: Aoostar Gem12 w/ Ryzen7 8845HS (8core Zen4), 96GiB
+        * Demo System: Aoostar Gem12 w/ Ryzen7 8845HS (8core(16HT) Zen4), 96GiB
           RAM, 2x4TB Lexar NM790 NVMe, 2x2.5Gbps network -> ~$1500
 * Switch it on three times, first time with boot image connected (USB, PXE, BMC)
     - Installation process downloads tens of GB of data, ensure good internet connection
