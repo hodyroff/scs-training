@@ -73,17 +73,20 @@ This section provides example deployments of single-cluster, multi-cluster and I
 ### Quickstart Guide
 - Create KinD cluster
   ```shell
-  kind create cluster --config kind/kind-observer-config.yaml --image kindest/node:v1.31.6 --name observer
+  kind create cluster --config kind/kind-observer-config.yaml \
+    --image kindest/node:v1.31.6 --name observer
   ```
 - Install monitoring stack  
   ```shell
   helm repo add dnationcloud https://dnationcloud.github.io/helm-hub/
   helm repo update dnationcloud
-  helm upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
+  helm upgrade --install dnation-kubernetes-monitoring-stack \
+    dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml
   ```
 - Port-forward to Grafana
   ```bash
-  kubectl --namespace default port-forward  svc/dnation-kubernetes-monitoring-stack-grafana 3000:80
+  kubectl --namespace default port-forward \
+    svc/dnation-kubernetes-monitoring-stack-grafana 3000:80
   ```
 - Access monitoring [http://localhost:30000/d/monitoring/infrastructure-services-monitoring](http://localhost:30000/d/monitoring/infrastructure-services-monitoring)
 
@@ -94,18 +97,21 @@ This section provides example deployments of single-cluster, multi-cluster and I
 ### Multicluster Monitoring
 - Spawn a workload cluster in KinD - observer was already created in [previous section](#quickstart-guide), if not please follow it
   ```shell
-  kind create cluster --config kind/kind-workload-config.yaml --image kindest/node:v1.31.6 --name workload
+  kind create cluster --config kind/kind-workload-config.yaml \
+    --image kindest/node:v1.31.6 --name workload
   ```
 - Install k8s monitoring on the cluster using `values-observer.yaml`
   ```shell
-  helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml
+  helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack \
+    dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml
   ```
 - Now we connect the clusters
 
 #### Observer Cluster
 - Install `cert-manager` 
   ```shell
-  helm --kube-context kind-observer install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.17.2 --set crds.enabled=true
+  helm --kube-context kind-observer install cert-manager jetstack/cert-manager \
+    --namespace cert-manager --create-namespace --version v1.17.2 --set crds.enabled=true
   ```
 - Create a self signed issuer and a CA issuer with self-signed ca. Use CA issuer to generate client and server certificate.
   ```shell
@@ -125,7 +131,9 @@ This section provides example deployments of single-cluster, multi-cluster and I
   ```
 - Apply additional observer values to mount this secrets
   ```shell
-  helm --kube-context kind-observer upgrade dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml -f multicluster/values-connect-observer.yaml
+  helm --kube-context kind-observer upgrade dnation-kubernetes-monitoring-stack \
+    dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-observer.yaml \
+    -f multicluster/values-connect-observer.yaml
   ```
 - Access monitoring [http://localhost:30000/d/monitoring/infrastructure-services-monitoring](http://localhost:30000/d/monitoring/infrastructure-services-monitoring). You will see the box for workload cluster saying `Down`
   > Hack: monitoring is domain based, this should make it work locally in Kind
@@ -152,33 +160,35 @@ This section provides example deployments of single-cluster, multi-cluster and I
   kubectl --context kind-workload apply -f  multicluster/deploy-ingress-nginx.yaml
   ```
 - Add the following secrets to workload cluster
-    ```yaml
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name:thanos-server
-      namespace: monitoring
-    type: kubernetes.io/tls
-    data:
-    # copied from server-secret created by server-certificate (query-workload.local)
-      ca.crt: <ca.crt>
-      tls.crt: <tls.crt>
-      tls.key: <tls.key>
+  ```yaml
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name:thanos-server
+    namespace: monitoring
+  type: kubernetes.io/tls
+  data:
+  # copied from server-secret created by server-certificate (query-workload.local)
+    ca.crt: <ca.crt>
+    tls.crt: <tls.crt>
+    tls.key: <tls.key>
 
-    ---
-    apiVersion: v1
-    kind: Secret
-    metadata:    
-      name: thanos-ca-secret
-      namespace: default
-    data:
-      # copy from tls-ca-key-pair
-      ca.crt: <ca.crt>
+  ---
+  apiVersion: v1
+  kind: Secret
+  metadata:    
+    name: thanos-ca-secret
+    namespace: default
+  data:
+    # copy from tls-ca-key-pair
+    ca.crt: <ca.crt>
 
-    ```
+  ```
 - Apply workload observer values to connect the clusters
   ```bash
-  helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml -f multicluster/values-connect-workload.yaml 
+  helm --kube-context kind-workload  upgrade --install dnation-kubernetes-monitoring-stack \
+    dnationcloud/dnation-kubernetes-monitoring-stack -f multicluster/values-workload.yaml \
+    -f multicluster/values-connect-workload.yaml 
   ```
 
 #### Assignments
@@ -190,7 +200,8 @@ This section provides example deployments of single-cluster, multi-cluster and I
 - Acquire application credential of your cloud. An admin access is required. You can use Horizon UI `https://your.openstack.cloud.url/identity/application_credentials/` or via `openstack` CLI
 >Warning: If you used Horizon, the secret will be automatically generated and shown only once! Make sure to note it down in a secure place i.e. KeyPass
   ```shell
-  openstack application credential create my-app-cred --secret <generate-your-app-cred-secret-here> --role <admin or reader>
+  openstack application credential create my-app-cred \
+    --secret <generate-your-app-cred-secret-here> --role <admin or reader>
   ```
 - Admin role is required to access all the metrics, without it the resulting dashboard will be incomplete.  In this example however, reader role is sufficient for demonstration purposes, fill free to use it. Also, in some Openstack deployments, internal API inaccessible from outside  is required to read all the metrics.
 - Create `values-iaas.yaml` and fill in application credentials.

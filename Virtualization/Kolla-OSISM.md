@@ -439,8 +439,9 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
             - It is recommended to run compliance checks with**out** admin privileges
             - In case they ever clean up too much, this won't hit anything but itself
   ```bash
-  # This example assumes you want to name the cloud CiaB-Kurt7 and have a cloud "test" defined in clouds/secure.yaml
-  ./scs-compliance-check.py scs-compatible-iaas.yaml --subject=CiaB-Kurt7 -a os_cloud=test
+  # This example assumes you want to name the cloud CiaB-KG7 and have a
+  #  cloud "test" defined in clouds/secure.yaml
+  ./scs-compliance-check.py scs-compatible-iaas.yaml --subject=CiaB-KG7 -a os_cloud=test
   ```
 * OpenStack Health Monitor
     - Will cover this later
@@ -481,11 +482,13 @@ See also <https://docs.scs.community/docs/iaas/guides/concept-guide/bom>
 * Perform changes in the checked out configuration repository ON A TEST OR REFERENCE ENVIRONMENT
     - Typically you end up editing some file under `/opt/configuration/environments/`
     - Push the changes (for your test environment) and apply them:
+
       ```bash
       osism apply configuration   # Pull config from git
       osism reconciler sync       # Adjust derived config files
       osism apply facts           # Gather/Update ansible facts
       ```
+
     - Run the playbooks that consume the new settings: `osism apply PLAYBOOK`
     - If everything works as designed, commit the same changes to the config repository
       of your production environment.

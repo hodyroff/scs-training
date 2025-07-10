@@ -55,14 +55,16 @@
     - Update infrastructure services:
     ```bash
         set -e
-        for svc in common loadbalancer opensearch openvswitch ovn memcached redis mariadb rabbitmq; do
+        for svc in common loadbalancer opensearch openvswitch ovn memcached redis \
+                   mariadb rabbitmq; do
             osism apply -a upgrade $svc
         done
     ```
     - Update OpenStack services (the exact list depends on your deployment)
     ```bash
         set -e
-        for svc in keystone horizon placement glance neutron nova cinder designate octavia skyline barbican heat magnum; do
+        for svc in keystone horizon placement glance neutron nova cinder designate \
+                   octavia skyline barbican heat magnum; do
             osism apply -a upgrade $svc
         done
     ```

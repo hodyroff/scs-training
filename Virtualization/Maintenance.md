@@ -128,15 +128,16 @@ DELETE FROM `volumes` WHERE deleted = 1 and deleted_at < "2025-05-01 00:00:00";
   your root disk).
 * Example with a running VM booted from volume `82b99323-3b69-4b05-9cb9-770324235099`:
 
-```bash
-dragon@cumulus(config:test):~ [0]$ rbd lock list volumes/volume-82b99323-3b69-4b05-9cb9-770324235099
-There is 1 exclusive lock on this image.
-Locker          ID                    Address
-client.4105767  auto 139984392802144  192.168.16.10:0/3228397893
-dragon@cumulus(config:test):~ [0]$ rbd lock rm volumes/volume-82b99323-3b69-4b05-9cb9-770324235099 "auto 139984392802144" client.4105767
-dragon@cumulus(config:test):~ [0]$ rbd lock list volumes/volume-82b99323-3b69-4b05-9cb9-770324235099
-dragon@cumulus(config:test):~ [0]$
-```
+  ```bash
+  dragon@cumulus(test):~ [0]$ rbd lock list volumes/volume-82b99323-3b69-4b05-9cb9-770324235099
+  There is 1 exclusive lock on this image.
+  Locker          ID                    Address
+  client.4105767  auto 139984392802144  192.168.16.10:0/3228397893
+  dragon@cumulus(test):~ [0]$ rbd lock rm volumes/volume-82b99323-3b69-4b05-9cb9-770324235099 \
+      "auto 139984392802144" client.4105767
+  dragon@cumulus(test):~ [0]$ rbd lock list volumes/volume-82b99323-3b69-4b05-9cb9-770324235099
+  dragon@cumulus(test):~ [0]$
+  ```
 
 * Don't do this on a volume backing a running server unless you want to see its volume turn to read-only.
     - Shut it down (`openstack server stop`) and wait for it to be in `SHUTDOWN` state.

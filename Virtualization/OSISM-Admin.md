@@ -25,11 +25,11 @@
 - The SCS flavor manager allows to create these flavors
 
 #### Usage
-* On the manager node, run `osism manage flavors --help`
+On the manager node, run `osism manage flavors --help`
 ```bash
 dragon@testbed-manager(test):~/.config/openstack [0]$ osism manage flavors --help
-usage: osism manage flavors [-h] [--no-wait] [--cloud CLOUD] [--name {scs,osism,local,url}] [--url URL]
-                            [--recommended]
+usage: osism manage flavors [-h] [--no-wait] [--cloud CLOUD] [--name {scs,osism,local,url}]
+                            [--url URL] [--recommended]
 
 options:
   -h, --help            show this help message and exit
@@ -59,11 +59,11 @@ options:
   provide updated versions of them.
 
 #### Usage
-* On the manager node, run
+On the manager node, run
 ```bash
 dragon@testbed-manager(test):~ [0]$ osism manage image --help
-usage: osism manage image [-h] [--no-wait] [--dry-run] [--hide] [--delete] [--latest] [--cloud CLOUD]
-                          [--filter FILTER] [--images IMAGES]
+usage: osism manage image [-h] [--no-wait] [--dry-run] [--hide] [--delete] [--latest]
+                          [--cloud CLOUD] [--filter FILTER] [--images IMAGES]
 
 options:
   -h, --help            show this help message and exit
@@ -88,7 +88,7 @@ options:
 - Cirros 0.6.3, Cirros 0.6.2
 
 #### Example
-* Example: Register AlmaLinux 9
+Example: Register AlmaLinux 9
 ```bash
 dragon@testbed-manager(test):~ [0]$ osism manage image --cloud admin --latest --filter "AlmaLinux"`
 2025-05-09 16:44:43 | INFO     | It takes a moment until task 27d41583-8bca-4518-a861-81b101fe3cf2 (image-manager) has been started and output is visible here.
@@ -128,8 +128,9 @@ dragon@testbed-manager(test):~ [0]$ osism manage image --cloud admin --latest --
 2025-05-09 16:49:23 | INFO     | Setting visibility of 'AlmaLinux 9 (20241120)' to 'public'
 2025-05-09 16:49:23 | INFO     | Renaming AlmaLinux 9 (20241120) to AlmaLinux 9
 ```
-* Image was converted to raw to allow for Copy-on-Write usage with ceph
-    - This took a bit of time (4min30s) on ceph on the testbed's ceph
+
+Image was converted to raw to allow for Copy-on-Write usage with ceph
+- This took a bit of time (4min30s) on ceph on the testbed's ceph
 
 ### Onboarding users
 

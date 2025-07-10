@@ -133,17 +133,19 @@ Live real-time monitoring.
 * Most tests are python3 scripts
     - Many accept the `OS_CLOUD` environment variable to specify which cloud to test
     - Example: 
-    ```bash
-    garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$ pwd
-    /home/garloff/SCS/standards/Tests/iaas/volume-types
-    garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$ echo $OS_CLOUD
-    gxscs2-kaas2
-    garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$ ./volume-types-check.py 
-    WARNING: Recommendation violated: missing encrypted volume type
-    WARNING: Recommendation violated: missing replicated volume type
-    volume-types-check: PASS
-    garloff@framekurt(gxscs2-kaas2):~/SCS/standards/Tests/iaas/volume-types [0]$ 
-    ```
+
+      ```bash
+      garloff@framekurt(gxscs2-kaas2):volume-types [0]$ pwd
+      /home/garloff/SCS/standards/Tests/iaas/volume-types
+      garloff@framekurt(gxscs2-kaas2):volume-types [0]$ echo $OS_CLOUD
+      gxscs2-kaas2
+      garloff@framekurt(gxscs2-kaas2):volume-types [0]$ ./volume-types-check.py 
+      WARNING: Recommendation violated: missing encrypted volume type
+      WARNING: Recommendation violated: missing replicated volume type
+      volume-types-check: PASS
+      garloff@framekurt(gxscs2-kaas2):volume-types [0]$ 
+      ```
+
     - Beyond the messages, the exit code is relevant. Here it's `0`, which is good.
       (My prompt is configured to display the exit code from the last command.)
     - Many checks do API calls without creating resources; the entropy test however

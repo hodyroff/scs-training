@@ -193,7 +193,8 @@ providers/
 
 - [Install clusterctl](https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl)
   ```bash
-  curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.9.7/clusterctl-linux-amd64 -o clusterctl
+  curl -L https://github.com/kubernetes-sigs/cluster-api/releases/\
+    download/v1.9.7/clusterctl-linux-amd64 -o clusterctl
   ```
 
 - Bootstrap a management cluster with KinD
@@ -302,7 +303,8 @@ with some tools installed, use [00-bootstrap-vm-cs.sh](https://github.com/Sovere
   export CLUSTER_TOPOLOGY=true
   export EXP_CLUSTER_RESOURCE_SET=true
   export EXP_RUNTIME_SDK=true
-  kubectl apply -f https://github.com/k-orc/openstack-resource-controller/releases/latest/download/install.yaml
+  kubectl apply -f https://github.com/k-orc/openstack-resource-controller/\
+    releases/latest/download/install.yaml
   clusterctl init --infrastructure openstack
   
   kubectl -n capi-system rollout status deployment
@@ -363,7 +365,10 @@ per cluster in 07-cluster-secret.sh.)
   If you want to use OVN provider OpenStack Octavia for the Workload LBs set `--set octavia_ovn=true` in the helm command.
 
   ```bash
-  helm upgrade -i openstack-secrets -n cluster --create-namespace https://github.com/SovereignCloudStack/openstack-csp-helper/releases/latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml --set cacert="$(cat /path/to/cacert)" --set octavia_ovn=true
+  helm upgrade -i openstack-secrets -n cluster --create-namespace \
+    https://github.com/SovereignCloudStack/openstack-csp-helper/releases/\
+    latest/download/openstack-csp-helper.tgz -f /path/to/cloud.yaml \
+    --set cacert="$(cat /path/to/cacert)" --set octavia_ovn=true
   ```
 
 - Deploy ClusterStack ([05-deploy-cstack.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/05-deploy-cstack.sh))
@@ -457,7 +462,8 @@ per cluster in 07-cluster-secret.sh.)
 - You can use the following example to deploy workload (nginx server with html page) with load balancer ([21-deploy-kube-dashboard.sh](https://github.com/SovereignCloudStack/scs-training-kaas-scripts/blob/main/21-deploy-kube-dashboard.sh))
 
   ```bash
-  kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml apply -f ./clusterstacks/test-workload-lb.yaml
+  kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml apply \
+    -f ./clusterstacks/test-workload-lb.yaml
   ```
 
   Get the IP address of the LB (from its status) and try to reach it, e.g. `curl <LB IP address>`
@@ -467,6 +473,7 @@ per cluster in 07-cluster-secret.sh.)
   Tear down both the workload cluster and the bootstrap cluster
 
   Note: Do not forget to cleanup workload LB before you tear down the workload cluster, e.g. `kubectl --kubeconfig ~/.kube/cluster.my-cluster.yaml delete -f ./clusterstacks/test-workload-lb.yaml`
+
   LB blocks the workload cluster deletion if it is not removed beforehand.
 
   ```bash
@@ -496,15 +503,18 @@ per cluster in 07-cluster-secret.sh.)
 - To use custom OCI registry, e.g.
 
   ```bash
-  export OCI_REGISTRY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eQ== # registry.scs.community
-  export OCI_REPOSITORY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eS9rYWFzL2NsdXN0ZXItc3RhY2tzCg== # registry.scs.community/kaas/cluster-stacks
+  # echo -n "registry.scs.community" | base64 -w0
+  export OCI_REGISTRY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eQ==
+  # registry.scs.community/kaas/cluster-stacks
+  export OCI_REPOSITORY_B64=cmVnaXN0cnkuc2NzLmNvbW11bml0eS9rYWFzL2NsdXN0ZXItc3RhY2tzCg==
   ```
 
 - Deploy CSO. The variables will be replaced in the file
 
   ```yaml
   # Get the latest CSO release version and apply CSO manifests
-  curl -sSL https://github.com/SovereignCloudStack/cluster-stack-operator/releases/latest/download/cso-infrastructure-components.yaml | /tmp/envsubst | kubectl apply -f -
+  curl -sSL https://github.com/SovereignCloudStack/cluster-stack-operator/releases/latest/\
+    download/cso-infrastructure-components.yaml | /tmp/envsubst | kubectl apply -f -
   ```
 
 - Cluster can be further configured by `spec.topology.variables` field , e.g.
@@ -590,7 +600,9 @@ Create a new directory, e.g. `my-clusterstack`. Inside this directory create the
   ```bash
   clusterctl init --infrastructure docker
   cd templates
-  clusterctl generate cluster my-cluster --infrastructure docker --flavor development --kubernetes-version v1.32.0 --control-plane-machine-count=3 --worker-machine-count=3  > my-cluster.yaml
+  clusterctl generate cluster my-cluster --infrastructure docker --flavor development \
+    --kubernetes-version v1.32.0 --control-plane-machine-count=3 --worker-machine-count=3 \
+    > my-cluster.yaml
   ```
 
 - Split the file into different yaml files, e.g. `Kind: Cluster` should be in `cluster.yaml`
@@ -672,7 +684,8 @@ Create a new directory, e.g. `my-clusterstack`. Inside this directory create the
 - Download [CSCTL](https://github.com/SovereignCloudStack/csctl/releases/latest) and unpack
 
   ```bash
-  wget https://github.com/SovereignCloudStack/csctl/releases/download/v0.0.5/csctl_0.0.5_linux_amd64.tar.gz
+  wget https://github.com/SovereignCloudStack/csctl/releases/download/v0.0.5/\
+    csctl_0.0.5_linux_amd64.tar.gz
   tar -xzf ~/Downloads/csctl_0.0.5_linux_amd64.tar.gz
   chmod u+x csctt
   sudo mv csctl /usr/local/bin/csctl
@@ -731,13 +744,13 @@ Create a new directory, e.g. `my-clusterstack`. Inside this directory create the
 - Create your cluster stack e.g.
 
   ```bash
-  csctl create . --output ../my-clusterstack-build  --mode hash
+  csctl create . --output ../my-clusterstack-build --mode hash
   ```
 
 - If you want to publish, you can do so by e.g.
 
   ```bash
-  csctl create . --output ../my-clusterstack-build  --mode hash --publish  --remote oci
+  csctl create . --output ../my-clusterstack-build --mode hash --publish --remote oci
   ```
 
 ### Assignments
@@ -860,7 +873,9 @@ diagnose the problem.
 - Check the logs, list all logs from all deployments, show for last 10 minutes
 
   ```bash
-  kubectl get deployment -A --no-headers | while read -r ns d _; do echo; echo "====== $ns $d"; kubectl logs --since=10m -n $ns deployment/$d; done
+  kubectl get deployment -A --no-headers | while read -r ns d _; do 
+    echo; echo "====== $ns $d"; kubectl logs --since=10m -n $ns deployment/$d;
+  done
   ```
 
 ## Summary and Further Learning
