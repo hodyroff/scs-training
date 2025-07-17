@@ -90,7 +90,7 @@
         * If the metadata service was broken on first VM boot, the ssh key might not have been injected. Throw away the VM and recreate it then (assuming that no valuable data is held on a local root volume)
     - Did you specify the right private ssh key when connecting?
         * Use `ssh -v` to get more debug output ...
-        * Beware that ssh-agents may offer added keys ahead of the one you just specified. (`SSH_AUTH_SOCK ssh -i ~/.ssh/privkey.pem logname@host` helps then).
+        * Beware that ssh-agents may offer added keys ahead of the one you just specified. (`SSH_AUTH_SOCK="" ssh -i ~/.ssh/privkey.pem logname@host` helps then).
     - Note that username/password authentication via ssh is not normally enabled in cloud VMs due to security considerations
 
 #### Snapshots and backups
