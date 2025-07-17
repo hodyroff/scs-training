@@ -95,8 +95,8 @@
 
 #### Snapshots and backups
 * Definitions
-    - A snapshot is a point-in-time state of a storage device.
-    - A backup is a copy of a storage devices.
+    - A snapshot is a point-in-time state of a block storage device (aka volume).
+    - A backup is a copy of a block storage device (aka volume).
 * Snapshots:
     - Are typically created within the same storage backend
     - This allows for quick and cheap creation, using copy-on-write
@@ -132,7 +132,7 @@
 * Most tools assume a `clouds.yaml` style configuration
     - You keep two config files, `~/.config/openstack/clouds.yaml` and `~/.config/openstack/secure.yaml` where you can have several entries, one per OpenStack project
         * Reminder: An OpenStack project is a workspace for virtual resources with associated roles (user authorizations) in a cloud
-    - The `secure.yaml` file is for you passwords and secrets and must be kept safe; by doing so, you can freely show the `clouds.yaml` to others
+    - The `secure.yaml` file is for your passwords and secrets and must be kept safe; by doing so, you can freely show the `clouds.yaml` to others
     - Tools do not enforce this separation, it is possible (but not recommended) to put all into `clouds.yaml`
     - Some people (aggrieved by Windows?) prefer `clouds.yml` (without the `a`) file name, which works as well.
     - The openstack CLI looks for `clouds.yaml` first in the current directory, then in `~/.config/openstack`, then `/etc/openstack/`)
