@@ -8,7 +8,7 @@ thanks: |
   License: [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en)  
   Material has been prepared by Kurt Garloff of [S7n Cloud Services GmbH](https://garloff.de/s7n/) for
   the ITU following good collaboration in the [govstack](https://govstack.global/) project.  
-  The material was used for a training in Kenya paid for by [GIZ](https://giz.de/) and subsequently improved.
+  The material was used for a training in Kenya paid for by [GIZ](https://giz.de/) and subsequently improved.  
   Thanks for contributions to [dNation s.r.o](https://dnation.cloud/),
   [VanillaCore GmbH](https://vanillacore.net/), [OSISM GmbH](https://osism.tech/).  
   A lot of material was prepared during the [Sovereign Cloud Stack](https://scs.community/) project

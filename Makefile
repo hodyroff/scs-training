@@ -24,7 +24,7 @@ ALLINPUTS = Header.md \
 	 registry/registry.md \
 	 References/README.md
 
-SEARCHDIRS = Virtualization:clusterstacks:monitoring:registry
+SEARCHDIRS = Virtualization:clusterstacks:monitoring:registry:Introduction
 
 TARGET = SCS-Training-Trad.pdf
 TFONT = tgschola
