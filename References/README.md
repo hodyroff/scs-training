@@ -1,30 +1,5 @@
 # Links and References for SCS and GovStack
 
-## Digital Sovereignty
-
-* Sovereignty is the ability to decisions about your fate yourself and be very
-  deliberate which dependencies with what risks you are willing to accept.
-* Digital platforms tend to come with strong dependencies.
-* SCS has
-  [published](https://the-report.cloud/why-digital-sovereignty-is-more-than-mere-legal-compliance/)
-  a four-level taxonomy for digital sovereignty for infrastructure platforms
-
-### Four pillars of Sovereignty
-
-1. Data Sovereignty: The ability to decide where to store data and to (independently)
-   decide with whom to share data and metadata.
-
-2. Provider Switchability: Freedom of choice between several providers and
-   the ability to easily switch between them.
-
-3. Technical Sovereignty: The ability to study technology, to shape it according
-   to your needs, to innovate and to contribute.
-
-4. Open Operations: The ability to acquire the knowledge and skills from
-   documentation, knowledge sharing and learning events, transparency on
-   operational processes in order to be capable to operate your own
-   infrastructure.
-
 ### About Sovereign Cloud Stack
 * The idea is to leverage mature Open Source Software (OSS) to support digital sovereignty
     - The challenge is to integrate them in a coherent and standardized way to create
@@ -61,12 +36,4 @@
 * A number of blocks have been specified, identity management, payment, etc., see <https://govstack.gitbook.io>
     - One of them is a cloud building block
 * Govstack is supported by German [BMZ](https://www.bmz.de/en), [GIZ](https://giz.de/), [DIAL](https://dial.global/), [ITU](https://itu.int), [Estonia](https://vm.ee/en)
-
-### SCS and GovStack
-* The SCS project has contributed to the GovStack cloud building block,
-  reflecting some high level principles behind the standardization.
-* The SCS reference implementation fulfills the GovStack Cloud BB's
-  specifications and is thus listed on the GovMarket.
-* The trainings are a contribution to spread the skills and this way support
-  Digital Sovereignty. Thanks!
 

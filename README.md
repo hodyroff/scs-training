@@ -23,8 +23,8 @@ Contributions:
   behind the [OSISM](https://osism.tech/) framework used to deploy and manage
   the current implementation
   of the SCS IaaS reference implementation and also a key contributor to the
-  upstream OpenStack kolla-ansible approach. Christian has reviewed and
-  improved this course.
+  upstream OpenStack kolla-ansible approach. Christian has accepted to review
+  this course.
 - The materials for the SCS Cluster Stacks, for SCS monitoring and for the
   Registry solutions was developed by [dNation](https://dnation.cloud/).
 
@@ -39,19 +39,18 @@ Place des Nations
 ## License
 It was agreed that this material will be made available under a
 suitable open source license.
-The current CC-BY-SA-4.0 license is a (suitable) place holder until
-a final decision on the license has been taken.
+We have chosen the [CC-BY-SA-4.0 license](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
 
-## No warranty
+### No warranty
 While the information in this material was researched with care,
 the authors can not take any responsibility for damage that may
 occur from incomplete or wrong information in this material.
 Any liability is excluded to the maximum extent permitted by law.
 
 ## Usage
-Making this material freely available has the downside that any company
-can use it and offer trainings based on this material. A good training
-can only be delivered by trainers that have deep knowledge and experience
+Making this material freely available has the advantage and downside that any 
+company can use it and offer trainings based on this material. A good training
+course can only be delivered by trainers that have deep knowledge and experience
 in deploying and running SCS infrastructure. There is currently no formal
 training certification program yet by the Forum SCS-Standards at the
 [OSBA](https://osb-alliance.de/)
