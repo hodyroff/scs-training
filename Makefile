@@ -17,6 +17,7 @@ VIRTINPUTS = Virtualization/Front.md \
 	Virtualization/Support.md
 
 ALLINPUTS = Header.md \
+	 Introduction/README.md \
 	 $(VIRTINPUTS) \
 	 clusterstacks/cluster-stacks.md \
 	 monitoring/monitoring.md \
