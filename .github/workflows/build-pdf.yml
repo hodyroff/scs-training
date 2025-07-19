@@ -1,0 +1,29 @@
+name: Build SCS PDF
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pandoc lualatex texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended fonts-lato make librsvg2-bin
+
+    - name: Build PDF
+      run: make
+
+    - name: Upload PDF
+      uses: actions/upload-artifact@v4
+      with:
+        name: SCS-Training-PDF
+        path: SCS-Training.pdf
